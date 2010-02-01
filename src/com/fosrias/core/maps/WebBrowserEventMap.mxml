@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventMap 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo" 
+	xmlns="http://mate.asfusion.com/">
+    <fx:Script>
+        <![CDATA[
+            import mx.events.FlexEvent;  
+            
+            import com.fosrias.core.events.StateEvent;
+            import com.fosrias.core.events.WebBrowserEvent;
+            import com.fosrias.core.managers.WebBrowserManager;
+            import com.fosrias.core.utils.cookies.CookieEvent;
+        ]]>
+    </fx:Script>
+    
+	<fx:Declarations>
+		
+	<!-- FlexEvent.PREINITIALIZE ___________________________________________ -->   
+    <EventHandlers type="{FlexEvent.PREINITIALIZE}">
+        <ObjectBuilder generator="{WebBrowserManager}">
+            <Properties dispatcher="{scope.dispatcher}"/>
+        </ObjectBuilder>
+    </EventHandlers>
+    
+    <!-- CookieEvent.CREATE ________________________________________________ -->
+    <EventHandlers type="{CookieEvent.CREATE}">
+        <MethodInvoker generator="{WebBrowserManager}" 
+            method="createCookie" arguments="{[event.name, event.value, 
+                event.expiration]}"/>
+    </EventHandlers>
+    
+    <!-- CookieEvent.DESTROY _______________________________________________ -->
+    <EventHandlers type="{CookieEvent.DESTROY}">
+        <MethodInvoker generator="{WebBrowserManager}" 
+            method="destroyCookie" arguments="{event.name}"/>
+    </EventHandlers>
+    
+    <!-- CookieEvent.READ __________________________________________________ -->
+    <EventHandlers type="{CookieEvent.READ}">
+        <MethodInvoker generator="{WebBrowserManager}" 
+            method="readCookie" arguments="{event.name}"/>
+    </EventHandlers>
+    
+    <!-- StateEvent.SITE_INITIALIZED ________________________________________ -->
+    <EventHandlers type="{StateEvent.SITE_INITIALIZED}">
+        <MethodInvoker generator="{WebBrowserManager}" 
+            method="siteInitialized"/>
+    </EventHandlers>
+    
+    <!-- WebBrowserEvent.BACK ______________________________________________ -->
+    <EventHandlers type="{WebBrowserEvent.BACK}">
+        <MethodInvoker generator="{WebBrowserManager}" method="back"/>
+    </EventHandlers>
+    
+    <!-- WebBrowserEvent.SET_APPLICATION_TITLE _____________________________ -->
+    <EventHandlers type="{WebBrowserEvent.SET_APPLICATION_TITLE}">
+        <MethodInvoker generator="{WebBrowserManager}" 
+            method="setApplicationTitle" arguments="{event.reference}"/>
+    </EventHandlers>
+    
+    <!-- WebBrowserEvent.SET_TITLE _________________________________________ -->
+    <EventHandlers type="{WebBrowserEvent.SET_TITLE}">
+        <MethodInvoker generator="{WebBrowserManager}" 
+            method="setTitle" arguments="{event.reference}"/>
+    </EventHandlers>
+    
+    <!-- WebBrowserEvent.SET_FRAGMENT ______________________________________ -->
+    <EventHandlers type="{WebBrowserEvent.SET_FRAGMENT}">
+    	<MethodInvoker generator="{WebBrowserManager}" 
+    		method="setFragment" arguments="{event.reference}"/>
+    </EventHandlers>
+		
+	</fx:Declarations>
+	
+</EventMap>

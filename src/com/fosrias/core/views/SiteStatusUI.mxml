@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StatefulPopUpCanvas width="100%" height="100%"
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo" 
+	xmlns="com.fosrias.core.views.components.*"
+	xmlns:maps="com.fosrias.core.maps.*"
+    name="AddressStatusUI"
+    preinitialize="onPreinitialize();">
+	
+	<!-- Define States _____________________________________________________ -->
+    <states>
+		<mx:State name="urlRequiresSession"/>
+	</states>
+	
+	<!-- Define Script _____________________________________________________ -->
+    <fx:Script>
+	<![CDATA[
+        import mx.binding.utils.BindingUtils;
+        
+		import com.fosrias.core.views.models.SiteStatusViewModel;
+		
+		//----------------------------------------------------------------------
+        //
+        //  Properties
+        //
+        //----------------------------------------------------------------------
+        
+        [Bindable]
+        public var model:SiteStatusViewModel;
+        
+        //----------------------------------------------------------------------
+        //
+        //  Methods
+        //
+        //----------------------------------------------------------------------
+        
+        //Sets up binding for help window and intializes variables
+        private function onPreinitialize() : void 
+        {
+            //Watches for changes to the models viewState property.
+            BindingUtils.bindSetter( setCurrentState, this, 
+                ["model", "viewState"] );
+        }
+        
+        /* Note: Bug involved here if txtMessage goes under a TitleWindow
+        when this view is in a view stack, it will cause the TitleWindow
+        close button not to work (can't mouse over it or click it). Thus,
+        the width of the Text is not to the edge of the screen, in my case.*/
+        
+	]]>
+    </fx:Script>
+	
+	<fx:Declarations>
+		
+	<!-- Define Local Event Map ____________________________________________ --> 
+    <maps:SiteStatusLocalEventMap dispatcher="{this}"/>
+    
+	</fx:Declarations>
+	
+    <!-- GUI _______________________________________________________________ -->
+	<mx:LinkButton label="Home" top="45" left="3" 
+	    click="model.home();"
+	    tabIndex="1"/>
+	<mx:LinkButton id="lnkBack" label="Back" top="45" left="64" 
+	    left.urlRequiresSession="122"
+	    click="model.back();"
+	    tabIndex="3"/>
+	<mx:LinkButton id="lnkLogin" label="Login" includeIn="urlRequiresSession"
+	    click="model.login()"
+	    left="64" top="45"
+	    tabIndex="2"/>
+	<mx:Text id="txtMessage" height="26" left="10" right="51" top="0" 
+		fontWeight="bold" fontSize="16"
+		text="We are sorry, the page you requested cannot be found."
+		text.urlRequiresSession="We are sorry, you must login to access the page you have requested."/>
+	<mx:Text x="10" y="23" text="See below for available options."/>
+</StatefulPopUpCanvas>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LocalEventMap 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo" 
+	xmlns="http://mate.asfusion.com/"
+    xmlns:business="com.fosrias.business.*">
+    <fx:Script>
+        <![CDATA[
+            import com.fosrias.core.events.ViewModelEvent;
+            import com.fosrias.core.managers.fragment.FragmentManager;
+            import com.fosrias.core.views.models.SiteStatusViewModel;
+            import com.fosrias.core.views.SiteStatusUI;
+        ]]>
+    </fx:Script>
+    
+	<fx:Declarations>
+		
+	<!-- ViewModelEvent.DIRTY ______________________________________________ -->   
+    <EventHandlers type="{ViewModelEvent.DIRTY}">
+        <MethodInvoker generator="{FragmentManager}" 
+            method="setDirty" arguments="{event}" cache="global"/>
+    </EventHandlers>
+    
+    <!-- ViewModelEvent.EXECUTE ____________________________________________ -->   
+    <EventHandlers type="{ViewModelEvent.EXECUTE}">
+        <MethodInvoker generator="{FragmentManager}" 
+        	method="execute" cache="global"/>
+    </EventHandlers>
+    
+    <!-- Injectors _________________________________________________________ -->
+    <Injectors target="{SiteStatusUI}" debug="true">
+        <ObjectBuilder generator="{SiteStatusViewModel}" 
+        	registerTarget="true"/>
+        <PropertyInjector targetKey="model" source="{lastReturn}"/>
+    </Injectors>
+    <Injectors target="{SiteStatusViewModel}" debug="true">
+    	<PropertyInjector targetKey="dispatcher" source="{scope.dispatcher}"/>
+    	<!-- View State Injector (last so other properties injected first)__ -->    
+        <PropertyInjector targetKey="viewState" source="{FragmentManager}"
+            sourceKey="modelViewState" sourceCache="global"/>
+    </Injectors>
+		
+	</fx:Declarations>
+	
+</LocalEventMap>

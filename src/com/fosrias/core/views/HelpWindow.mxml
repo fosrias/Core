@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow title="Help" 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo" 
+	name="HelpWindow"
+    height.base="{40 + tAText.height}"
+    height.invalidModel="{79 + tAText.height + tAInvalidText.height}"
+    height.invalidRequired="{99 + tAText.height + tAInvalidText.height}"
+    height.required="{64 + tAText.height}"
+    layout="absolute" width="253" height="94" showCloseButton="true"
+	horizontalScrollPolicy="off" verticalScrollPolicy="off"
+	close="model.closeHelp();"
+    mouseDownOutside="model.closeHelp();"
+    creationCompleteEffect="{wipeDown}"
+    removedEffect="{wipeUp}"
+    creationComplete="onComplete();"
+    preinitialize="onPreinitialize();">
+	
+	<!-- Define States _____________________________________________________ -->
+    <mx:states>
+        <mx:State name="base"/>
+        <mx:State name="invalidModel"/>
+		<mx:State name="required"/>
+		<mx:State name="invalidRequired"/>
+	</mx:states>
+    
+    <!-- Define Metadata ___________________________________________________ -->
+    <fx:Metadata>
+        /**
+         *  Specifies the skin to use for the required field indicator. 
+         *
+         *  The default value is the "mx.containers.FormItem.Required" symbol 
+         *  in the Assets.swf file.
+         */
+        [Style(name="invalidSkin", type="Class", inherit="no")]
+        
+        /**
+         *  Specifies the skin to use for the required field indicator. 
+         *
+         *  The default value is the "mx.containers.FormItem.Required" symbol 
+         *  in the Assets.swf file.
+         */
+        [Style(name="requiredSkin", type="Class", inherit="no")]
+        
+    
+    </fx:Metadata>
+	
+	<!-- Define Script _____________________________________________________ -->  
+	<fx:Script>
+	<![CDATA[
+	import com.fosrias.core.views.interfaces.AValidatedViewModel;
+	import com.fosrias.core.views.interfaces.AViewModel;
+	
+	import mx.utils.StringUtil;
+    
+    [Bindable]
+    public var model:AViewModel;
+    
+    public var hasRequired:Boolean = false;
+    
+    [Bindable]
+    private var _text:String;
+        
+    [Bindable]
+    private var _borderThickness:Number;
+   
+    [Bindable]
+    public var invalidText:String = "Invalid value. Mouse over field for " 
+        + "instructions on correcting values."
+    
+    private function onPreinitialize():void
+    {
+    	_text = StringUtil.trim( model.helpText );
+    	title = model.title + " Help";
+    }
+	
+	private function onComplete():void
+	{
+        _borderThickness = getStyle( "borderThicknessBottom" );
+		    
+		if ( isNaN( _borderThickness ) )
+		{
+			//Default value if borderThicknessBottom is not set.
+            _borderThickness = getStyle( "borderThicknessLeft" );
+		}
+		
+		if ( model is AValidatedViewModel )
+		{
+			if ( AValidatedViewModel( model ).isValidated  
+			   && !AValidatedViewModel( model ).isValid)
+			{
+				if ( hasRequired )
+				{
+					currentState = "invalidRequired";
+                    
+				} else {
+			       currentState = "invalidModel";
+			    }
+			} else if ( hasRequired ) {
+				currentState = "required";
+			}
+		} else if ( hasRequired ) {
+            currentState = "required";
+        }
+	}
+	]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		
+	<!-- Define Effects ____________________________________________________ -->
+    <mx:WipeDown id="wipeDown" duration="150" showTarget="true"/>
+    <mx:WipeUp id="wipeUp" duration="150" showTarget="false"/>
+        
+	</fx:Declarations>
+	
+    <!-- Define Base GUI ___________________________________________________ -->                 
+    <s:TextArea id="tAText" top="10" left="10" right="10" 
+        borderVisible="false"
+        text="{_text}"
+        horizontalScrollPolicy="off" verticalScrollPolicy="off"
+        editable="false" 
+        selectable="false"/>
+	<mx:Image id="imgInvalid" x="10" 
+		source="{getStyle('invalidSkin')}" 
+	    source.required="{getStyle('requiredSkin')}"
+		bottom="25" 
+	    bottom.required="10"
+		includeIn="invalidModel, required"/>
+	<mx:Label x="32" text="Required" bottom="8" includeIn="required"/>
+	<s:TextArea id="tAInvalidText" x="30" width="211"
+        borderVisible="false"
+        text="{invalidText}"
+		selectable="false"
+        editable="false"
+        bottom="10" 
+		bottom.required="39"
+		includeIn="invalidModel, invalidRequired"/>
+	<mx:Image id="imgInvalidRequired" x="10" bottom="48" 
+		source="{getStyle('requiredSkin')}" includeIn="invalidRequired"/>
+	<mx:Label text="Required" x="32"  bottom="46" includeIn="invalidRequired"/>
+</mx:TitleWindow>

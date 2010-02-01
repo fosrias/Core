@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventMap 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/halo" 
+	xmlns="http://mate.asfusion.com/"
+    xmlns:business="com.fosrias.core.business.*">
+    
+    <fx:Script>
+    <![CDATA[
+        import com.fosrias.core.business.MessageService;
+        import com.fosrias.core.factories.MessageFactory;
+        
+        import mx.events.FlexEvent;
+        
+    ]]>
+    </fx:Script>
+    
+	<fx:Declarations>
+		
+	<!-- Services __________________________________________________________ -->
+    <business:Services id="services"/>
+    
+    <!-- FlexEvent.PREINITIALIZE ___________________________________________ -->   
+    <EventHandlers type="{FlexEvent.PREINITIALIZE}" debug="true">
+        <ObjectBuilder generator="{MessageService}">
+        	<Properties service="{services.messagesService}"/>
+        </ObjectBuilder>
+        <ObjectBuilder generator="{MessageFactory}">
+            <Properties service="{lastReturn}"/>
+        </ObjectBuilder>  
+    </EventHandlers>
+		
+	</fx:Declarations>
+	
+</EventMap>
