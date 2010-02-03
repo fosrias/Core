@@ -36,8 +36,7 @@ public class ARESTfulService extends AService
     public function ARESTfulService( self:AService, 
         showBusyCursor:Boolean = false )
     {
-    	super( self );
-    	_showBusyCursor = showBusyCursor;
+    	super( self, showBusyCursor );
     }
     
     //--------------------------------------------------------------------------
@@ -64,7 +63,7 @@ public class ARESTfulService extends AService
      */
     public function create( ... args ):void
     {
-        call( 'create', _showBusyCursor, args );
+        call.apply( null, ['create'].concat( args ) );
     }
     
     /**
@@ -74,7 +73,7 @@ public class ARESTfulService extends AService
      */
     public function destroy( ... args ):void
     {
-        call( 'destroy', _showBusyCursor, args );
+        call.apply( null, ['destroy'].concat( args ) );
     }
     
     /**
@@ -82,7 +81,7 @@ public class ARESTfulService extends AService
      */
     public function index():void
     {
-        call( 'index', _showBusyCursor );
+        call( 'index' );
     }
     
     /**
@@ -92,8 +91,7 @@ public class ARESTfulService extends AService
      */
     public function show( ... args ):void
     {
-    	
-        call( 'show', _showBusyCursor, args );
+        call.apply( null, ['show'].concat( args ) );
     }
         
     /**
@@ -103,7 +101,7 @@ public class ARESTfulService extends AService
      */
     public function update( ... args ):void 
     {
-        call( 'update', _showBusyCursor, args );
+        call.apply( null, ['update'].concat( args ) );
     }
 }
 

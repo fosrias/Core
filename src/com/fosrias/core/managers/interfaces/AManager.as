@@ -15,9 +15,12 @@ import com.fosrias.core.interfaces.ADispatcher;
 import com.fosrias.core.models.User;
 import com.fosrias.core.models.interfaces.AUser;
 import com.fosrias.core.namespaces.app_internal;
+import com.fosrias.core.validators.ServerErrors;
 import com.fosrias.core.vos.CallResult;
 
 import flash.events.Event;
+import flash.utils.clearTimeout;
+import flash.utils.setTimeout;
 
 import mx.rpc.Fault;
 
@@ -34,12 +37,6 @@ public class AManager extends ADispatcher
     //
     //--------------------------------------------------------------------------
 
-    /**
-     * @private
-     * Storage for the session status.
-     */
-    private static var _hasSession:Boolean = false;
-    
     /**
      * @private
      * Storage for the session user.
@@ -60,7 +57,18 @@ public class AManager extends ADispatcher
 		super( self );
 	}
 	
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //  Variables
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * @private
+     */
+    private var _remoteCallIntervalId:int;
+    
+    //--------------------------------------------------------------------------
     //
     //  Properties
     //
@@ -76,10 +84,38 @@ public class AManager extends ADispatcher
      */
     public final function get hasSession():Boolean
     {
-       return _hasSession;
+       return _sessionUser != null;
     }
-        
-	//----------------------------------
+    
+    //----------------------------------
+    //  modelServerErrors
+    //----------------------------------
+    
+    /**
+     * @private 
+     * Storage for the modelServerErrors property. 
+     */
+    private var _modelServerErrors:ServerErrors = null;
+    
+    /**
+     * The server errors returned by a remote call.
+     * 
+     * <p>This property is typically injected into a <code>AViewModel</code>
+     * presentation model's <code>serverErrors</code> property.</p>
+     */
+    [Bindable(event="serverErrorsChange")]
+    public final function get modelServerErrors():ServerErrors
+    {
+        return _modelServerErrors;
+    }    
+ 
+	//--------------------------------------------------------------------------
+    //
+    //  Namespaced properties
+    //
+    //--------------------------------------------------------------------------
+    
+    //----------------------------------
     //  sessionUser
     //----------------------------------
     
@@ -88,6 +124,34 @@ public class AManager extends ADispatcher
      * The current session user.
      */
     app_internal function get sessionUser():AUser
+    {
+        return _sessionUser;
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Protected properties
+    //
+    //--------------------------------------------------------------------------
+    
+    //----------------------------------
+    //  hasPendingRemoteCall
+    //----------------------------------
+    
+    /**
+     * A that can be used to monitor remote calls.
+     */
+    protected var hasPendingRemoteCall:Boolean = false;
+    
+    
+    //----------------------------------
+    //  sessionUser
+    //----------------------------------
+    
+    /**
+     * The current sessioin user.
+     */
+    protected function get sessionUser():AUser
     {
         return _sessionUser;
     }
@@ -145,8 +209,6 @@ public class AManager extends ADispatcher
      */
     public function loggedIn( user:AUser = null ):void
     {
-        _hasSession = true;
-        
         //Update the session user.
         if ( user != null ) 
         {
@@ -172,7 +234,6 @@ public class AManager extends ADispatcher
      */
     public function loggedOut( event:StateEvent = null ):void
     {
-        _hasSession = false;
         _sessionUser = null;
         
         dispatchEventType( "sessionUserChange" ); 
@@ -186,8 +247,8 @@ public class AManager extends ADispatcher
         _sessionUser = value;
         dispatchEvent( new Event( "sessionUserChange" ) );
     }
-
-	//--------------------------------------------------------------------------
+    
+    //--------------------------------------------------------------------------
     //
     //  Overriden Methods
     //
@@ -206,6 +267,48 @@ public class AManager extends ADispatcher
     	    _dispatcher.dispatchEvent( event );
     	}
     	return super.dispatchEvent( event );
+    }
+    
+    //--------------------------------------------------------------------------
+    //
+    //  Protected methods
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * The current sessioin user.
+     */
+    protected function clearCallTimeout():void
+    {
+        hasPendingRemoteCall = false;
+        clearTimeout( _remoteCallIntervalId );
+    }
+    
+    /**
+     * The current sessioin user.
+     */
+    protected function setCallTimeout( closure:Function, 
+                                       delay:Number, 
+                                       ... arguments ):void
+    {
+        hasPendingRemoteCall = true;
+       _remoteCallIntervalId = setTimeout( closure, delay, arguments );
+    }
+    
+    /**
+     * Sets the <code>modelServerErrors</code> property.
+     * 
+     * <p>Typically, called by states that handle a callFault.</p>
+     */    
+    protected function setServerErrors( value:String ):void
+    {
+        if ( value != null )
+        {
+            _modelServerErrors = new ServerErrors( XML( value ) );
+        } else {
+            _modelServerErrors = null;
+        }
+        dispatchEvent(new Event("serverErrorsChange"));
     }
 }
 

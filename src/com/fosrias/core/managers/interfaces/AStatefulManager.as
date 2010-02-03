@@ -293,28 +293,6 @@ public class AStatefulManager extends AManager
     }
     
     //----------------------------------
-    //  modelServerErrors
-    //----------------------------------
-    
-    /**
-     * @private 
-     * Storage for the modelServerErrors property. 
-     */
-    private var _modelServerErrors:ServerErrors = null;
-    
-    /**
-     * The server errors returned by a remote call.
-     * 
-     * <p>This property is typically injected into a <code>AViewModel</code>
-     * presentation model's <code>serverErrors</code> property.</p>
-     */
-    [Bindable(event="serverErrorsChange")]
-    public final function get modelServerErrors():ServerErrors
-    {
-        return _modelServerErrors;
-    }    
-    
-    //----------------------------------
     //  modelTitle
     //----------------------------------
     
@@ -765,10 +743,9 @@ public class AStatefulManager extends AManager
      * 
      * <p>Typically, called by states that handle a callFault.</p>
      */    
-    app_internal function setServerErrors(value:ServerErrors):void
+    app_internal function setServerErrors( value:String ):void
     {
-        _modelServerErrors = value;
-        dispatchEvent(new Event("serverErrorsChange"));
+        setServerErrors( value );
     }
 
     /**

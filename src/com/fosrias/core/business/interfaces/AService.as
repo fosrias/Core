@@ -34,10 +34,22 @@ public class AService extends ADispatcher
     /**
      * Constructor
      */
-    public function AService(self:AService)
+    public function AService( self:AService, showBusyCursor:Boolean = false )
     {
     	super( self );
+        _showBusyCursor = showBusyCursor;
     }
+    
+    //--------------------------------------------------------------------------
+    //
+    //  Variables
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * @private 
+     */
+    private var _showBusyCursor:Boolean; 
     
     //--------------------------------------------------------------------------
     //
@@ -87,11 +99,10 @@ public class AService extends ADispatcher
      * @param remoteOperation The remote operation to be called.
      * @param arguments The arguments to be passed to the remote operation.
      */
-    public function call( remoteOperation:String, 
-        showBusyCursor:Boolean = false, ... args ):void
+    public function call( remoteOperation:String, ... args ):void
     {
     	//Show the cursor
-    	service.showBusyCursor = showBusyCursor;
+    	service.showBusyCursor = _showBusyCursor;
     	
     	//Create the token
     	var token:AsyncToken;
@@ -99,9 +110,9 @@ public class AService extends ADispatcher
     	    = Operation( service.getOperation( remoteOperation ) );
     	
     	//Call the remote operation
-    	if ( args[0].length > 0 )
+    	if ( args.length > 0 )
     	{
-    	   token = operation.send( args );
+    	   token = operation.send.apply( null, args );
     	}  else {
     		 token = operation.send();
     	} 
@@ -111,6 +122,22 @@ public class AService extends ADispatcher
     	
     	//Display debug message
     	traceDebugMessage( className + "." + remoteOperation + " called.");
+    }
+    
+    /**
+     * Changes the remote object of the service.
+     */
+    public function changeService( value:RemoteObject ):void
+    {
+        _service = value;
+    }
+    
+    /**
+     * Changes the showBusyCursor status of the service.
+     */
+    public function changeShowBusyCursor( value:Boolean = false ):void
+    {
+        _showBusyCursor = value;
     }
     
     //--------------------------------------------------------------------------

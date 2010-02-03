@@ -55,9 +55,11 @@ public class AValidatedViewModel extends AViewModel
     /**
      * Constructor
      */
-    public function AValidatedViewModel( self:AValidatedViewModel )
+    public function AValidatedViewModel( self:AValidatedViewModel, 
+                                         validationEnabled:Boolean = true )
     {
         super( self );  
+        _validationEnabled = validationEnabled;
     }
     
     //--------------------------------------------------------------------------

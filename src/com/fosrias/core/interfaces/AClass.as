@@ -102,6 +102,7 @@ public class AClass extends EventDispatcher
     //  qualifiedClassName
     //----------------------------------
     
+    [Transient]
     /**
      * The class name of the implemented class including the package
      * specification.
@@ -115,6 +116,7 @@ public class AClass extends EventDispatcher
     //  className
     //----------------------------------
     
+    [Transient]
     /**
      * The class name of the implemented class excluding the package
      * specification.
