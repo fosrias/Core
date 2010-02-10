@@ -582,6 +582,16 @@ public class AViewModel extends ADispatcher
     //--------------------------------------------------------------------------
     
     /**
+     * Dispatches a ViewModelEvent.DIRTY event with the specified payload.
+     */
+    protected function dispatchDirty( data:Object, 
+                                      reference:String = null ):void
+    {
+        dispatchEvent( new ViewModelEvent( ViewModelEvent.DIRTY, data, 
+            reference ) );
+    }
+    
+    /**
      *  The <code>initialize</code> method is a hook called in the 
      * <code>dispatcher</code> setter. Override it to set listeners on 
      * validated properties.

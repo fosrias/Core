@@ -85,7 +85,7 @@ public class AdvancedComboBox extends ComboBox
     /**
      * @inheritDoc
      */
-    override public function set dataProvider(value:Object):void
+    override public function set dataProvider( value:Object ):void
     {
     	super.dataProvider = value;
         

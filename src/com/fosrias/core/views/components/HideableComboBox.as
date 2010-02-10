@@ -311,7 +311,8 @@ public class HideableComboBox extends ComboBox
      */
     private function setButtonVisibility():void
 	{
-		downArrowButton.visible =  _isOpen || _hasMouseOver || _hasFocus;
+		downArrowButton.visible =  (_isOpen || _hasMouseOver || _hasFocus ) &&
+            enabled;
 	}
 	
 	//Utility methods
@@ -327,7 +328,7 @@ public class HideableComboBox extends ComboBox
 		addEventListener(MouseEvent.MOUSE_OVER, mouseOverHandler);
         addEventListener(MouseEvent.MOUSE_OUT, mouseOutHandler);
         addEventListener(DropdownEvent.CLOSE, closeHandler);
-        addEventListener(DropdownEvent.OPEN, openHandler);     
+        addEventListener(DropdownEvent.OPEN, openHandler);
 	}
 	
 	/**

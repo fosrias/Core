@@ -33,18 +33,6 @@ public class AManager extends ADispatcher
 {
 	//--------------------------------------------------------------------------
     //
-    //  Class Variables
-    //
-    //--------------------------------------------------------------------------
-
-    /**
-     * @private
-     * Storage for the session user.
-     */
-    private static var _sessionUser:AUser;
-
-    //--------------------------------------------------------------------------
-    //
     //  Constructor
     //
     //--------------------------------------------------------------------------
@@ -75,19 +63,6 @@ public class AManager extends ADispatcher
     //--------------------------------------------------------------------------
 	
 	//----------------------------------
-    //  hasSession
-    //----------------------------------
-    
-    [Bindable (event="sessionUserChange")]
-    /**
-     * Whether a current session exists.
-     */
-    public final function get hasSession():Boolean
-    {
-       return _sessionUser != null;
-    }
-    
-    //----------------------------------
     //  modelServerErrors
     //----------------------------------
     
@@ -119,13 +94,13 @@ public class AManager extends ADispatcher
     //  sessionUser
     //----------------------------------
     
-    [Bindable (event="sessionUserChange")]
+    [Bindable (event="sessionChange")]
     /**
      * The current session user.
      */
     app_internal function get sessionUser():AUser
     {
-        return _sessionUser;
+        return sessionManager.user;
     }
 
     //--------------------------------------------------------------------------
@@ -142,21 +117,8 @@ public class AManager extends ADispatcher
      * A that can be used to monitor remote calls.
      */
     protected var hasPendingRemoteCall:Boolean = false;
-    
-    
-    //----------------------------------
-    //  sessionUser
-    //----------------------------------
-    
-    /**
-     * The current sessioin user.
-     */
-    protected function get sessionUser():AUser
-    {
-        return _sessionUser;
-    }
-	
-	//--------------------------------------------------------------------------
+
+    //--------------------------------------------------------------------------
     //
     //  Methods
     //
@@ -207,16 +169,13 @@ public class AManager extends ADispatcher
      * Overridding this event requires calling the <code>loggedIn</code> 
      * method of <code>super</code> in the overridden method.</p>.
      */
-    public function loggedIn( user:AUser = null ):void
+    public function loggedIn( event:StateEvent = null ):void
     {
         //Update the session user.
-        if ( user != null ) 
+        if ( event != null ) 
         {
-            //Cast as user so User compiled in core swc
-            _sessionUser = User( user );
+            sessionManager.user = User( event.data );
         }
-        
-        dispatchEventType( "sessionUserChange" ); 
     }
     
     /**
@@ -234,9 +193,7 @@ public class AManager extends ADispatcher
      */
     public function loggedOut( event:StateEvent = null ):void
     {
-        _sessionUser = null;
-        
-        dispatchEventType( "sessionUserChange" ); 
+        sessionManager.user = null;
     }
     
     /**
@@ -244,8 +201,7 @@ public class AManager extends ADispatcher
      */
     public function setSessionUser( value:AUser ):void
     {
-        _sessionUser = value;
-        dispatchEvent( new Event( "sessionUserChange" ) );
+        sessionManager.user = value;
     }
     
     //--------------------------------------------------------------------------
@@ -308,7 +264,7 @@ public class AManager extends ADispatcher
         } else {
             _modelServerErrors = null;
         }
-        dispatchEvent(new Event("serverErrorsChange"));
+        dispatchEvent( new Event( "serverErrorsChange" ) );
     }
 }
 

@@ -144,6 +144,17 @@ public class CoreStringUtils
 
         return output;
     }
+    
+    /**
+     * Underscores camel case strings.
+     */
+    public static function underscore( value:String ):String
+    {        
+        var underscored:String = value.replace(/([A-Z]+)([A-Z][a-z])/,"$1_$2");
+        underscored = underscored.replace(/([a-z\d])([A-Z])/,"$1_$2");
+        
+        return underscored.toLowerCase();
+    }
 }
 
 }

@@ -67,24 +67,17 @@ public class ComparisonUtils
             var isEqual:Boolean = false;
             
             //Iterate through primary array elements
-            for each ( var primaryObject:Object in primaryArray )
+            var n:int = primaryArray.length;
+            for (var i:int = 0; i < n; i++ )
             {
-            	if ( !isEqualObject( primaryObject ) )
+            	if ( !isEqualObject( primaryArray[i] ) )
             	{
             		return false;
-            	}
-	                //Iterate through secondary array elements
-	                for each ( var secondaryObject:Object in secondaryArray )
-		            {
-		                if ( !isEqualObject( secondaryObject ) )
-		                {
-		                    return false;
-		                }
-		                if ( primaryObject.isEqual( secondaryObject ) )
-		                {
-		                    isEqual = true;
-		                }
-		            }
+            	} else if ( !isEqualObject( secondaryArray[i] ) ) {
+                    return false;
+                } else if ( primaryArray[i].isEqual( secondaryArray[i] ) ) {
+                    isEqual = true;
+                }
             }
             return isEqual;
         }

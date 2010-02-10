@@ -1128,7 +1128,7 @@ public class FragmentManager extends AStatefulManager
     /**
      * @inheritDoc
      */
-    override public function loggedIn( user:AUser = null ):void
+    override public function loggedIn( event:StateEvent = null ):void
     {
     	//Automatically retry parsing pending state after session is created 
         if ( _pendingFragment != null 

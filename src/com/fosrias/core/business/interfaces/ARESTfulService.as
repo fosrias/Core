@@ -17,10 +17,15 @@ import mx.rpc.remoting.mxml.RemoteObject;
 
 /**
  * The ARESTfulService class is the base class for asynchronous RESTful 
- * remote services.
+ * remote services for the following actions:
  * 
- * <p>Note: The new method is not included to create a new instance since this
- * should be handled locally in the flex application.</p>
+ * <p><ul>
+ *    <li>create</li>
+ *    <li>destroy</li>
+ *    <li>index</li>
+ *    <li>show</li>
+ *    <li>update</li>
+ * </p>
  */
 public class ARESTfulService extends AService
 {
@@ -39,17 +44,6 @@ public class ARESTfulService extends AService
     	super( self, showBusyCursor );
     }
     
-    //--------------------------------------------------------------------------
-    //
-    //  Variables
-    //
-    //--------------------------------------------------------------------------
-
-    /**
-     * @private 
-     */
-    private var _showBusyCursor:Boolean;
-
     //--------------------------------------------------------------------------
     //
     //  Methods

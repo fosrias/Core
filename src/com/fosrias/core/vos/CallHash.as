@@ -10,6 +10,8 @@
 
 package com.fosrias.core.vos
 {
+import flash.errors.IllegalOperationError;
+
 /**
  * The CallHash class is a value object that carries attributes and 
  * values for remote calls.
@@ -25,7 +27,7 @@ public dynamic class CallHash
     /**
      * Constructor
      */
-    public function CallHash( id:int, type:String, userId:int = -1 )
+    public function CallHash( id:Object, type:String, userId:int = -1 )
     {
         this.id = id;
         this.type = type;
@@ -54,7 +56,7 @@ public dynamic class CallHash
     /**
      * The id of the object
      */
-    public var id:int;
+    public var id:Object;
     
     //----------------------------------
     //  type
@@ -86,6 +88,60 @@ public dynamic class CallHash
     public function addAttribute( attribute:String, value:Object ):void
     {
         attributes[ attribute ] = value;
+        
+       /* //Check for dot-delimited attributes
+        if ( attribute.indexOf(".") > 0 )
+        {
+            addChildAttributesOf( attribute, value );
+        } else if  ( attribute.indexOf(".") != 0 ) {
+            attributes[ attribute ] = value;
+        } else {
+            throw new IllegalOperationError("CallHash addAttribute Error: "
+                + "Attribute " + attribute + " invalid.");
+        }*/
+    }
+    
+    //--------------------------------------------------------------------------
+    //
+    //  Private methods
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * @private
+     */
+    private function addChildAttributesOf( attribute:String,
+                                           value:Object ):void
+    {
+        var obj:Object = attributes;
+
+        var parts:Array = attribute.split(".");
+        var tracedAttribute:String = '';
+        
+        var n:int = parts.length - 1;
+        for ( var i:int = 0; i < n; i++ )
+        {
+            try
+            {
+                tracedAttribute += parts[i];
+                obj = attributes[parts[i]];
+            }
+            catch(error:Error)
+            {
+                if ( ( error is TypeError ) &&
+                    ( error.message.indexOf( "null has no properties" ) 
+                            != -1) )
+                {
+                    throw new IllegalOperationError( "Attribute " 
+                        + tracedAttribute + " not found in base CallHash. " );
+                }
+                else
+                {                    
+                    throw error;
+                }
+            }
+        }
+        obj[parts[i]] = value;
     }
 }
 

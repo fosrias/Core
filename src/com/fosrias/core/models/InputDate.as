@@ -218,8 +218,9 @@ public class InputDate extends AInputData
         if( value is InputDate )
         {
           	//Compare the properties
-            return value.text == text && 
-                   value.date == date;
+            var isEqual:Boolean;
+            isEqual =  value.date == date;
+            return isEqual;
         }
         return false;
     }
@@ -235,7 +236,7 @@ public class InputDate extends AInputData
     	
         //So that binding and validation on PROPERTY_CHANGE work
     	dispatchEventType( PropertyChangeEvent.PROPERTY_CHANGE );
-    }
+    } 
 }
 
 }
