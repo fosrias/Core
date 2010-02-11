@@ -72,7 +72,7 @@ public class FragmentInvalidState extends AState
     /**
      * @inheritDoc 
      */
-    override protected function executeImpl( event:ViewModelEvent = null ):void
+    override protected function executeImpl( event:ViewModelEvent = null ):*
     {
     	switch( manager.selectedLink )
     	{

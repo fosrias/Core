@@ -248,12 +248,13 @@ public class AClass extends EventDispatcher
      * 
      * @param The string event type.
      */
-    protected function dispatchEventType( type:String ):void
+    protected function dispatchEventType( type:String ):Boolean
     {
         if ( type != null )
         {
-           dispatchEvent( new Event( type ) ); 
+           return dispatchEvent( new Event( type ) ); 
         }
+        return false;
     }
     
     //--------------------------------------------------------------------------

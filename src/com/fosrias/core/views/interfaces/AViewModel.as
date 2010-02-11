@@ -157,6 +157,33 @@ public class AViewModel extends ADispatcher
     }
     
     //----------------------------------
+    //  viewIndex
+    //----------------------------------
+    
+    /**
+     * @private
+     * Storage for the viewIndex property. 
+     */    
+    private var _viewIndex:int;
+    
+    /**
+     * The view index. This is a default index that can be bound to
+     * navigation containers. 
+     */
+    public function get viewIndex():int
+    {
+        return _viewIndex;
+    }
+    
+    /**
+     * @private 
+     */
+    public function set viewIndex(value:int):void
+    {
+        _viewIndex = value;
+    }
+    
+    //----------------------------------
     //  title
     //----------------------------------
     
@@ -569,7 +596,7 @@ public class AViewModel extends ADispatcher
      * navigation containers, if multiple navigation containers are used in 
      * a view.
      */
-    public final function setSubstate( index:int, reference:String = null ):void
+    public function setSubstate( index:int, reference:String = null ):void
     {
         dispatchEvent( new StateEvent( StateEvent.SET_SUBSTATE, index, 
             reference ) );

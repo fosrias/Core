@@ -17,7 +17,6 @@ import com.fosrias.core.managers.states.NullState;
 import com.fosrias.core.namespaces.app_internal;
 import com.fosrias.core.utils.Iterator;
 import com.fosrias.core.utils.interfaces.IIterator;
-import com.fosrias.core.validators.ServerErrors;
 import com.fosrias.core.vos.CallResult;
 import com.fosrias.core.vos.Message;
 
@@ -26,7 +25,6 @@ import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.utils.Dictionary;
 
-import mx.core.Application;
 import mx.core.FlexGlobals;
 import mx.core.UIComponent;
 import mx.events.FlexEvent;
@@ -100,7 +98,18 @@ public class AStatefulManager extends AManager
      * remote call responses, which would change the handling of the remote
      * call for the state.
      */
-    app_internal var hasPendingRemoteCall:Boolean = false; 
+    app_internal function get hasPendingRemoteCall():Boolean
+    {
+        return hasPendingRemoteCall;
+    }
+    
+    /**
+     * @private
+     */
+    app_internal function set hasPendingRemoteCall( value:Boolean ):void
+    {
+        hasPendingRemoteCall = value;
+    }
     
     //--------------------------------------------------------------------------
     //
@@ -214,7 +223,7 @@ public class AStatefulManager extends AManager
         {
             return _stateMap[ _initialStateType ];
         }
-        return new NullState(this);
+        return new NullState( this );
     }
     
     //----------------------------------
@@ -264,7 +273,7 @@ public class AStatefulManager extends AManager
      * <p>This property is typically injected into a <code>AViewModel</code>
      * presentation model's <code>helpText</code> property.</p>
      */
-    public final function get modelHelpText():String
+    public function get modelHelpText():String
     {
         return _modelHelpText;
     }
@@ -303,7 +312,7 @@ public class AStatefulManager extends AManager
      * <p>This property is typically injected into a <code>AViewModel</code>
      * presentation model's <code>title</code> property.</p>
      */
-    public final function get modelTitle():String
+    public function get modelTitle():String
     {
         return state.modelTitle;
     }
@@ -329,6 +338,20 @@ public class AStatefulManager extends AManager
     }
     
     //----------------------------------
+    //  modelViewIndex
+    //----------------------------------
+    
+    [Bindable(event="substateChange")]
+    [Bindable(event="stateChange")]
+    /**
+     * The substate index of the view.
+     */
+    public function get modelViewIndex():int
+    {
+        return state.modelViewIndex;
+    }
+    
+    //----------------------------------
     //  modelViewState
     //----------------------------------
     
@@ -341,7 +364,7 @@ public class AStatefulManager extends AManager
      * corresponds to view states of <code>UIComponent</code> views 
      * injected with the presentation model.</p>
      */
-    public final function get modelViewState():String
+    public function get modelViewState():String
     {
         return state.modelViewState;
     }
@@ -439,8 +462,8 @@ public class AStatefulManager extends AManager
         if ( hasFragmentSegment && !hasDefaultChildState )
         {
         	throw new IllegalOperationError("No default child state set " + 
-        			"in " + qualifiedClassName + ".stateFactory setter for the" + 
-        			value.qualifiedClassName + " state factory.");
+        			"in " + qualifiedClassName + ".stateFactory setter for the" 
+                    + value.qualifiedClassName + " state factory.");
         			
         }
         
@@ -512,7 +535,7 @@ public class AStatefulManager extends AManager
      * 
      * @param event The <code>ViewModelEvent</code> event.
      */
-    public final function back( event:ViewModelEvent = null ):void
+    public function back( event:ViewModelEvent = null ):void
     {
         state.back( event );
     }
@@ -555,6 +578,20 @@ public class AStatefulManager extends AManager
     }
     
     /**
+     * Clears the current state by delegating to the current 
+     * state's <code>clear</code> internal method.
+     * 
+     * <p>Typically, this method is used as a handler for a
+     * <code>ViewModelEvent.CLEAR</code> event.</p>
+     * 
+     * @param event The <code>ViewModelEvent</code> event.
+     */
+    public function clear( event:ViewModelEvent = null ):void
+    {
+        state.clear( event );
+    }
+    
+    /**
      * Closes the current state by delegating to the current 
      * state's <code>close</code> internal method.
      * 
@@ -563,9 +600,22 @@ public class AStatefulManager extends AManager
      * 
      * @param event The <code>ViewModelEvent</code> event.
      */
-    public final function close( event:ViewModelEvent = null ):void
+    public function close( event:ViewModelEvent = null ):Boolean
     {
-        state.close( event );
+        return state.close( event );
+    }
+    
+    /**
+     * Closes the current state's help GUI.
+     * 
+     * <p>Typically, this method is used as a handler for a
+     * <code>ViewModelEvent.CLOSE_HELP</code> event.</p>
+     * 
+     * @param event The <code>ViewModelEvent</code> event.
+     */
+    public function closeHelp( event:ViewModelEvent = null ):void
+    {
+        setHelpMessage( null );
     }
     
     /**
@@ -580,7 +630,7 @@ public class AStatefulManager extends AManager
      * 
      * @param event The <code>ViewModelEvent</code> event.
      */
-    public final function execute( event:ViewModelEvent = null ):void
+    public function execute( event:ViewModelEvent = null ):*
     {
         state.execute( event );
     }
@@ -594,22 +644,23 @@ public class AStatefulManager extends AManager
      * 
      * @param event The <code>ViewModelEvent</code> event.
      */
-    public final function next( event:ViewModelEvent = null ):void
+    public function next( event:ViewModelEvent = null ):void
     {
         state.next( event );
     }
     
     /**
-     * Closes the current state's help GUI.
+     * Opens the current state by delegating to the current 
+     * state's <code>open</code> internal method.
      * 
      * <p>Typically, this method is used as a handler for a
-     * <code>ViewModelEvent.CLOSE_HELP</code> event.</p>
+     * <code>ViewModelEvent.OPEN</code> event.</p>
      * 
      * @param event The <code>ViewModelEvent</code> event.
      */
-    public final function closeHelp( event:ViewModelEvent = null ):void
+    public function open( event:ViewModelEvent = null ):Boolean
     {
-        setHelpMessage( null );
+        return state.open( event );
     }
     
     /**
@@ -621,7 +672,7 @@ public class AStatefulManager extends AManager
      * 
      * @param event The <code>ViewModelEvent</code> event.
      */
-    public final function openHelp( event:ViewModelEvent = null ):void
+    public function openHelp( event:ViewModelEvent = null ):void
     {
     	if ( _messageFactory != null )
     	{
@@ -636,7 +687,8 @@ public class AStatefulManager extends AManager
      *   
      * @param childManager The manager to be added if of the right class.
      */
-    public final function setChildManager( childManager:AStatefulManager ):Boolean
+    public final function setChildManager( 
+        childManager:AStatefulManager ):Boolean
     {
     	if ( childManager == null )
     	{ 
@@ -670,7 +722,7 @@ public class AStatefulManager extends AManager
     {
     	if ( setDirtyImpl( event ) )
     	{
-	        dispatchEvent( new Event( "dirtyChange" ) );
+	        dispatchEventType( "dirtyChange" );
 	        return true;
     	}
     	return false;
@@ -691,7 +743,7 @@ public class AStatefulManager extends AManager
      * represents the parameters string in the browser address and is set by 
      * the <code>FragmentManager</code>.
      */
-    public final function setState( type:String, parameters:Object = null ):void
+    public function setState( type:String, parameters:Object = null ):void
     {
         state.setState( type, parameters );
     }
@@ -700,17 +752,25 @@ public class AStatefulManager extends AManager
      * Sets the current state as a substate by delegating to the current 
      * state's <code>setSubstate</code> internal method.
      * 
-     * @param reference A string that can be used to reference a particular
-     * navigator container.
-     * @param index The selected index of the navigator container.
-     * @param dispatcher The dispatcher requesting the substate to be set. 
-     * The substate is only updated if the dispatcher is the manager's
-     * <code>dispatcher</code>.
+     * @param event The event with substate information.
+     * @param args Optional arguments that allow the substate to be set
+     * directly. There values are needed to be specified: index, reference,
+     * and dispatcher in that order. Set event = null to use the optional
+     * arguments.
+     * 
+     * The substate is only updated if the event target or optional argument 
+     * dispatcher is the manager's <code>dispatcher</code>.
      */
-    public function setSubstate(reference:String, index:int, 
-        dispatcher:IEventDispatcher):void
+    public function setSubstate( event:StateEvent = null, ...args ):void
     {
-        _state.setSubstate(reference, index, dispatcher);
+        if ( event != null )
+        {
+            _state.setSubstate( int( event.data ), event.reference, 
+                IEventDispatcher( event.target ) );
+        } else {
+            _state.setSubstate( args[0], args[1], args[2]);
+        }
+        
     } 
     
     /**
@@ -721,7 +781,7 @@ public class AStatefulManager extends AManager
      * this, other states and managers communicate their state to this manager 
      * by dispatching a <code>StateEvent.STATE_SET</code> event.</p>
      * 
-     * <p>The default use of this method is to auto-close as state that
+     * <p>The default use of this method is to auto-close a state that
      * is set to automatically close (see the <code>AState.stateSet</code> 
      * internal method.</p>
      * 
@@ -803,7 +863,7 @@ public class AStatefulManager extends AManager
         } else {
            _modelHelpText = null;
         }
-        dispatchEvent( new Event( "helpChange" ) );
+        dispatchEventType( "helpChange" );
     }
 
     //--------------------------------------------------------------------------
@@ -842,7 +902,16 @@ public class AStatefulManager extends AManager
     //  Protected Methods
     //
     //--------------------------------------------------------------------------
+    
+    /**
+     * A utility method to clear the model dirty state
+     */
+    protected function clearDirty( isClear:Boolean = true ):void
+    {
+        _modelIsDirty = !isClear;
         
+        dispatchEventType( "dirtyChange" );
+    }
     /**
      * Creates and maps states by their type.
      * 

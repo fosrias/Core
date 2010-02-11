@@ -21,9 +21,9 @@ import com.fosrias.core.vos.CallResult;
 import flash.errors.IllegalOperationError;
 import flash.events.Event;
 import flash.events.IEventDispatcher;
+import flash.utils.Dictionary;
 import flash.utils.setTimeout;
 
-import mx.core.Application;
 import mx.core.FlexGlobals;
 import mx.core.UIComponent;
 import mx.rpc.Fault;
@@ -62,7 +62,19 @@ use namespace app_internal;
  */
 public class AState extends AClass
 {    
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //  Class variables
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Maps last states so they can be restored if a lastStateMapKey is 
+     * defined.
+     */
+    protected static var lastStateMap:Dictionary = new Dictionary;
+    
+    //--------------------------------------------------------------------------
     //
     //  Constants
     //
@@ -156,6 +168,16 @@ public class AState extends AClass
     private var _hasAutoClose:Boolean = false;
     
     /**
+     * @private 
+     */
+    app_internal var lastStateKey:String = null;
+    
+    /**
+     * @private 
+     */
+    private var _excludedLastStateTypes:Array /* of String */ = [];
+    
+    /**
      * @private
      * The reference to the state's manager.
      */
@@ -197,7 +219,7 @@ public class AState extends AClass
      * Returns call arguments to be used in a remote call associated with 
      * the state.
      * 
-     * <p>This abstrac method must be overridden in concrete implementations of 
+     * <p>This abstract method must be overridden in concrete implementations of 
      * <code>AState</code> if the <code>callArguments</code> property is 
      * used.</p>
      */
@@ -292,7 +314,7 @@ public class AState extends AClass
      */
     public final function get hasBrowserTitle():Boolean
     {
-        return browserTitle != null;
+        return _browserTitle != null;
     }
     
     //----------------------------------
@@ -544,34 +566,6 @@ public class AState extends AClass
     }
     
     //----------------------------------
-    //  modelViewState
-    //----------------------------------
-    
-    /**
-     * @private 
-     * Storage for the modelViewState property. 
-     */
-    private var _modelViewState:String;
-      
-    /**
-     * The presention model view state.
-     * 
-     * <p>This property is a string that represents a view state in the MXML 
-     * view associated with the state manager and is injected into the 
-     * presention model. The value is set with the 
-     * <code>setModelProperties</code> method in the state's 
-     * <code>Constructor</code>.</p>
-     * 
-     * <p>Typically, it will correspond to a constant defined in the 
-     * associated <code>AViewModel</code> presentation model that corresponds
-     * to a view state of the MXML view.</p> 
-     */
-    public function get modelViewState():String
-    {
-    	return _modelViewState;
-    }
-    
-    //----------------------------------
     //  modelTitle
     //----------------------------------
      
@@ -591,6 +585,61 @@ public class AState extends AClass
     public function get modelTitle():String
     {
     	return _modelTitle;
+    }
+    
+    //----------------------------------
+    //  modelViewIndex
+    //----------------------------------
+    
+    /**
+     * @private 
+     * Storage for the modelSubstateIndex property. 
+     */
+    protected var _modelViewIndex:int = 0;
+    
+    /**
+     * The substate index of the view.
+     */
+    public function get modelViewIndex():int
+    {
+        return _modelViewIndex;
+    }
+    
+    /**
+     * @private
+     * Can only be set in subclasses.
+     */
+    protected function set modelViewIndex( value:int ):void
+    {
+        _modelViewIndex = value;
+    }
+    
+    //----------------------------------
+    //  modelViewState
+    //----------------------------------
+    
+    /**
+     * @private 
+     * Storage for the modelViewState property. 
+     */
+    private var _modelViewState:String;
+    
+    /**
+     * The presention model view state.
+     * 
+     * <p>This property is a string that represents a view state in the MXML 
+     * view associated with the state manager and is injected into the 
+     * presention model. The value is set with the 
+     * <code>setModelProperties</code> method in the state's 
+     * <code>Constructor</code>.</p>
+     * 
+     * <p>Typically, it will correspond to a constant defined in the 
+     * associated <code>AViewModel</code> presentation model that corresponds
+     * to a view state of the MXML view.</p> 
+     */
+    public function get modelViewState():String
+    {
+        return _modelViewState;
     }
     
     //----------------------------------
@@ -752,6 +801,19 @@ public class AState extends AClass
     }
         
     /**
+     * Clears the state based on the <code>clearImpl</code> protected method.
+     * 
+     * <p>Typically, this method is used as a handler for a
+     * <code>ViewModelEvent.CLEAR</code> event.</p>
+     * 
+     * @param event The <code>ViewModelEvent</code> event.
+     */
+    app_internal final function clear( event:ViewModelEvent = null ):void
+    {
+        clearImpl( event );
+    }
+    
+    /**
      * Closes the state based on the <code>closeImpl</code> protected method.
      * 
      * <p>Typically, this method is used as a handler for a
@@ -786,7 +848,7 @@ public class AState extends AClass
     {
         executeImpl( event );
     }
-    
+
     /**
      * Whether the state has a child state.
      * 
@@ -853,6 +915,30 @@ public class AState extends AClass
     app_internal final function next( event:ViewModelEvent = null ):void
     {
         nextImpl( event );
+    }
+    
+    /**
+     * Opens the state based on the <code>openImpl</code> protected method.
+     * 
+     * <p>Typically, this method is used as a handler for a
+     * <code>ViewModelEvent.OPEN</code> event.</p>
+     * 
+     * @param event The <code>ViewModelEvent</code> event.
+     */
+    app_internal final function open( event:ViewModelEvent = null ):Boolean
+    {
+        return openImpl( event );
+    }
+    
+    /**
+     * Records the last state as this.
+     */
+    app_internal function recordLastState():void
+    {
+        if ( lastStateKey != null )
+        {
+            lastStateMap[ lastStateKey ] = this;
+        }
     }
     
     /**
@@ -970,13 +1056,14 @@ public class AState extends AClass
      * <code>dispatcher</code>.
      * 
      */
-    app_internal final function setSubstate( reference:String, index:int,
+    app_internal final function setSubstate( index:int, reference:String, 
         dispatcher:IEventDispatcher ):void
     {
         if ( dispatcher == manager.dispatcher )
         {
-            setSubstateImpl( reference, index );
-            dispatchEvent( new Event( "substateChange" ) );
+            setSubstateImpl( index, reference  );
+            
+            dispatchEventType( "substateChange" );
         }
     }
     
@@ -988,7 +1075,7 @@ public class AState extends AClass
      * is set to automatically close (see the <code>AState.stateSet</code> 
      * internal method.</p>
      * 
-     * @param event The event with and AState payload
+     * @param event The event with an AState payload
      */
     app_internal final function stateSet( event:StateEvent ):void
     {
@@ -1031,6 +1118,20 @@ public class AState extends AClass
 	    	//Clear the listener if successful
 	    	removeRegisterListener();
     	}
+    }
+    
+    /**
+     * Retrieves that last state for the state. If there is no last state
+     * it returns itself.
+     */
+    app_internal function retrieveLastState():AState
+    {
+        var lastState:AState = lastStateMap[ lastStateKey ];
+        if ( lastState != null )
+        {
+            return lastState;
+        }
+        return this;
     }
     
     /**
@@ -1102,24 +1203,21 @@ public class AState extends AClass
      */
     protected function callResultImpl( result:CallResult, ... args ):*
     {
-       raiseImplementationError( "method", 
-            "ARemoteViewState.callResultImpl" ); 
+       raiseImplementationError( "method", "callResultImpl" ); 
     }
     
     /**
-     * This is the actual implementation of the
-     * <code>isValidParameters</code> internal method. 
+     * This is the actual implementation of the internal <code>clear</code> 
+     * method.
      * 
      * <p>Because there are problems with overriding methods in custom 
-     * namespaces, this method is needed to let subclasses override the 
-     * <code>isValidParameters</code> method. This method must be
-     * overridden if the <code>setParametersImpl</code> protected method
-     * is overridden.<p>
+     * namespaces, this method is needed to let subclasses override 
+     * the <code>clear</code> method.</p>
      */
-    protected function isValidParametersImpl( parameters:Object ):Boolean
+    protected function clearImpl( event:ViewModelEvent = null ):void
     {
-        return parameters == null;
-    } 
+        raiseImplementationError( "method", "clearImpl" );
+    }   
     
     /**
      * This is the actual implementation of the internal <code>close</code> 
@@ -1143,9 +1241,9 @@ public class AState extends AClass
      * namespaces, this method is needed to let subclasses override 
      * the <code>execute</code> method.</p>
      */
-    protected function executeImpl( event:ViewModelEvent = null ):void
+    protected function executeImpl( event:ViewModelEvent = null ):*
     {
-        raiseImplementationError( "method", "AViewState.executeImpl" );
+        raiseImplementationError( "method", "executeImpl" );
     }
     
     /**
@@ -1164,6 +1262,21 @@ public class AState extends AClass
     }
      
     /**
+     * This is the actual implementation of the
+     * <code>isValidParameters</code> internal method. 
+     * 
+     * <p>Because there are problems with overriding methods in custom 
+     * namespaces, this method is needed to let subclasses override the 
+     * <code>isValidParameters</code> method. This method must be
+     * overridden if the <code>setParametersImpl</code> protected method
+     * is overridden.<p>
+     */
+    protected function isValidParametersImpl( parameters:Object ):Boolean
+    {
+        return parameters == null;
+    } 
+    
+    /**
      * This abstract method is the actual implementation of the internal 
      * <code>next</code> method. 
      * 
@@ -1176,8 +1289,21 @@ public class AState extends AClass
      */
     protected function nextImpl( event:ViewModelEvent = null ):void
     {
-        raiseImplementationError( "method", "AViewState.nextImpl" );
+        raiseImplementationError( "method", "nextImpl" );
     }
+    
+    /**
+     * This is the actual implementation of the internal <code>open</code> 
+     * method.
+     * 
+     * <p>Because there are problems with overriding methods in custom 
+     * namespaces, this method is needed to let subclasses override 
+     * the <code>open</code> method.</p>
+     */
+    protected function openImpl( event:ViewModelEvent = null ):Boolean
+    {
+        return true;
+    }   
     
     /**
      * This is the actual implementation of the internal <code>reset</code> 
@@ -1304,6 +1430,22 @@ public class AState extends AClass
     {
     	_helpTextCode = code;
     }
+    
+    /**
+     * Sets the key to use to map a state type to a last state. Typically 
+     * this would be the base state type, but is always the state that 
+     * is closing for the new state to open.
+     * 
+     * <p>Setting this key records the last state so that any state that is
+     * set that utilizes the same last state key, will override the state
+     * being set. If no key is set, the last state is not stored.</p>
+     *  
+     * @param value The key.
+     */
+    protected function setLastStateKey( value:String ):void
+    {
+        lastStateKey = value;
+    }
    
     /**
      * Sets the <code>modelTitle</code> and <code>modelViewState</code>
@@ -1384,8 +1526,8 @@ public class AState extends AClass
      * represents the parameters string in the browser address and is set by 
      * the <code>FragmentManager</code>.
      */
-    protected function setStateImpl(  type:String, 
-        parameters:Object = null ):Boolean
+    protected function setStateImpl( type:String, 
+                                     parameters:Object = null ):Boolean
     {
         if ( manager.hasPendingRemoteCall )
         {
@@ -1399,6 +1541,11 @@ public class AState extends AClass
             //Only respond to states mapped in this manager
             if ( newState!= null )
             {  
+                //Only check for last states, when the current state is the key
+                //and the state is changing.
+                if ( this.type == newState.lastStateKey && type != this.type )                               
+                    newState = newState.retrieveLastState();
+                
                 //Only set the state if it is not the current manager state
                 if ( !newState.isCurrent )
                 {
@@ -1444,15 +1591,18 @@ public class AState extends AClass
                             //for child managers. 
                             manager.registerManager();
                             
+                            //Attempt to record the state as the last state
+                            newState.recordLastState();
+                            
                             //Notify the world that a state has been set
                             //(actually the Fragment Manager).
                             dispatchEvent( new StateEvent(
                                 StateEvent.STATE_SET, newState, 
                                     newState.type ) );
-                                
+                            
                             //Notify the manager that state has changed
                             //so that binding events occur.
-                            return dispatchEvent( new Event( "stateChange" ) );
+                            return dispatchEventType( "stateChange" );
                         }
                     }
 
@@ -1464,7 +1614,7 @@ public class AState extends AClass
                     
                     //Reset the state if current
                     newState.reset();
-                    dispatchEvent( new Event( "stateChange" ) );
+                    dispatchEventType( "stateChange" );
                 }
                 return true;
             }
@@ -1482,14 +1632,14 @@ public class AState extends AClass
      * for managers that handle views with navigation containers
      * using the <code>setSubstate</code> method.</p>
      * 
+     * @param index The selected index of the navigator container.
      * @param reference A string that can be used to reference a particular
      * navigator container.
-     * @param index The selected index of the navigator container.
      * @param dispatcher The dispatcher requesting the substate to be set. 
      * The substate is only updated if the dispatcher is the manager's
      * <code>dispatcher</code>.</p>
      */
-    protected function setSubstateImpl(reference:String, index:int):void
+    protected function setSubstateImpl( index:int, reference:String ):void
     {
     	raiseImplementationError("method", "AViewState.setSubstateImpl");
     }
@@ -1558,9 +1708,9 @@ public class AState extends AClass
      * @private
      * Dispatches events to the state and the manager.
      */
-    override public function dispatchEvent(event:Event):Boolean
+    override public function dispatchEvent( event:Event ):Boolean
     {
-    	manager.dispatchEvent(event);
+    	manager.dispatchEvent( event );
     	return super.dispatchEvent(event);
     }
 }
