@@ -720,12 +720,10 @@ public class AStatefulManager extends AManager
      */
     public final function setDirty( event:ViewModelEvent = null ):Boolean
     {
-    	if ( setDirtyImpl( event ) )
-    	{
-	        dispatchEventType( "dirtyChange" );
-	        return true;
-    	}
-    	return false;
+    	_modelIsDirty = setDirtyImpl( event )
+
+        dispatchEventType( "dirtyChange" );
+    	return _modelIsDirty;
     }
     
     /**
@@ -948,7 +946,8 @@ public class AStatefulManager extends AManager
      * <p>Typically, this method processes <code>ViewModelEvent.SET_DIRTY</code> 
      * event data property which corresponds to the <code>data</code>
      * property in a <code>AViewModel</code> presentation model. It should
-     * return <code>true</code> if the model has changed its dirty status.</p>
+     * return <code>true</code> if the model has changed its dirty status. This
+     * method should return true if the model is dirty and false otherwise.</p>
      * 
      * @param event The <code>ViewModelEvent</code> event.
      */

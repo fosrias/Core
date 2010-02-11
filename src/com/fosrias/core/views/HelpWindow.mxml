@@ -19,10 +19,10 @@
 	
 	<!-- Define States _____________________________________________________ -->
     <mx:states>
-        <mx:State name="base"/>
-        <mx:State name="invalidModel"/>
-		<mx:State name="required"/>
-		<mx:State name="invalidRequired"/>
+        <s:State name="base"/>
+        <s:State name="invalidModel"/>
+		<s:State name="required"/>
+		<s:State name="invalidRequired"/>
 	</mx:states>
     
     <!-- Define Metadata ___________________________________________________ -->

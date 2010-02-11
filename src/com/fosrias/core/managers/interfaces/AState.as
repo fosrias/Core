@@ -24,6 +24,7 @@ import flash.events.IEventDispatcher;
 import flash.utils.Dictionary;
 import flash.utils.setTimeout;
 
+import mx.collections.ArrayCollection;
 import mx.core.FlexGlobals;
 import mx.core.UIComponent;
 import mx.rpc.Fault;
@@ -72,7 +73,7 @@ public class AState extends AClass
      * Maps last states so they can be restored if a lastStateMapKey is 
      * defined.
      */
-    protected static var lastStateMap:Dictionary = new Dictionary;
+    protected static var stateMementoMap:Dictionary = new Dictionary;
     
     //--------------------------------------------------------------------------
     //
@@ -170,12 +171,7 @@ public class AState extends AClass
     /**
      * @private 
      */
-    app_internal var lastStateKey:String = null;
-    
-    /**
-     * @private 
-     */
-    private var _excludedLastStateTypes:Array /* of String */ = [];
+    private var _stateMementoKeys:ArrayCollection = new ArrayCollection;
     
     /**
      * @private
@@ -933,11 +929,21 @@ public class AState extends AClass
     /**
      * Records the last state as this.
      */
-    app_internal function recordLastState():void
+    app_internal function recordStateMemento( key:String ):void
     {
-        if ( lastStateKey != null )
+        for each ( var mementoKey:String in _stateMementoKeys )
         {
-            lastStateMap[ lastStateKey ] = this;
+            //Record a memento of the state if the key is in the 
+            //stateMementoKeys
+            if ( key == mementoKey )
+            {
+                stateMementoMap[ key ] = this;
+            } else if ( stateMementoMap[ mementoKey ].type == key ) {
+                
+                //Otherwise, if a recorded memento is of the current state
+                //type, update it to the new state.
+                stateMementoMap[ mementoKey ] = this;
+            }
         }
     }
     
@@ -1124,12 +1130,15 @@ public class AState extends AClass
      * Retrieves that last state for the state. If there is no last state
      * it returns itself.
      */
-    app_internal function retrieveLastState():AState
+    app_internal function checkStateMemento( key:String ):AState
     {
-        var lastState:AState = lastStateMap[ lastStateKey ];
-        if ( lastState != null )
+        if ( _stateMementoKeys.contains( key ) )
         {
-            return lastState;
+            var mementoState:AState = stateMementoMap[ key ];
+            if ( mementoState != null )
+            {
+                return mementoState;
+            }
         }
         return this;
     }
@@ -1432,19 +1441,18 @@ public class AState extends AClass
     }
     
     /**
-     * Sets the key to use to map a state type to a last state. Typically 
-     * this would be the base state type, but is always the state that 
-     * is closing for the new state to open.
+     * Sets keys for states that check for a memento when the state is
+     * changing away from it. 
      * 
-     * <p>Setting this key records the last state so that any state that is
-     * set that utilizes the same last state key, will override the state
-     * being set. If no key is set, the last state is not stored.</p>
+     * <p>Typically, this would be a base state type so that when the state 
+     * changes away from the base state, it checks if  a memento is stored for 
+     * the last non-base state.
      *  
-     * @param value The key.
+     * @param value An array of state types.
      */
-    protected function setLastStateKey( value:String ):void
+    protected function setStateMementoKeys( value:Array /* of String */ ):void
     {
-        lastStateKey = value;
+        _stateMementoKeys = new ArrayCollection( value );
     }
    
     /**
@@ -1541,10 +1549,10 @@ public class AState extends AClass
             //Only respond to states mapped in this manager
             if ( newState!= null )
             {  
-                //Only check for last states, when the current state is the key
+                //Only check for stateMemento, when the current state is the key
                 //and the state is changing.
-                if ( this.type == newState.lastStateKey && type != this.type )                               
-                    newState = newState.retrieveLastState();
+                if ( type != this.type )  
+                    newState = newState.checkStateMemento( this.type );
                 
                 //Only set the state if it is not the current manager state
                 if ( !newState.isCurrent )
@@ -1592,7 +1600,7 @@ public class AState extends AClass
                             manager.registerManager();
                             
                             //Attempt to record the state as the last state
-                            newState.recordLastState();
+                            newState.recordStateMemento( this.type );
                             
                             //Notify the world that a state has been set
                             //(actually the Fragment Manager).
