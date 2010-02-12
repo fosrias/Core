@@ -67,6 +67,30 @@ public class Memento extends AClass implements IMemento
     
     //--------------------------------------------------------------------------
     //
+    //  Properties
+    //
+    //--------------------------------------------------------------------------
+    
+    //----------------------------------
+    //  isEmpty
+    //----------------------------------
+    
+    /**
+     * @private
+     * Storage for the isEmpty property. 
+     */
+    protected var _isEmpty:Boolean = false;
+    
+    /**
+     * Whether the memento has been cleared or not.
+     */
+    public function get isEmpty():Boolean
+    {
+        return _isEmpty;
+    }
+    
+    //--------------------------------------------------------------------------
+    //
     //  Methods
     //
     //--------------------------------------------------------------------------

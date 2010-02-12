@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow title="Help" 
+<ns:TitleWindow title="Help" 
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	xmlns:s="library://ns.adobe.com/flex/spark" 
 	xmlns:mx="library://ns.adobe.com/flex/halo" 
-	name="HelpWindow"
+    xmlns:ns="library://ns.adobe.com/flex/mx" 
+    name="HelpWindow"
     height.base="{40 + tAText.height}"
     height.invalidModel="{79 + tAText.height + tAInvalidText.height}"
     height.invalidRequired="{99 + tAText.height + tAInvalidText.height}"
@@ -18,12 +19,12 @@
     preinitialize="onPreinitialize();">
 	
 	<!-- Define States _____________________________________________________ -->
-    <mx:states>
+    <ns:states>
         <s:State name="base"/>
         <s:State name="invalidModel"/>
 		<s:State name="required"/>
 		<s:State name="invalidRequired"/>
-	</mx:states>
+	</ns:states>
     
     <!-- Define Metadata ___________________________________________________ -->
     <fx:Metadata>
@@ -110,8 +111,8 @@
 	<fx:Declarations>
 		
 	<!-- Define Effects ____________________________________________________ -->
-    <mx:WipeDown id="wipeDown" duration="150" showTarget="true"/>
-    <mx:WipeUp id="wipeUp" duration="150" showTarget="false"/>
+    <ns:WipeDown id="wipeDown" duration="150" showTarget="true"/>
+    <ns:WipeUp id="wipeUp" duration="150" showTarget="false"/>
         
 	</fx:Declarations>
 	
@@ -122,13 +123,13 @@
         horizontalScrollPolicy="off" verticalScrollPolicy="off"
         editable="false" 
         selectable="false"/>
-	<mx:Image id="imgInvalid" x="10" 
+	<ns:Image id="imgInvalid" x="10" 
 		source="{getStyle('invalidSkin')}" 
 	    source.required="{getStyle('requiredSkin')}"
 		bottom="25" 
 	    bottom.required="10"
 		includeIn="invalidModel, required"/>
-	<mx:Label x="32" text="Required" bottom="8" includeIn="required"/>
+	<ns:Label x="32" text="Required" bottom="8" includeIn="required"/>
 	<s:TextArea id="tAInvalidText" x="30" width="211"
         borderVisible="false"
         text="{invalidText}"
@@ -137,7 +138,7 @@
         bottom="10" 
 		bottom.required="39"
 		includeIn="invalidModel, invalidRequired"/>
-	<mx:Image id="imgInvalidRequired" x="10" bottom="48" 
+	<ns:Image id="imgInvalidRequired" x="10" bottom="48" 
 		source="{getStyle('requiredSkin')}" includeIn="invalidRequired"/>
-	<mx:Label text="Required" x="32"  bottom="46" includeIn="invalidRequired"/>
-</mx:TitleWindow>
+	<ns:Label text="Required" x="32"  bottom="46" includeIn="invalidRequired"/>
+</ns:TitleWindow>

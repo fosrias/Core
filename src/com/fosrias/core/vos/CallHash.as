@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2010 Mark W. Foster    www.fosrias.com
+//  Copyright (c) 2010   Mark W. Foster    www.fosrias.com
 //  All Rights Reserved.
 //
 //  NOTICE: Mark W. Foster permits you to use, modify, and distribute this file
@@ -83,65 +83,109 @@ public dynamic class CallHash
     //--------------------------------------------------------------------------
     
     /**
-     * Adds an attribute to the hash attributes.
+     * Adds an attribute to the hash attributes. 
+     * 
+     * @param The attribute to set. For dot-delimited attributes,use 
+     * attributes.property to access properties of the attributes that you
+     * have already set.
      */
     public function addAttribute( attribute:String, value:Object ):void
     {
-        attributes[ attribute ] = value;
-        
-       /* //Check for dot-delimited attributes
+        //Check for dot-delimited attributes
         if ( attribute.indexOf(".") > 0 )
         {
-            addChildAttributesOf( attribute, value );
+            var obj:Object = attributes;
+            
+            var parts:Array = attribute.split(".");
+            var tracedAttribute:String = '';
+            
+            var n:int = parts.length - 1;
+            for ( var i:int = 0; i < n; i++ )
+            {
+                try
+                {
+                    tracedAttribute += parts[i];
+                    obj = attributes[parts[i]];
+                }
+                catch(error:Error)
+                {
+                    if ( ( error is TypeError ) &&
+                        ( error.message.indexOf( "null has no properties" ) 
+                            != -1) )
+                    {
+                        throw new IllegalOperationError( "Property " 
+                            + tracedAttribute + " not found in attributes. " );
+                    }
+                    else
+                    {                    
+                        throw error;
+                    }
+                }
+            }
+            obj[parts[i]] = value;
+            
         } else if  ( attribute.indexOf(".") != 0 ) {
+            
             attributes[ attribute ] = value;
+            
         } else {
             throw new IllegalOperationError("CallHash addAttribute Error: "
                 + "Attribute " + attribute + " invalid.");
-        }*/
+        }
     }
     
-    //--------------------------------------------------------------------------
-    //
-    //  Private methods
-    //
-    //--------------------------------------------------------------------------
-    
     /**
-     * @private
+     * Adds an attribute to the hash attributes. 
+     * 
+     * @param The attribute to set. For dot-delimited attributes,use 
+     * attributes.property to access properties of the attributes that you
+     * have already set.
      */
-    private function addChildAttributesOf( attribute:String,
-                                           value:Object ):void
+    public function removeAttribute( attribute:String ):void
     {
-        var obj:Object = attributes;
-
-        var parts:Array = attribute.split(".");
-        var tracedAttribute:String = '';
-        
-        var n:int = parts.length - 1;
-        for ( var i:int = 0; i < n; i++ )
+        //Check for dot-delimited attributes
+        if ( attribute.indexOf(".") > 0 )
         {
-            try
+            var obj:Object = attributes;
+            
+            var parts:Array = attribute.split(".");
+            var tracedAttribute:String = '';
+            
+            var n:int = parts.length - 1;
+            for ( var i:int = 0; i < n; i++ )
             {
-                tracedAttribute += parts[i];
-                obj = attributes[parts[i]];
-            }
-            catch(error:Error)
-            {
-                if ( ( error is TypeError ) &&
-                    ( error.message.indexOf( "null has no properties" ) 
-                            != -1) )
+                try
                 {
-                    throw new IllegalOperationError( "Attribute " 
-                        + tracedAttribute + " not found in base CallHash. " );
+                    tracedAttribute += parts[i];
+                    obj = attributes[parts[i]];
                 }
-                else
-                {                    
-                    throw error;
+                catch(error:Error)
+                {
+                    if ( ( error is TypeError ) &&
+                        ( error.message.indexOf( "null has no properties" ) 
+                            != -1) )
+                    {
+                        throw new IllegalOperationError( "Property " 
+                            + tracedAttribute + " not found in attributes. " );
+                    }
+                    else
+                    {                    
+                        throw error;
+                    }
                 }
             }
+            obj[ parts[i] ] = null;
+            delete obj[ parts[i] ];
+            
+        } else if  ( attribute.indexOf(".") != 0 ) {
+            
+            attributes[ attribute ] = null;
+            delete attributes[ attribute ];
+            
+        } else {
+            throw new IllegalOperationError("CallHash removeAttribute Error: "
+                + "Attribute " + attribute + " invalid.");
         }
-        obj[parts[i]] = value;
     }
 }
 

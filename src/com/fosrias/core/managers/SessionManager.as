@@ -11,6 +11,7 @@
 package com.fosrias.core.managers
 {
 import com.fosrias.core.models.interfaces.AUser;
+import com.fosrias.core.models.NullUser;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
@@ -37,8 +38,8 @@ public class SessionManager extends EventDispatcher
      * @private 
      */
     private static const _instance:SessionManager 
-        = new SessionManager( SingletonLock );  
-      
+    = new SessionManager( SingletonLock );  
+    
     //--------------------------------------------------------------------------
     //
     //  Constructor
@@ -55,8 +56,8 @@ public class SessionManager extends EventDispatcher
         // Verify that the lock is the correct class reference.  
         if ( lock != SingletonLock )  
         {  
-                throw new Error( "Invalid Singleton access. " +
-                    "Use SessionManager.getInstance()." );  
+            throw new Error( "Invalid Singleton access. " +
+                "Use SessionManager.getInstance()." );  
         }  
     }  
     
@@ -75,7 +76,7 @@ public class SessionManager extends EventDispatcher
      */
     public function get hasSession():Boolean
     {
-        return _user != null;
+        return _user.id != -1;
     }
     
     //----------------------------------
@@ -86,8 +87,8 @@ public class SessionManager extends EventDispatcher
      * @private
      * Storage of the user property. 
      */
-    private var _user:AUser
-
+    private var _user:AUser = new NullUser;
+    
     /**
      * The session user.
      */
@@ -95,16 +96,21 @@ public class SessionManager extends EventDispatcher
     {
         return _user;
     }
-
+    
     /**
      * @private
      */
     public function set user( value:AUser ):void
     {
-        _user = value;
+        if ( value != null )
+        {
+            _user = value;
+        } else {
+            _user = new NullUser;
+        }
         dispatchEvent( new Event( SESSION_CHANGE ) );
     }
-
+    
     //--------------------------------------------------------------------------
     //
     //  Methods
@@ -119,7 +125,7 @@ public class SessionManager extends EventDispatcher
 }
 
 } 
-  
+
 /**
  * This is a private class declared outside of the package 
  * that is only accessible to classes inside of the SessionManager.as 

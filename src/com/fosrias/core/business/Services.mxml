@@ -6,7 +6,7 @@
 	
 	<fx:Declarations>
 		
-	<mx:RemoteObject id="messagesService" destination="rubyamf" 
+	<s:RemoteObject id="messagesService" destination="rubyamf" 
    	     source="MessagesController"/>
 		
 	</fx:Declarations>

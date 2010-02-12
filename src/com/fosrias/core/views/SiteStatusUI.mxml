@@ -3,14 +3,15 @@
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	xmlns:s="library://ns.adobe.com/flex/spark" 
 	xmlns:mx="library://ns.adobe.com/flex/halo" 
-	xmlns="com.fosrias.core.views.components.*"
+    xmlns:ns="library://ns.adobe.com/flex/mx" 
+    xmlns="com.fosrias.core.views.components.*"
 	xmlns:maps="com.fosrias.core.maps.*"
     name="AddressStatusUI"
     preinitialize="onPreinitialize();">
 	
 	<!-- Define States _____________________________________________________ -->
     <states>
-		<mx:State name="urlRequiresSession"/>
+		<s:State name="urlRequiresSession"/>
 	</states>
 	
 	<!-- Define Script _____________________________________________________ -->
@@ -59,20 +60,20 @@
 	</fx:Declarations>
 	
     <!-- GUI _______________________________________________________________ -->
-	<mx:LinkButton label="Home" top="45" left="3" 
+	<ns:LinkButton label="Home" top="45" left="3" 
 	    click="model.home();"
 	    tabIndex="1"/>
-	<mx:LinkButton id="lnkBack" label="Back" top="45" left="64" 
+	<ns:LinkButton id="lnkBack" label="Back" top="45" left="64" 
 	    left.urlRequiresSession="122"
 	    click="model.back();"
 	    tabIndex="3"/>
-	<mx:LinkButton id="lnkLogin" label="Login" includeIn="urlRequiresSession"
+	<ns:LinkButton id="lnkLogin" label="Login" includeIn="urlRequiresSession"
 	    click="model.login()"
 	    left="64" top="45"
 	    tabIndex="2"/>
-	<mx:Text id="txtMessage" height="26" left="10" right="51" top="0" 
+	<ns:Text id="txtMessage" height="26" left="10" right="51" top="0" 
 		fontWeight="bold" fontSize="16"
 		text="We are sorry, the page you requested cannot be found."
 		text.urlRequiresSession="We are sorry, you must login to access the page you have requested."/>
-	<mx:Text x="10" y="23" text="See below for available options."/>
+	<ns:Text x="10" y="23" text="See below for available options."/>
 </StatefulPopUpCanvas>

@@ -66,7 +66,8 @@ public class ComparisonUtils
             //Flag to see if equal
             var isEqual:Boolean = false;
             
-            //Iterate through primary array elements
+            //Iterate through primary array elements, the secondary
+            //elements must be equal, element by element.
             var n:int = primaryArray.length;
             for (var i:int = 0; i < n; i++ )
             {
@@ -77,6 +78,8 @@ public class ComparisonUtils
                     return false;
                 } else if ( primaryArray[i].isEqual( secondaryArray[i] ) ) {
                     isEqual = true;
+                } else {
+                    return false;
                 }
             }
             return isEqual;
