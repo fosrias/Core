@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ns:Application  layout="absolute"
+<mx:Application  layout="absolute"
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	xmlns:s="library://ns.adobe.com/flex/spark" 
     xmlns:mx="library://ns.adobe.com/flex/halo" 
-    xmlns:ns="library://ns.adobe.com/flex/mx" 
     xmlns:coreMaps="com.fosrias.core.maps.*">
 	
 	<fx:Declarations>
@@ -15,4 +14,4 @@
 		
 	</fx:Declarations>
     
-</ns:Application>
+</mx:Application>

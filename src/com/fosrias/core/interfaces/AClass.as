@@ -208,6 +208,8 @@ public class AClass extends EventDispatcher
     {
         if ( debugMessagesEnabled )
         {
+            message = qualifiedClassName + "\n     " + message;
+            
             //Send debug messages to the internal debug console.
             trace( "DebugMessage: " + message );
             
@@ -262,6 +264,17 @@ public class AClass extends EventDispatcher
     //  Overridden methods
     //
     //--------------------------------------------------------------------------
+    
+    /**
+     * @inheritDoc
+     */
+    override public function dispatchEvent( event:Event ):Boolean
+    {
+        traceDebugMessage( "Event Dispatched: " + event.type );
+        
+        return super.dispatchEvent( event ); 
+    }
+    
     
     /**
      * @inheritDoc

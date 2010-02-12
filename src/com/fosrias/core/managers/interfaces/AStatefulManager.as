@@ -741,7 +741,7 @@ public class AStatefulManager extends AManager
      * represents the parameters string in the browser address and is set by 
      * the <code>FragmentManager</code>.
      */
-    public function setState( type:String, parameters:Object = null ):void
+    public function setState( type:Object, parameters:Object = null ):void
     {
         state.setState( type, parameters );
     }
@@ -813,6 +813,15 @@ public class AStatefulManager extends AManager
     app_internal final function reset():void
     {
         state.reset();
+    } 
+    
+    /**
+     * Postsets the current state by delegating to its 
+     * <code>preset</code> internal method.
+     */
+    app_internal final function postset():void
+    {
+        state.postset();
     } 
     
     /**

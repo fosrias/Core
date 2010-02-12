@@ -3,7 +3,6 @@
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	xmlns:s="library://ns.adobe.com/flex/spark" 
 	xmlns:mx="library://ns.adobe.com/flex/halo" 
-    xmlns:ns="library://ns.adobe.com/flex/mx" 
     xmlns="com.fosrias.core.views.components.*"
 	xmlns:maps="com.fosrias.core.maps.*"
     name="AddressStatusUI"
@@ -60,20 +59,20 @@
 	</fx:Declarations>
 	
     <!-- GUI _______________________________________________________________ -->
-	<ns:LinkButton label="Home" top="45" left="3" 
+	<mx:LinkButton label="Home" top="45" left="3" 
 	    click="model.home();"
 	    tabIndex="1"/>
-	<ns:LinkButton id="lnkBack" label="Back" top="45" left="64" 
+	<mx:LinkButton id="lnkBack" label="Back" top="45" left="64" 
 	    left.urlRequiresSession="122"
 	    click="model.back();"
 	    tabIndex="3"/>
-	<ns:LinkButton id="lnkLogin" label="Login" includeIn="urlRequiresSession"
+	<mx:LinkButton id="lnkLogin" label="Login" includeIn="urlRequiresSession"
 	    click="model.login()"
 	    left="64" top="45"
 	    tabIndex="2"/>
-	<ns:Text id="txtMessage" height="26" left="10" right="51" top="0" 
+	<mx:Text id="txtMessage" height="26" left="10" right="51" top="0" 
 		fontWeight="bold" fontSize="16"
 		text="We are sorry, the page you requested cannot be found."
 		text.urlRequiresSession="We are sorry, you must login to access the page you have requested."/>
-	<ns:Text x="10" y="23" text="See below for available options."/>
+	<mx:Text x="10" y="23" text="See below for available options."/>
 </StatefulPopUpCanvas>

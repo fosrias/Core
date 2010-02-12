@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ns:TitleWindow title="Help" 
+<mx:TitleWindow title="Help" 
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	xmlns:s="library://ns.adobe.com/flex/spark" 
 	xmlns:mx="library://ns.adobe.com/flex/halo" 
-    xmlns:ns="library://ns.adobe.com/flex/mx" 
     name="HelpWindow"
     height.base="{40 + tAText.height}"
     height.invalidModel="{79 + tAText.height + tAInvalidText.height}"
@@ -19,12 +18,12 @@
     preinitialize="onPreinitialize();">
 	
 	<!-- Define States _____________________________________________________ -->
-    <ns:states>
+    <mx:states>
         <s:State name="base"/>
         <s:State name="invalidModel"/>
 		<s:State name="required"/>
 		<s:State name="invalidRequired"/>
-	</ns:states>
+	</mx:states>
     
     <!-- Define Metadata ___________________________________________________ -->
     <fx:Metadata>
@@ -68,7 +67,7 @@
    
     [Bindable]
     public var invalidText:String = "Invalid value. Mouse over field for " 
-        + "instructions on correcting values."
+        + "imxtructiomx on correcting values."
     
     private function onPreinitialize():void
     {
@@ -111,8 +110,8 @@
 	<fx:Declarations>
 		
 	<!-- Define Effects ____________________________________________________ -->
-    <ns:WipeDown id="wipeDown" duration="150" showTarget="true"/>
-    <ns:WipeUp id="wipeUp" duration="150" showTarget="false"/>
+    <mx:WipeDown id="wipeDown" duration="150" showTarget="true"/>
+    <mx:WipeUp id="wipeUp" duration="150" showTarget="false"/>
         
 	</fx:Declarations>
 	
@@ -123,13 +122,13 @@
         horizontalScrollPolicy="off" verticalScrollPolicy="off"
         editable="false" 
         selectable="false"/>
-	<ns:Image id="imgInvalid" x="10" 
+	<mx:Image id="imgInvalid" x="10" 
 		source="{getStyle('invalidSkin')}" 
 	    source.required="{getStyle('requiredSkin')}"
 		bottom="25" 
 	    bottom.required="10"
 		includeIn="invalidModel, required"/>
-	<ns:Label x="32" text="Required" bottom="8" includeIn="required"/>
+	<mx:Label x="32" text="Required" bottom="8" includeIn="required"/>
 	<s:TextArea id="tAInvalidText" x="30" width="211"
         borderVisible="false"
         text="{invalidText}"
@@ -138,7 +137,7 @@
         bottom="10" 
 		bottom.required="39"
 		includeIn="invalidModel, invalidRequired"/>
-	<ns:Image id="imgInvalidRequired" x="10" bottom="48" 
+	<mx:Image id="imgInvalidRequired" x="10" bottom="48" 
 		source="{getStyle('requiredSkin')}" includeIn="invalidRequired"/>
-	<ns:Label text="Required" x="32"  bottom="46" includeIn="invalidRequired"/>
-</ns:TitleWindow>
+	<mx:Label text="Required" x="32"  bottom="46" includeIn="invalidRequired"/>
+</mx:TitleWindow>

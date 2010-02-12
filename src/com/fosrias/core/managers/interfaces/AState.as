@@ -973,6 +973,15 @@ public class AState extends AClass
     }
     
     /**
+     * Post sets the state based on the <code>postsetImpl</code> 
+     * protected method.
+     */
+    app_internal final function postset():void
+    {
+        postsetImpl(); 
+    }
+    
+    /**
      * Presets the state based on the <code>presetImpl</code> protected method.
      */
     app_internal final function preset():void
@@ -1038,13 +1047,14 @@ public class AState extends AClass
      * <p>Requests to set states that are not mapped in the manager are 
      * ignored.</p>
      * 
-     * @param type The state type to be set.
+     * @param type The state type to be set. This can be a string state factory 
+     * key or a StateEvent event.
      * @param parameters An object representing the parameters to be set in
      * the manager as part of setting the new state. Typically, this object 
      * represents the parameters string in the browser address and is set by 
      * the <code>FragmentManager</code>.
      */
-    app_internal final function setState( type:String, 
+    app_internal final function setState( type:Object, 
         parameters:Object = null ):Boolean
     {
          return setStateImpl( type, parameters);
@@ -1332,6 +1342,25 @@ public class AState extends AClass
     }
     
     /**
+     * This is the actual implementation of the internal <code>postset</code> 
+     * method. 
+     * 
+     * <p>Because there are problems with overriding methods in custom 
+     * namespaces, this method is needed to let subclasses override 
+     * the <code>preset</code> method.</p>
+     * 
+     * <p>Use this method to post set any  state or manager properties when 
+     * after a state is set. Only include functionality here that needs 
+     * to be done once when the state is set and is not dependent on future
+     * changes to the manager model. Include all other functionality
+     * in the <code>resetImpl</code> protected method.
+     */
+    protected function postsetImpl():void
+    {
+        //Does nothing unless overridden.
+    } 
+    
+    /**
      * This is the actual implementation of the internal <code>preset</code> 
      * method. 
      * 
@@ -1513,7 +1542,7 @@ public class AState extends AClass
     * represents the parameters string in the browser address and is set by 
     * the <code>FragmentManager</code>.
     */
-    protected function setStateFailed(type:String, 
+    protected function setStateFailed( type:Object, 
         parameters:Object = null):void
     {
     	//Do nothing unless overridden
@@ -1534,9 +1563,19 @@ public class AState extends AClass
      * represents the parameters string in the browser address and is set by 
      * the <code>FragmentManager</code>.
      */
-    protected function setStateImpl( type:String, 
+    protected function setStateImpl( type:Object, 
                                      parameters:Object = null ):Boolean
     {
+        //Check if StateEvent is the type
+        if ( type is StateEvent )
+        {
+            parameters = type.data;
+            type = type.reference;
+        } else if ( !type is String ) {
+            throw new IllegalOperationError( "State Error: Type is not valid "
+                + " in " + qualifiedClassName + " setState method." );
+        }
+            
         if ( manager.hasPendingRemoteCall )
         {
             //Try again later
@@ -1608,9 +1647,14 @@ public class AState extends AClass
                                 StateEvent.STATE_SET, newState, 
                                     newState.type ) );
                             
+                            //Post set the state of the managers new state
+                            manager.postset();
+                            
                             //Notify the manager that state has changed
                             //so that binding events occur.
-                            return dispatchEventType( "stateChange" );
+                            dispatchEventType( "stateChange" );
+                            
+                            return true;
                         }
                     }
 
