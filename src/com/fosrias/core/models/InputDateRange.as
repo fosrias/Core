@@ -14,10 +14,7 @@ import com.fosrias.core.models.interfaces.AInputData;
 import com.fosrias.core.models.interfaces.IInputDateRange;
 import com.fosrias.core.namespaces.app_internal;
 
-import flash.events.Event;
-
 import mx.controls.DateField;
-import mx.events.FlexEvent;
 import mx.events.PropertyChangeEvent;
 import mx.events.ValidationResultEvent;
 import mx.utils.ObjectUtil;
@@ -90,6 +87,9 @@ public class InputDateRange extends AInputData
 		var clone:InputDateRange = new InputDateRange( startDate, endDate, 
 		    startInputDate.required, endInputDate.required, isOrdered, 
 		    _isSwitchable );
+        
+        clone._startInputDate.date = startDate;
+        clone._endInputDate.date = endDate;
 		clone.endErrorString = endErrorString;
 		clone.startErrorString = startErrorString;
 		clone.endText = endText;
@@ -290,8 +290,10 @@ public class InputDateRange extends AInputData
         if( value is InputDateRange )
         {
             //Compare the properties
-            return value.startInputDate.isEqual( startInputDate ) && 
-                   value.endInputDate.isEqual( endInputDate );
+            var isEqual:Boolean;
+            isEqual = value.startInputDate.isEqual( startInputDate ) && 
+                      value.endInputDate.isEqual( endInputDate );
+            return isEqual;
         }
         return false;
     }

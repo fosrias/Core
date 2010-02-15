@@ -204,9 +204,10 @@ public class AClass extends EventDispatcher
      * calls trace() on the message.
      *  
      * @param message The message to be sent.
+     * @param reference The debug message reference. Set to "event" for events.
      */
-    public function traceDebugMessage( message:String, 
-                                       reference:String = null ):void
+    public function traceDebug( message:String, 
+                                reference:String = null ):void
     {
         //Broadcast messages if enabled and not from the DebugManager
         if ( debugMessagesEnabled && !( className == "DebugManager" ) )
@@ -277,7 +278,7 @@ public class AClass extends EventDispatcher
              event.type != "errorStringChange" &&
              event.type != "sessionChange" )
         {
-            traceDebugMessage( "Event Dispatched: " + event.type, "event" );
+            traceDebug( "Event Dispatched: " + event.type, "event" );
         }
         
         return super.dispatchEvent( event ); 

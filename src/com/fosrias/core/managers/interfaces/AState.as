@@ -1646,7 +1646,7 @@ public class AState extends AClass
                     if ( newState.setParameters(parameters) )
                     {
                         //Let the DebugConsole know
-                        traceDebugMessage( "State Set: " + type + " | "
+                        traceDebug( "State Set: " + type + " | "
                             + toString() + " " );
                         
                         //Clear child manager if none exist for the 

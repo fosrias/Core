@@ -266,7 +266,7 @@ public class FragmentManager extends AStatefulManager
 		        }
 	            
 		        //Set DebugMessage
-		        traceDebugMessage( "State registered: " + state.className + 
+		        traceDebug( "State registered: " + state.className + 
 		           " for Manager:" + manager.className );
 		    }
     	}
@@ -977,7 +977,7 @@ public class FragmentManager extends AStatefulManager
             state  = pendingStatesStack.pop();
 
             //Set DebugMessage          
-            traceDebugMessage( toString() + "[commit " + state.type 
+            traceDebug( toString() + "[commit " + state.type 
                 + "]" );
                     
             //Stack the titles
@@ -1080,8 +1080,7 @@ public class FragmentManager extends AStatefulManager
                 }
                 if ( !isSibling && state.isTopLevel )
                 {
-                    traceDebugMessage( toString() + "[close " + state.type 
-                        + "]" );
+                    traceDebug( toString() + "[close " + state.type + "]" );
                     state.close();
                 }
             }
@@ -1176,7 +1175,7 @@ public class FragmentManager extends AStatefulManager
                     parseSetState( state );
                     
                     //Set DebugMessage
-                    traceDebugMessage( "State Set: " + state.className );
+                    traceDebug( "State Set: " + state.className );
                 }       
             }
         }

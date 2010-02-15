@@ -218,9 +218,7 @@ public class InputDate extends AInputData
         if( value is InputDate )
         {
           	//Compare the properties
-            var isEqual:Boolean;
-            isEqual =  value.date == date;
-            return isEqual;
+            return value.date.time == date.time;
         }
         return false;
     }

@@ -121,7 +121,7 @@ public class AService extends ADispatcher
     	token.addResponder( new Responder( onResult, onFault ) );
     	
     	//Display debug message
-    	traceDebugMessage( className + "." + remoteOperation + " called.");
+    	traceDebug( className + "." + remoteOperation + " called.");
     }
     
     /**
@@ -156,7 +156,7 @@ public class AService extends ADispatcher
         dispatchEvent(new ResultEvent(ResultEvent.RESULT, false, true, 
            event.result, event.token, event.message ));
            
-        traceDebugMessage("Result Object: " + event.result.toString()); 
+        traceDebug("Result Object: " + event.result.toString()); 
         
         //Reset showBusyCursor property
         service.showBusyCursor = false; 
@@ -185,7 +185,7 @@ public class AService extends ADispatcher
         dispatchEvent(new FaultEvent(FaultEvent.FAULT, false, true, 
            newFault, event.token, event.message ));
            
-        traceDebugMessage("Fault: " + newFault.message);
+        traceDebug("Fault: " + newFault.message);
         
         //Reset showBusyCursor property
         service.showBusyCursor = false; 
