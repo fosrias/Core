@@ -26,9 +26,10 @@ public class DebugMessage
     /**
      * Constructor
      */
-    public function DebugMessage( message:String ) {
+    public function DebugMessage( message:String, reference:String = null ) {
         _message = message;
         _time = new Date();
+        _reference = reference;
     }
     
     //--------------------------------------------------------------------------
@@ -48,6 +49,23 @@ public class DebugMessage
      */
     public var count:int = -1;
     
+    
+    //----------------------------------
+    //  isEventMessage
+    //----------------------------------
+    
+    /**
+     * Whether the message is from a dispatched event or not.
+     */
+    public function get isEventMessage():Boolean
+    {
+        if ( _reference == null )
+        {
+            return false;
+        } else {
+            return _reference.toLowerCase() == "event";
+        }
+    }
     //----------------------------------
     //  message
     //----------------------------------
@@ -64,6 +82,24 @@ public class DebugMessage
     public function get message():String
     {
     	return _message;
+    }
+    
+    //----------------------------------
+    //  reference
+    //----------------------------------
+    
+    /**
+     * @private
+     * Storage for the reference property 
+     */
+    private var _reference:String;
+    
+    /**
+     * The event reference.
+     */
+    public function get reference():String
+    {
+        return _reference;
     }
     
     //----------------------------------

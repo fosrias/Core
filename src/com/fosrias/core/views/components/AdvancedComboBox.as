@@ -104,7 +104,8 @@ public class AdvancedComboBox extends ComboBox
     {
     	_selectedData = data;
     	if ( itemField != null && dataProviderField != null 
-    	   && dataProvider != null && data != null )
+    	   && dataProvider != null && data != null && 
+           data.hasOwnProperty( itemField ) )
     	{
             for each (var dp:Object in dataProvider) 
             {
@@ -114,7 +115,7 @@ public class AdvancedComboBox extends ComboBox
                     return;     
                 }
                
-            }     
+            }    
             super.selectedItem = null;               
     	} else {
     		super.selectedItem = data;

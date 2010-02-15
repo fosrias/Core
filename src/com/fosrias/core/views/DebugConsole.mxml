@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Panel 
+<mx:Canvas 
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
 	xmlns:s="library://ns.adobe.com/flex/spark" 
 	xmlns:mx="library://ns.adobe.com/flex/halo" 
-	title="Debug Console" 
     width="100%" height="100%" tabEnabled="false"
     creationComplete="onComplete();">
 
@@ -35,7 +34,7 @@
     private function onComplete():void
     {
 		FlexGlobals.topLevelApplication.addEventListener(DebugEvent.SET_MESSAGE, 
-    	setMessage);new FlexGlobals
+    	setMessage);
     }
     
     //Handler for DebugEvent.SET_MESSAGE event.
@@ -43,6 +42,10 @@
     {
     	var message:DebugMessage = event.message;
     	var messageTime:Number = message.time.valueOf();
+        if ( chkEvents.selected != message.isEventMessage 
+            && message.isEventMessage )
+            return;
+        
         if (_messages == null) 
         {
         	_count = 1;
@@ -82,7 +85,8 @@
 </fx:Script>
 
     <!-- Define GUI ________________________________________________________ -->   
-    <mx:TextArea id="taDebug" width="100%" height="100%" editable="false" 
-    	tabEnabled="false" focusThickness="0"/>
-    <mx:Button label="clear" click="clearMessages();"/>
-</mx:Panel>
+    <mx:TextArea id="taDebug" editable="false" 
+    	tabEnabled="false" focusThickness="0" left="10" top="10" bottom="39" right="10"/>
+    <mx:Button label="clear" click="clearMessages();" bottom="10" left="10"/>
+    <s:CheckBox id="chkEvents" label="Show Events" bottom="12" left="95"/>
+</mx:Canvas>

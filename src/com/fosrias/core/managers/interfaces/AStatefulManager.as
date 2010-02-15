@@ -348,7 +348,7 @@ public class AStatefulManager extends AManager
      */
     public function get modelViewIndex():int
     {
-        return state.modelViewIndex;
+        return _state.modelViewIndex;
     }
     
     //----------------------------------
@@ -432,6 +432,11 @@ public class AStatefulManager extends AManager
      * setting this property ensures that a default child state is also
      * included in the mapping. An error is thrown otherwise.</p>
      */
+    public final function get stateFactory():AStateFactory
+    {
+        return _stateFactory;
+    }
+    
     public final function set stateFactory( value:AStateFactory ):void
     {
         _stateFactory = value;
@@ -740,15 +745,19 @@ public class AStatefulManager extends AManager
      * the manager as part of setting the new state. Typically, this object 
      * represents the parameters string in the browser address and is set by 
      * the <code>FragmentManager</code>.
+     * @return <code>true</code> if the state is set.
      */
-    public function setState( type:Object, parameters:Object = null ):void
+    public function setState( type:Object, parameters:Object = null ):Boolean
     {
-        state.setState( type, parameters );
+        return state.setState( type, parameters );
     }
 
     /**
      * Sets the current state as a substate by delegating to the current 
      * state's <code>setSubstate</code> internal method.
+     * 
+     * The substate is only updated if the event target or optional argument 
+     * dispatcher is the manager's <code>dispatcher</code>.
      * 
      * @param event The event with substate information.
      * @param args Optional arguments that allow the substate to be set
@@ -756,19 +765,17 @@ public class AStatefulManager extends AManager
      * and dispatcher in that order. Set event = null to use the optional
      * arguments.
      * 
-     * The substate is only updated if the event target or optional argument 
-     * dispatcher is the manager's <code>dispatcher</code>.
+     * @return <code>true</code> if the substate was set.
      */
-    public function setSubstate( event:StateEvent = null, ...args ):void
+    public function setSubstate( event:StateEvent = null, ...args ):Boolean
     {
         if ( event != null )
         {
-            _state.setSubstate( int( event.data ), event.reference, 
+            return _state.setSubstate( int( event.data ), event.reference, 
                 IEventDispatcher( event.target ) );
         } else {
-            _state.setSubstate( args[0], args[1], args[2]);
+            return _state.setSubstate( args[0], args[1], args[2]);
         }
-        
     } 
     
     /**

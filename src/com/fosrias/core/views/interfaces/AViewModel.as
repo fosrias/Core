@@ -164,7 +164,7 @@ public class AViewModel extends ADispatcher
      * @private
      * Storage for the viewIndex property. 
      */    
-    private var _viewIndex:int;
+    protected var _viewIndex:int;
     
     /**
      * The view index. This is a default index that can be bound to
@@ -219,7 +219,7 @@ public class AViewModel extends ADispatcher
      * @private
      * Storage for the viewState property. 
      */    
-    private var _viewState:String;
+    protected var _viewState:String;
     
     /**
      * The view state of the current view. 

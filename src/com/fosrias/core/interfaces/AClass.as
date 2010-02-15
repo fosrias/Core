@@ -22,6 +22,7 @@ import flash.utils.getQualifiedClassName;
 
 import mx.core.FlexGlobals;
 import mx.core.UIComponent;
+import mx.events.PropertyChangeEvent;
 
 use namespace app_internal;
 
@@ -194,8 +195,8 @@ public class AClass extends EventDispatcher
     public function callLater( method:Function,
                                args:Array /* of Object */ = null ):void
     {
-        var component:UIComponent = new UIComponent;
-        component.callLater( method, args );
+        UIComponent( FlexGlobals.topLevelApplication ).callLater( method, 
+            args );
     }
     
     /**
@@ -204,9 +205,11 @@ public class AClass extends EventDispatcher
      *  
      * @param message The message to be sent.
      */
-    public function traceDebugMessage( message:String ):void
+    public function traceDebugMessage( message:String, 
+                                       reference:String = null ):void
     {
-        if ( debugMessagesEnabled )
+        //Broadcast messages if enabled and not from the DebugManager
+        if ( debugMessagesEnabled && !( className == "DebugManager" ) )
         {
             message = qualifiedClassName + "\n     " + message;
             
@@ -215,7 +218,7 @@ public class AClass extends EventDispatcher
             
             //Send debug messages to the DebugConsole.
 			FlexGlobals.topLevelApplication.dispatchEvent(
-                new DebugEvent( DebugEvent.SET_MESSAGE, message ) );
+                new DebugEvent( DebugEvent.SET_MESSAGE, message, reference ) );
          }
     } 
     
@@ -270,11 +273,15 @@ public class AClass extends EventDispatcher
      */
     override public function dispatchEvent( event:Event ):Boolean
     {
-        traceDebugMessage( "Event Dispatched: " + event.type );
+        if ( event.type != PropertyChangeEvent.PROPERTY_CHANGE &&
+             event.type != "errorStringChange" &&
+             event.type != "sessionChange" )
+        {
+            traceDebugMessage( "Event Dispatched: " + event.type, "event" );
+        }
         
         return super.dispatchEvent( event ); 
     }
-    
     
     /**
      * @inheritDoc

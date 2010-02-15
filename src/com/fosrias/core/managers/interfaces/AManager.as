@@ -232,7 +232,7 @@ public class AManager extends ADispatcher
     //--------------------------------------------------------------------------
     
     /**
-     * The current sessioin user.
+     * The current session user.
      */
     protected function clearCallTimeout():void
     {

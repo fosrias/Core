@@ -43,10 +43,12 @@ public class DebugEvent extends Event
     /**
      * Constructor
      */
-    public function DebugEvent( type:String, message:String )
+    public function DebugEvent( type:String, message:String, 
+                                reference:String = null )
     {
     	super( type, true, false );
-    	_message = new DebugMessage( message );
+    	_message = new DebugMessage( message, reference );
+        _reference = reference;
     }
     
     //--------------------------------------------------------------------------
@@ -73,6 +75,24 @@ public class DebugEvent extends Event
         return _message;
     }
     
+    //----------------------------------
+    //  reference
+    //----------------------------------
+    
+    /**
+     * @private
+     * Storage for the reference property 
+     */
+    private var _reference:String;
+    
+    /**
+     * The event reference.
+     */
+    public function get reference():String
+    {
+        return _reference;
+    }
+    
     //--------------------------------------------------------------------------
     //
     //  Overridden Methods 
@@ -84,7 +104,7 @@ public class DebugEvent extends Event
      */
     override public function clone():Event
     {
-        return new DebugEvent( type, _message.message );
+        return new DebugEvent( type, _message.message, _reference );
     }
 }
   

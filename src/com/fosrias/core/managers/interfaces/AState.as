@@ -221,8 +221,7 @@ public class AState extends AClass
      */
     public function get callArguments():*
     {
-        return raiseImplementationError( "getter", 
-            "ARemoteViewState.callArguments" ); 
+        return raiseImplementationError( "getter", "callArguments" ); 
     }
     
     //----------------------------------
@@ -596,7 +595,7 @@ public class AState extends AClass
     /**
      * The substate index of the view.
      */
-    public function get modelViewIndex():int
+    app_internal function get modelViewIndex():int
     {
         return _modelViewIndex;
     }
@@ -605,7 +604,7 @@ public class AState extends AClass
      * @private
      * Can only be set in subclasses.
      */
-    protected function set modelViewIndex( value:int ):void
+    app_internal function set modelViewIndex( value:int ):void
     {
         _modelViewIndex = value;
     }
@@ -888,6 +887,18 @@ public class AState extends AClass
     }
     
     /**
+     * Whether the state type corresponds to a is a sibling of the 
+     * state specified. Sibling states are states that are mapped in 
+     * the same manager.
+     * 
+     *  @param state The prospective sibling state.
+     */
+    app_internal final function isSiblingStateType( type:String ):Boolean
+    {
+        return isSiblingStateType( type );
+    }
+    
+    /**
      * Whether parameters from the browser address are valid for this
      * state as based on <code>isValidParametersImpl</code> protected method.
      * 
@@ -929,21 +940,13 @@ public class AState extends AClass
     /**
      * Records the last state as this.
      */
-    app_internal function recordStateMemento( key:String ):void
+    app_internal function recordStateMemento():void
     {
         for each ( var mementoKey:String in _stateMementoKeys )
         {
             //Record a memento of the state if the key is in the 
             //stateMementoKeys
-            if ( key == mementoKey )
-            {
-                stateMementoMap[ key ] = this;
-            } else if ( stateMementoMap[ mementoKey ].type == key ) {
-                
-                //Otherwise, if a recorded memento is of the current state
-                //type, update it to the new state.
-                stateMementoMap[ mementoKey ] = this;
-            }
+            stateMementoMap[ mementoKey ] = this;
         }
     }
     
@@ -1048,16 +1051,36 @@ public class AState extends AClass
      * ignored.</p>
      * 
      * @param type The state type to be set. This can be a string state factory 
-     * key or a StateEvent event.
+     * key or a StateEvent event with a state factory key as the reference
+     * and its data being the state parameters.
      * @param parameters An object representing the parameters to be set in
      * the manager as part of setting the new state. Typically, this object 
      * represents the parameters string in the browser address and is set by 
      * the <code>FragmentManager</code>.
      */
     app_internal final function setState( type:Object, 
-        parameters:Object = null ):Boolean
+                                          parameters:Object = null ):Boolean
     {
-         return setStateImpl( type, parameters);
+        if ( manager.hasPendingRemoteCall )
+        {
+            //Try again later
+            _pendingCallTimeout = setTimeout( setState, 10, type, parameters );
+        } else {
+            var event:Event; 
+            
+            //Get the correct type
+            if ( type is StateEvent )
+            {
+                event = Event( type );
+                parameters = type.data;
+                type = type.reference;
+            } else if ( !type is String ) {
+                throw new IllegalOperationError( "State Error: type is not "
+                    + "valid in " + qualifiedClassName + " setState method." );
+            }
+            return setStateImpl( String( type ), parameters, event );
+        }
+        return false;
     }
         
     /**
@@ -1073,14 +1096,13 @@ public class AState extends AClass
      * 
      */
     app_internal final function setSubstate( index:int, reference:String, 
-        dispatcher:IEventDispatcher ):void
+        dispatcher:IEventDispatcher ):Boolean
     {
         if ( dispatcher == manager.dispatcher )
         {
-            setSubstateImpl( index, reference  );
-            
-            dispatchEventType( "substateChange" );
+            return setSubstateImpl( index, reference );
         }
+        return false;
     }
     
     /**
@@ -1279,7 +1301,19 @@ public class AState extends AClass
     {
         return false;
     }
-     
+    
+    /**
+     * Whether the state type corresponds to a is a sibling of the 
+     * state specified. Sibling states are states that are mapped in 
+     * the same manager.
+     * 
+     *  @param state The prospective sibling state.
+     */
+    protected final function isSiblingStateType( type:String ):Boolean
+    {
+        return manager.stateFactory.contains( type );
+    }
+    
     /**
      * This is the actual implementation of the
      * <code>isValidParameters</code> internal method. 
@@ -1562,112 +1596,100 @@ public class AState extends AClass
      * the manager as part of setting the new state. Typically, this object 
      * represents the parameters string in the browser address and is set by 
      * the <code>FragmentManager</code>.
+     * @param The event triggering the setState method, if any. This value
+     * can be used to differentiate the state being internally by a 
+     * sibling state ( which should use a string type key ) from a different
+     * manager setting the state.
      */
-    protected function setStateImpl( type:Object, 
-                                     parameters:Object = null ):Boolean
+    protected function setStateImpl( type:String, 
+                                     parameters:Object,
+                                     event:Event ):Boolean
     {
-        //Check if StateEvent is the type
-        if ( type is StateEvent )
-        {
-            parameters = type.data;
-            type = type.reference;
-        } else if ( !type is String ) {
-            throw new IllegalOperationError( "State Error: Type is not valid "
-                + " in " + qualifiedClassName + " setState method." );
-        }
+        //See if the manager contains the state.
+        var newState:AState = manager.stateMap[type];
+        
+        //Only respond to states mapped in this manager
+        if ( newState!= null )
+        {  
+            //Only check for stateMemento, when the current state is the key
+            //and the state is changing.
+            if ( type != this.type )  
+                newState = newState.checkStateMemento( this.type );
             
-        if ( manager.hasPendingRemoteCall )
-        {
-            //Try again later
-            _pendingCallTimeout = setTimeout( setState, 10, type, parameters );
-        } else {    
-            
-            //See if the manager contains the state.
-            var newState:AState = manager.stateMap[type];
-            
-            //Only respond to states mapped in this manager
-            if ( newState!= null )
-            {  
-                //Only check for stateMemento, when the current state is the key
-                //and the state is changing.
-                if ( type != this.type )  
-                    newState = newState.checkStateMemento( this.type );
-                
-                //Only set the state if it is not the current manager state
-                if ( !newState.isCurrent )
+            //Only set the state if it is not the current manager state
+            if ( !newState.isCurrent )
+            {
+                //Check if the state is valid and the parameters are 
+                //valid for the state.
+                if ( newState.isValid 
+                    && newState.isValidParameters( parameters ) )
                 {
-                    //Check if the state is valid and the parameters are 
-                    //valid for the state.
-                    if ( newState.isValid 
-                        && newState.isValidParameters( parameters ) )
+                    //Set the state of the manager to the new state.
+                    manager.state = newState;
+                    
+                    //Preset the state of the managers new state
+                    manager.preset();
+                    
+                    //Set listener for child manager registery
+                    var hasChildManagerClass:Boolean 
+                        = newState.hasChildManagerClass;
+                    
+                    //Instruct the state to listen for child manager 
+                    //register event
+                    if ( hasChildManagerClass )
                     {
-                        //Set the state of the manager to the new state.
-                        manager.state = newState;
+                        addRegisterListener();
+                    }                       
+                
+                    //Call this on the new state set in the manager, not 
+                    //this state which is processing the change.
+                    if ( newState.setParameters(parameters) )
+                    {
+                        //Let the DebugConsole know
+                        traceDebugMessage( "State Set: " + type + " | "
+                            + toString() + " " );
                         
-                        //Preset the state of the managers new state
-                        manager.preset();
-                        
-                        //Set listener for child manager registery
-                        var hasChildManagerClass:Boolean 
-                            = newState.hasChildManagerClass;
-                        
-                        //Instruct the state to listen for child manager 
-                        //register event
-                        if ( hasChildManagerClass )
+                        //Clear child manager if none exist for the 
+                        //new state.    
+                        if ( !newState.hasChildManagerClass )
                         {
-                            addRegisterListener();
-                        }                       
-                    
-                        //Call this on the new state set in the manager, not 
-                        //this state which is processing the change.
-                        if ( newState.setParameters(parameters) )
-                        {
-                            //Let the DebugConsole know
-                            traceDebugMessage( "State Set: " + toString() 
-                                + "]" );
-                            
-                            //Clear child manager if none exist for the 
-                            //new state.    
-                            if ( !newState.hasChildManagerClass )
-                            {
-                                manager.setChildManager( null );
-                                manager.acceptNewChildManager = false;
-                            } 
-                                                                
-                            //Register the manager for managers listening
-                            //for child managers. 
-                            manager.registerManager();
-                            
-                            //Attempt to record the state as the last state
-                            newState.recordStateMemento( this.type );
-                            
-                            //Notify the world that a state has been set
-                            //(actually the Fragment Manager).
-                            dispatchEvent( new StateEvent(
-                                StateEvent.STATE_SET, newState, 
-                                    newState.type ) );
-                            
-                            //Post set the state of the managers new state
-                            manager.postset();
-                            
-                            //Notify the manager that state has changed
-                            //so that binding events occur.
-                            dispatchEventType( "stateChange" );
-                            
-                            return true;
-                        }
-                    }
+                            manager.setChildManager( null );
+                            manager.acceptNewChildManager = false;
+                        } 
+                                                            
+                        //Register the manager for managers listening
+                        //for child managers. 
+                        manager.registerManager();
+                        
+                        //Attempt to record the state as the last state
+                        newState.recordStateMemento();
+                        
+                        //Post set the state of the managers new state
+                        manager.postset();
+                        
+                        //Notify the manager that state has changed
+                        //so that binding events occur.
+                        dispatchEventType( "stateChange" );
+                        
+                        //Notify the world that a state has been set
+                        //(actually the Fragment Manager).
+                        dispatchEvent( new StateEvent(
+                            StateEvent.STATE_SET, newState, 
+                            newState.type ) );
 
-                    //Recover from the state not being set
-                    removeRegisterListener();
-                    setStateFailed( type, parameters );
-                    return false;
-                } else {
-                    
-                    //Reset the state if current
-                    newState.reset();
-                    dispatchEventType( "stateChange" );
+                        return true;
+                    }
                 }
+
+                //Recover from the state not being set
+                removeRegisterListener();
+                setStateFailed( type, parameters );
+                return false;
+            } else {
+                
+                //Reset the state if current
+                newState.reset();
+                dispatchEventType( "stateChange" );
                 return true;
             }
         }
@@ -1690,10 +1712,12 @@ public class AState extends AClass
      * @param dispatcher The dispatcher requesting the substate to be set. 
      * The substate is only updated if the dispatcher is the manager's
      * <code>dispatcher</code>.</p>
+     * 
+     * @return <code>true</code> if the substate is set
      */
-    protected function setSubstateImpl( index:int, reference:String ):void
+    protected function setSubstateImpl( index:int, reference:String ):Boolean
     {
-    	raiseImplementationError("method", "AViewState.setSubstateImpl");
+    	return raiseImplementationError("method", "setSubstateImpl");
     }
         
     /**

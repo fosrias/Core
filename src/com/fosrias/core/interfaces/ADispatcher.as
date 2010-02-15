@@ -10,8 +10,9 @@
 
 package com.fosrias.core.interfaces
 {
-import flash.events.Event;
 import flash.events.IEventDispatcher;
+
+import mx.core.UIComponent;
 
 [Bindable]
 /**
