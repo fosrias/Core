@@ -153,7 +153,7 @@ public class AState extends AClass
     {
     	super( self );
     	_type = type;
-        this.manager = manager;
+        _manager = manager;
     }
     
     //--------------------------------------------------------------------------
@@ -177,7 +177,7 @@ public class AState extends AClass
      * @private
      * The reference to the state's manager.
      */
-    app_internal var manager:AStatefulManager;
+    protected var _manager:AStatefulManager;
     
     /**
      * @private 
@@ -362,7 +362,7 @@ public class AState extends AClass
         return manager.hasInitialState;
     }
     
-     //----------------------------------
+    //----------------------------------
     //  hasParameters
     //----------------------------------
       
@@ -372,6 +372,30 @@ public class AState extends AClass
     public function get hasParameters():Boolean
     {
         return parameters != null;
+    }
+    
+    //----------------------------------
+    //  hasPendingRemoteCall
+    //----------------------------------
+    
+    /**
+     * @private 
+     * Flag used to monitor if a remote call is pending and has not
+     * returned a response. It is used to prevent state changes prior to
+     * remote call responses, which would change the handling of the remote
+     * call for the state.
+     */
+    protected function get hasPendingRemoteCall():Boolean
+    {
+        return _manager.hasPendingRemoteCall;
+    }
+    
+    /**
+     * @private
+     */
+    protected function set hasPendingRemoteCall( value:Boolean ):void
+    {
+        _manager.hasPendingRemoteCall = value;
     }
     
     //----------------------------------
@@ -532,6 +556,18 @@ public class AState extends AClass
     public function get isValid():Boolean
     {
         return hasValidSession && !isInvalidImpl();
+    }
+    
+    //----------------------------------
+    //  manager
+    //----------------------------------
+    
+    /**
+     * Internal accessors to the state's manager.
+     */
+    app_internal function get manager():AStatefulManager
+    {
+        return _manager;
     }
     
     //----------------------------------

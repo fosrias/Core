@@ -10,6 +10,9 @@ public class DateUtils
 	 */	
 	public static function adjustRemoteTimeZone( date:Date ):Date
 	{
+        if ( date == null )
+            return null;
+        
 		return new Date(date.valueOf() + date.getTimezoneOffset()*60000);
 	}
 	

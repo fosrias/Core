@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Mark W. Foster    www.fosrias.com
+//  Copyright (c) 2010    Mark W. Foster    www.fosrias.com
 //  All Rights Reserved.
 //
 //  NOTICE: Mark W. Foster permits you to use, modify, and distribute this file
@@ -20,9 +20,10 @@ import flash.events.Event;
  * <ul>
  *     <li>create</li>
  *     <li>destroy</li>
+ *     <li>index</li>
+ *     <li>show</li>
  *     <li>update</li>
  * </ul> 
- * 
  */
 public class RemoteDataEvent extends Event
 {
@@ -45,6 +46,20 @@ public class RemoteDataEvent extends Event
      */
     public static const DESTROY:String = 
         "com.fosrias.core.events.RemoteDataEvent.destroy";
+    
+    /**
+     * The RemoteDataEvent.INDEX constant defines the value of the type 
+     * property of the event object for an index event.
+     */
+    public static const INDEX:String = 
+        "com.fosrias.core.events.RemoteDataEvent.index";
+    
+    /**
+     * The RemoteDataEvent.SHOW constant defines the value of the type 
+     * property of the event object for a show event.
+     */
+    public static const SHOW:String = 
+        "com.fosrias.core.events.RemoteDataEvent.show";
     
     /**
      * The RemoteDataEvent.UPDATE constant defines the value of the type 
