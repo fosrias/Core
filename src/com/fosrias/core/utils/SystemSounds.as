@@ -62,12 +62,12 @@ public class SystemSounds
      */
     public static function play( type:String ):void
     {
-    	//Get the current style declaration
-    	var playerDeclaration:CSSStyleDeclaration =
-            StyleManager.getStyleDeclaration(".systemSounds");
+        //Get the current style declaration
+    	var css:CSSStyleDeclaration = StyleManager.getStyleManager(null).
+            getStyleDeclaration(".systemSounds");
         
         //Get the sound style
-    	var soundClass:Class = playerDeclaration.getStyle( type );
+    	var soundClass:Class = css.getStyle( type );
     	
     	//Play the sound
     	if ( soundClass != null )

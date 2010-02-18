@@ -58,8 +58,9 @@ public class InputDate extends AInputData
     {
         super( this, required );
         
-        var css:CSSStyleDeclaration = StyleManager.getStyleDeclaration( 
-                "InputDate" );
+        var css:CSSStyleDeclaration = StyleManager.getStyleManager(null).
+            getStyleDeclaration( "InputDate" );
+        
         var format:String = css != null ?
                    css.getStyle( "dateFormat" ) : 
                    null;
