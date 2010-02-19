@@ -918,15 +918,6 @@ public class AStatefulManager extends AManager
     //--------------------------------------------------------------------------
     
     /**
-     * A utility method to clear the model dirty state
-     */
-    protected function clearDirty( isClear:Boolean = true ):void
-    {
-        _modelIsDirty = !isClear;
-        
-        dispatchEventType( "dirtyChange" );
-    }
-    /**
      * Creates and maps states by their type.
      * 
      * @param states An array of state type strings corresponding to 
@@ -952,6 +943,16 @@ public class AStatefulManager extends AManager
 	    				+ " in " + qualifiedClassName + ".registerStates." );
 	    	}
     	}
+    }
+    
+    /**
+     * A utility method to clear the model dirty state
+     */
+    protected function resetDirty( isDirty:Boolean = false ):void
+    {
+        _modelIsDirty = isDirty;
+        
+        dispatchEventType( "dirtyChange" );
     }
  
     /**
