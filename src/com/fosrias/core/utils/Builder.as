@@ -82,6 +82,16 @@ public class Builder extends AClass implements IBuilder
      */
     private var _propertyKeys:ArrayCollection = new ArrayCollection;
     
+    /**
+     * @private 
+     */
+    private var _stylesMap:Dictionary = new Dictionary;
+    
+    /**
+     * @private 
+     */
+    private var _styleKeys:ArrayCollection = new ArrayCollection;
+    
     //--------------------------------------------------------------------------
     //
     //  Properties
@@ -147,6 +157,16 @@ public class Builder extends AClass implements IBuilder
             delete _decoratorsMap[ key ];
         }
         
+        //Clear styles
+        while ( _styleKeys.length > 0 )
+        {
+            key = _styleKeys.removeItemAt( 0 );
+            _stylesMap[ key ] = null;
+            delete _stylesMap[ key ];
+        }
+        
+        
+        
          //Clear variables
         _args = [];
         _type = null;
@@ -154,10 +174,156 @@ public class Builder extends AClass implements IBuilder
     
     /**
      * Creates and returns an instance of the class type set in the builder.
+     * Override this method to customize building the class instance. Make 
+     * sure all variables are cleared at the end of the overridden method and 
+     * override the clear method to clear any custom variables as well. 
+     * 
+     * <p>Typically, you will override the <code>clear</code>,
+     * <code>preInstantiate</code>,  <code>postInstantiate</code>, 
+     * and/or <code>postInstantiate</code> hook methods to customize the 
+     * builder behavior in subclasses instead
+     * of overrideing this method.</p>
+     * 
+     * @param clear Whether the builder should clear itself after creating
+     * the instance. The default is <code>true</code>.
      */
-    public function create():*
+    public function create(clear:Boolean = true):*
     {
-    	return buildInstance();
+        preInstantiate();
+        
+        var instance:Object = createInstance(_type, _args);
+        
+        instance = postInstantiate( instance );
+        
+        var key:*;
+        var parts:Array;
+        var obj:Object;
+        var i:int;
+        var n:int;
+        
+        //Set properties
+        for each( key in _propertyKeys )
+        {
+            parts = String(key).split(".");
+            obj = instance;
+            n = parts.length;
+            for (i = 0; i < n; i++)
+            {
+                if ( obj.hasOwnProperty( parts[i] ) )
+                {
+                    if ( i < n - 1 )
+                    {
+                        obj = obj[parts[i]];
+                    } else {
+                        obj[parts[i]] = _propertiesMap[key];
+                    }
+                } else {
+                    throw new IllegalOperationError("No " + String(key) 
+                        + " property exists for the type in " 
+                        + qualifiedClassName);
+                }
+            }
+        }
+        
+        //Decorate the instance
+        for each( key in  _decoratorKeys )
+        {
+            instance = createInstance( key, 
+                [instance].concat(_decoratorsMap[ key ]) );
+        }
+        
+        //Set the styles
+        for each( key in  _styleKeys )
+        {
+            parts = String(key).split(".");
+            if ( parts.length == 1)
+            {
+                instance.setStyle(key, _stylesMap[ key ]);
+            } else {
+                
+                obj = instance.getStyle(parts.shift());
+                
+                if ( obj == null ) {
+                    throw new IllegalOperationError("No " + String(key) 
+                        + " style property exists for the type in " 
+                        + qualifiedClassName); 
+                }
+                
+                //Not dry for performance reasons
+                n = parts.length;
+                for (i = 0; i < n; i++)
+                {
+                    if ( obj.hasOwnProperty(parts[i]))
+                    {
+                        if ( i < n - 1 )
+                        {
+                            obj = obj[parts[i]];
+                        } else {
+                            obj[parts[i]] = _propertiesMap[key];
+                        }
+                    } else {
+                        throw new IllegalOperationError("No " + String(key) 
+                            + " style exists for the type in " 
+                            + qualifiedClassName);
+                    }
+                }
+            }
+        }
+        
+        instance = postBuild( instance );
+        
+        //Clear the builder
+        if( clear)
+            this.clear();
+        
+        return instance;
+    }
+    
+    /**
+     * Clears a decorator set in the builder.
+     * 
+     * @param type The class of the decorator.
+     */
+    public function clearDecorator(type:Class):void
+    {
+        if ( _decoratorKeys.contains( type ) )
+        {
+            _decoratorKeys.removeItemAt(_decoratorKeys.getItemIndex(type));
+            _decoratorsMap[ type ] = null;
+            delete _decoratorsMap[ type ];
+        }
+    }
+    
+    /**
+     * Clears a property set in the builder.
+     * 
+     * @param property The name of the property.
+     * 
+     */
+    public function clearProperty(property:String):void
+    {
+        if ( _propertyKeys.contains(property) )
+        {
+            _propertyKeys.removeItemAt(_propertyKeys.getItemIndex(property));
+            _propertiesMap[property] = null;
+            delete _propertiesMap[property];
+        }
+    }
+    
+    /**
+     * Clears a style set in the builder.
+     * 
+     * @param style The name of the style.
+     * 
+     */
+    public function clearStyle(style:String):void
+    {
+        if ( _styleKeys.contains(style) )
+        {
+            _styleKeys.removeItemAt(_styleKeys.getItemIndex(style));
+            _stylesMap[style] = null;
+            delete _stylesMap[style];
+        }
     }
     
     /**
@@ -182,7 +348,8 @@ public class Builder extends AClass implements IBuilder
      * Sets a property on the built instance. If the property does not
      * exist an error is thrown when the instance is created.
      * 
-     * @param property The name of the property.
+     * @param property The name of the property. Can be a dot-delimited
+     * string to access the properties of the main property.
      * @param value The value to be set on the property.
      * 
      */
@@ -191,7 +358,23 @@ public class Builder extends AClass implements IBuilder
         //Keep unique. Allows overwriting a property
         if ( !_propertyKeys.contains( property ) )
             _propertyKeys.addItem( property );
-    	_propertiesMap[ property ] = value;
+        _propertiesMap[ property ] = value;
+    }
+    
+    /**
+     * Sets a style on the built instance.
+     * 
+     * @param style The name of the style.Can be a dot-delimited
+     * string to access the properties of the style.
+     * @param value The value to be set on the property.
+     * 
+     */
+    public function setStyle( style:String, value:Object ):void
+    {
+        //Keep unique. Allows overwriting a property
+        if ( !_styleKeys.contains( style ) )
+            _styleKeys.addItem( style );
+        _stylesMap[ style ] = value;
     }
     
     /**
@@ -214,46 +397,6 @@ public class Builder extends AClass implements IBuilder
     //  Protected methods
     //
     //--------------------------------------------------------------------------
-
-    /**
-     * The implementation of building an instance of the type. Override 
-     * this method to customize building the class instance. Make sure all 
-     * variables are cleared at the end of the method and override the 
-     * clear method to clear any custom variables as well. 
-     * 
-     * <p>Typically, you will use the <code>preBuildInstance</code>, 
-     * <code>postCreateInstance</code>, and/or <code>postCreateInstance</code>
-     * hook methods to customize the builder behavior in subclasses instead
-     * of overrideing this method.</p>
-     */
-    protected function buildInstance():*
-    {
-    	preBuildInstance();
-    	
-    	var instance:Object = createInstance();
-    	
-    	instance = postCreateInstance( instance );
-    	
-    	//Set properties
-    	var key:*;
-        for each( key in _propertyKeys )
-        {
-            updateProperty( instance, key, _propertiesMap[ key ] );
-        }
-        
-        //Decorate the instance
-        for each( key in  _decoratorKeys )
-        {
-            instance = decorateInstance( instance, key, _decoratorsMap[ key ] );
-        }
-        
-        instance = postBuildInstance( instance );
-        
-        //Clear variables
-        clear();
-        
-        return instance;
-    }
     
     /**
      * Creates an instance of the type. 
@@ -266,11 +409,11 @@ public class Builder extends AClass implements IBuilder
      * property in that class. In such a case, the parent type
      * should be instantiated and the subtype property set on it here.</p>
      */
-    protected function createInstance():Object
+    protected function createInstance(type:Object, args:Array):Object
     {
-        if ( _type is Class )
+        if ( type is Class )
         {
-            if ( _args.length > 9 )
+            if ( args.length > 9 )
             {
             	 throw new IllegalOperationError( "Too many arguments "
             		+ "(more than 9) for builder. Override the " 
@@ -280,47 +423,47 @@ public class Builder extends AClass implements IBuilder
             } else {
             	
             	//This should be enough.
-            	switch ( _args.length )
+            	switch ( args.length )
             	{
             		case 1: 
-            		    return new _type( _args[0] );
+            		    return new type( args[0] );
             		
                     case 2:  
-                        return new _type( _args[0], _args[1] );
+                        return new type( args[0], args[1] );
                     
                     case 3:  
-                        return new _type( _args[0], _args[1], _args[2] );
+                        return new type( args[0], args[1], args[2] );
                     
                     case 4:  
-                        return new _type( _args[0], _args[1], _args[2], 
-                                              _args[3] );
+                        return new type( args[0], args[1], args[2], 
+                                              args[3] );
                     case 5:  
-                        return new _type( _args[0], _args[1], _args[2], 
-                                              _args[3], _args[4] );                                              
+                        return new type( args[0], args[1], args[2], 
+                                              args[3], args[4] );                                              
                     case 6:  
-                        return new _type( _args[0], _args[1], _args[2], 
-                                              _args[3], _args[4], _args[5] );                                             
+                        return new type( args[0], args[1], args[2], 
+                                              args[3], args[4], args[5] );                                             
                     case 7:  
-                        return new _type( _args[0], _args[1], _args[2], 
-                                              _args[3], _args[4], _args[5],
-                                              _args[6] );                                            
+                        return new type( args[0], args[1], args[2], 
+                                              args[3], args[4], args[5],
+                                              args[6] );                                            
                     case 8:  
-                        return new _type( _args[0], _args[1], _args[2], 
-                                              _args[3], _args[4], _args[5],
-                                              _args[6], _args[7] );                                            
+                        return new type( args[0], args[1], args[2], 
+                                              args[3], args[4], args[5],
+                                              args[6], args[7] );                                            
                     case 9:  
-                        return new _type( _args[0], _args[1], _args[2], 
-                                              _args[3], _args[4], _args[5],
-                                              _args[6], _args[7], _args[8] );
+                        return new type( args[0], args[1], args[2], 
+                                              args[3], args[4], args[5],
+                                              args[6], args[7], args[8] );
                     default:  
-                        return new _type;  
+                        return new type;  
             	}
             	return null;
             }
         } else if ( _factory != null ) {
-            return _factory.create( String( _type ), _args );
+            return _factory.create( String( type ), args );
         } else {
-            throw new IllegalOperationError( "Type " + _type.toString() 
+            throw new IllegalOperationError( "Type " + type.toString() 
                 + " cannot be built. Make sure the type is an instantiable" 
                 + " class or that it is a valid key in an AFactory subclass "
                 + " and that the factory has been set for the builder " 
@@ -330,7 +473,7 @@ public class Builder extends AClass implements IBuilder
     }
     
     /**
-     * Hook into the <code>buildInstance</code> method before the class
+     * Hook into the <code>create</code> method before the class
      * instance is created.
      * 
      * <p>Override this method to make any modifications to the builder before
@@ -338,13 +481,13 @@ public class Builder extends AClass implements IBuilder
      * at this point using the <code>setProperty</code> and 
      * <code>setDecorator</code> methods.</p>
      */
-    protected function preBuildInstance():void
+    protected function preInstantiate():void
     {
     	//Do nothing
     }
     
     /**
-     * Hook into the <code>buildInstance</code> method after the class
+     * Hook into the <code>create</code> method after the class
      * instance is created and properties are set and decorators 
      * are applied.
      * 
@@ -354,13 +497,13 @@ public class Builder extends AClass implements IBuilder
      * instance at this point using the <code>setProperty</code> and 
      * <code>setDecorator</code> methods.</p>
      */
-    protected function postBuildInstance( instance:Object ):Object
+    protected function postBuild( instance:Object ):Object
     {
         return instance;
     }
     
     /**
-     * Hook into the <code>buildInstance</code> method after the class
+     * Hook into the <code>create</code> method after the class
      * instance is created but before properties are set and decorators 
      * are applied to the instance.
      * 
@@ -369,49 +512,9 @@ public class Builder extends AClass implements IBuilder
      * instance. You can set properties or decorators at this point using the 
      * <code>setProperty</code> and <code>setDecorator</code> methods.</p>
      */
-    protected function postCreateInstance( instance:Object ):Object
+    protected function postInstantiate( instance:Object ):Object
     {
         return instance;
-    }
-    
-    //--------------------------------------------------------------------------
-    //
-    //  Private methods
-    //
-    //--------------------------------------------------------------------------
-    
-    /**
-     * @private
-     */
-    private function decorateInstance( object:Object, type:Class, 
-                                       args:Array = null ):*
-    {
-        if ( args != null )
-        {
-            if ( args.length > 0 )
-            {
-                return new type( object, args );
-            } else {
-                return new type( object );
-            }
-        } else {
-            return new type( object );
-        }
-    }
-    
-    /**
-     * @private
-     */
-    private function updateProperty( object:Object, property:String, 
-        value:Object ):void
-    {
-        if ( object.hasOwnProperty( property ) )
-        {
-            object[property] = value;
-        } else {
-            throw new IllegalOperationError( "No " + property + " exists "
-                + " for the type in " + qualifiedClassName );
-        }
     }
 }
 

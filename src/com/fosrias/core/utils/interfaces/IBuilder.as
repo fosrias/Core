@@ -54,8 +54,34 @@ public interface IBuilder
     
     /**
      * Creates and returns an instance of the class type set in the builder.
+     * 
+     * @param clear Whether the builder should clear itself after creating
+     * the instance. The default is <code>true</code>.
      */
-    function create():*;
+    function create(clear:Boolean = true):*;
+    
+    /**
+     * Clears a decorator set in the builder.
+     * 
+     * @param type The class of the decorator.
+     */
+    function clearDecorator(type:Class):void;
+    
+    /**
+     * Clears a property set in the builder.
+     * 
+     * @param property The name of the property.
+     * 
+     */
+    function clearProperty(property:String):void;
+    
+    /**
+     * Clears a style set in the builder.
+     * 
+     * @param style The name of the style.
+     * 
+     */
+    function clearStyle(style:String):void;
     
     /**
      * Sets a decorator to decorate the class.
@@ -75,6 +101,15 @@ public interface IBuilder
      * 
      */
     function setProperty( property:String, value:Object ):void;
+    
+    /**
+     * Sets a style on the built instance.
+     * 
+     * @param style The name of the style.
+     * @param value The value to be set on the property.
+     * 
+     */
+    function setStyle( style:String, value:Object ):void;
     
     /**
      * Sets the type of class to be instantiated and its constructor
