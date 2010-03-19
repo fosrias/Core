@@ -11,7 +11,11 @@
 package com.fosrias.core.business.interfaces
 {
 import com.fosrias.core.interfaces.ADispatcher;
+import com.fosrias.core.utils.DateUtils;
 
+import flash.utils.Dictionary;
+
+import mx.formatters.DateFormatter;
 import mx.rpc.AsyncToken;
 import mx.rpc.Fault;
 import mx.rpc.Responder;
@@ -25,7 +29,18 @@ import mx.rpc.remoting.mxml.RemoteObject;
  */
 public class AService extends ADispatcher
 {
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //  Class variables
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * @private 
+     */
+    private static var pendingCallTimestamps:Dictionary = new Dictionary;
+    
+    //--------------------------------------------------------------------------
     //
     //  Constructor
     //
@@ -109,16 +124,22 @@ public class AService extends ADispatcher
     	var operation:Operation 
     	    = Operation( service.getOperation( remoteOperation ) );
     	
-    	//Call the remote operation
-    	if ( args.length > 0 )
+        //Get a timestamp
+    	var now:Date = new Date();
+            
+        //Call the remote operation
+        if ( args.length > 0 )
     	{
     	   token = operation.send.apply( null, args );
     	}  else {
     		 token = operation.send();
     	} 
-    	
-    	//Set the token responder
+        
+        //Set the token responder
     	token.addResponder( new Responder( onResult, onFault ) );
+    	
+        //Store the time for reference
+        pendingCallTimestamps[token] = now;
     	
     	//Display debug message
     	traceDebug( className + "." + remoteOperation + " called.");
@@ -142,10 +163,30 @@ public class AService extends ADispatcher
     
     //--------------------------------------------------------------------------
     //
-    //  Protected Methods
+    //  Private methods
     //
     //--------------------------------------------------------------------------
-
+    
+    /**
+     * @private
+     */
+    private function findTimestamp(date:Date, token:AsyncToken):String
+    {
+        var timestamp:Date = pendingCallTimestamps[token];
+        
+        //Clear dictionary reference
+        pendingCallTimestamps[token] = null;
+        delete pendingCallTimestamps[token];
+        
+        return ((date.getTime() - timestamp.getTime())/1000).toString() + " s" 
+    }
+            
+    //--------------------------------------------------------------------------
+    //
+    //  Protected methods
+    //
+    //--------------------------------------------------------------------------
+    
     /**
      * Handler for remote service call results.
      * 
@@ -153,10 +194,14 @@ public class AService extends ADispatcher
      */
     protected function onResult(event:ResultEvent):void 
     {
+        //Get a timestamp
+        var now:Date = new Date();
+
         dispatchEvent(new ResultEvent(ResultEvent.RESULT, false, true, 
            event.result, event.token, event.message ));
            
-        traceDebug("Result Object: " + event.result.toString()); 
+        traceDebug("Result: " + event.result.toString() + " returned "
+            + " in " + findTimestamp(now, event.token) + " ."); 
         
         //Reset showBusyCursor property
         service.showBusyCursor = false; 
@@ -169,6 +214,9 @@ public class AService extends ADispatcher
      */
     protected function onFault(event:FaultEvent):void 
     {
+        //Get a timestamp
+        var now:Date = new Date();
+
     	var oldFault:Fault = event.fault;
     	var newFault:Fault = new Fault(oldFault.faultCode,
             oldFault.faultString, oldFault.faultDetail);
@@ -185,7 +233,8 @@ public class AService extends ADispatcher
         dispatchEvent(new FaultEvent(FaultEvent.FAULT, false, true, 
            newFault, event.token, event.message ));
            
-        traceDebug("Fault: " + newFault.message);
+        traceDebug("Fault: " + newFault.message + " returned "
+            + " in " + findTimestamp(now, event.token) + " .");
         
         //Reset showBusyCursor property
         service.showBusyCursor = false; 
