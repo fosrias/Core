@@ -18,6 +18,7 @@ import flash.events.Event;
  * 
  * <ul>
  *     <li>back</li>
+ *     <li>cancel</li>
  *     <li>close</li>
  *     <li>closeHelp</li>
  *     <li>clear</li>
@@ -43,14 +44,21 @@ public class ViewModelEvent extends Event
     public static const BACK:String = 
         "com.fosrias.events.ViewModelEvent.back";
         
-    /**
-     * The ViewModelEvent.CLEAR constant defines the value of the type 
-     * property of the event object for a clear event.
-     */
-    public static const CLEAR:String = 
-        "com.fosrias.events.ViewModelEvent.clear";
-        
-    /**
+	/**
+	 * The ViewModelEvent.CANCEL constant defines the value of the type 
+	 * property of the event object for a cancel event.
+	 */
+	public static const CANCEL:String = 
+		"com.fosrias.events.ViewModelEvent.cancel";
+	
+	/**
+	 * The ViewModelEvent.CLEAR constant defines the value of the type 
+	 * property of the event object for a clear event.
+	 */
+	public static const CLEAR:String = 
+		"com.fosrias.events.ViewModelEvent.clear";
+	
+	/**
      * The ViewModelEvent.CLOSE constant defines the value of the type 
      * property of the event object for a close event.
      */

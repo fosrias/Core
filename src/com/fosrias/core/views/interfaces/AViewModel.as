@@ -414,19 +414,31 @@ public class AViewModel extends ADispatcher
         dispatchEvent(new ViewModelEvent(ViewModelEvent.BACK));
     }
     
-    /**
-     * A utility method that dispatches a <code>ViewModelEvent.CLEAR</code> 
-     * event.
-     *  
-     * @param args Optional arguments passed to the <code>data</code> property
-     * of the <code>ViewModelEvent</code>.
-     */
-    public function clear( ... args ):void
-    {
-        dispatchEvent( new ViewModelEvent( ViewModelEvent.CLEAR, args ) );
-    }
-
-    /**
+	/**
+	 * A utility method that dispatches a <code>ViewModelEvent.CANCEL</code> 
+	 * event.
+	 *  
+	 * @param args Optional arguments passed to the <code>data</code> property
+	 * of the <code>ViewModelEvent</code>.
+	 */
+	public function cancel( ... args ):void
+	{
+		dispatchEvent( new ViewModelEvent( ViewModelEvent.CANCEL, args ) );
+	}
+	
+	/**
+	 * A utility method that dispatches a <code>ViewModelEvent.CLEAR</code> 
+	 * event.
+	 *  
+	 * @param args Optional arguments passed to the <code>data</code> property
+	 * of the <code>ViewModelEvent</code>.
+	 */
+	public function clear( ... args ):void
+	{
+		dispatchEvent( new ViewModelEvent( ViewModelEvent.CLEAR, args ) );
+	}
+	
+	/**
      * A utility method that dispatches a <code>ViewModelEvent.CLOSE</code> 
      * event.
      *  
