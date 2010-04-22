@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EventMap 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:business="com.fosrias.business.*"
+    xmlns="http://mate.asfusion.com/"
+    cache="global">
+    
+    <fx:Script>
+    <![CDATA[
+    import mx.events.FlexEvent;
+    import com.fosrias.core.events.DebugEvent;
+    import com.fosrias.core.events.StateEvent;
+    import com.fosrias.core.events.WebBrowserEvent;
+    import com.fosrias.core.managers.DebugManager;
+        
+    ]]>
+    </fx:Script>
+	
+	<fx:Declarations>
+		
+	<!-- Debugger __________________________________________________________ -->
+    <!-- Remove during production. -->
+    <Debugger level="{Debugger.ALL}" />
+    
+    <!-- FlexEvent.PREINITIALIZE ___________________________________________ -->   
+    <EventHandlers type="{FlexEvent.PREINITIALIZE}">
+        <ObjectBuilder generator="{DebugManager}">
+			<Properties hasDebugMessages="{true}"/>
+            <Properties dispatcher="{scope.dispatcher}"/>
+        </ObjectBuilder>  
+		<MethodInvoker generator="{DebugManager}" method="testMe"/>
+    </EventHandlers>
+    
+    <!-- FlexEvent.CREATION_COMPLETE _______________________________________ -->   
+    <EventHandlers type="{FlexEvent.CREATION_COMPLETE}"  
+        debug="true">
+    </EventHandlers>
+    
+    <!-- StateEvent.SET_STATE __________________________________________ -->   
+    <EventHandlers type="{StateEvent.SET_STATE}" debug="true">
+        <MethodInvoker generator="{DebugManager}" method="watchSetState"
+            arguments="{event}"/>
+    </EventHandlers>
+    
+    <!-- StateEvent.STATE_SET __________________________________________ -->   
+    <EventHandlers type="{StateEvent.STATE_SET}" debug="true">
+        <MethodInvoker generator="{DebugManager}" method="watchStateSet"
+            arguments="{event}"/>
+    </EventHandlers>
+    
+    <!-- WebBrowserEvent.BROWSER_URL_CHANGE ________________________________ -->
+    <EventHandlers type="{WebBrowserEvent.BROWSER_URL_CHANGE}" debug="true">
+        <MethodInvoker generator="{DebugManager}" 
+            method="watchBrowserURLChange" arguments="{event}"/>
+    </EventHandlers>
+	
+	</fx:Declarations>
+    
+</EventMap>

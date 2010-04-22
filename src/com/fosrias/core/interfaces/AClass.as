@@ -121,7 +121,7 @@ public class AClass extends EventDispatcher
      * @param value <code>true</code>, if the application monitors debug 
      * messages.
      */
-    public function set hasDebugMessages( value:Boolean ):void
+    public function set hasDebugMessages(value:Boolean):void
     {
         debugMessagesEnabled = value;
     }
