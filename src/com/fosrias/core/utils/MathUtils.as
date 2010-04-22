@@ -24,6 +24,8 @@ public final class MathUtils
 
     /**
      * Returns the base 10 multiplier of a number.
+	 * 
+	 * @param value The number.
      */
     public static function baseOf( value:Number ):int
     {
@@ -32,6 +34,10 @@ public final class MathUtils
     
     /**
      * Returns the ceiling of a number with respect to an interval.
+	 * 
+	 * @param value The number.
+	 * @param unit The interval unit.
+
      */
     public static function ceilOf( value:Number, unit:Number = 1):Number
     {
@@ -40,6 +46,9 @@ public final class MathUtils
     
     /**
      * Returns the floor of a number with respect to an interval.
+	 *
+	 * @param value The number.
+	 * @param unit The interval unit.
      */
     public static function floorOf( value:Number, unit:Number = 1 ):Number
     {
@@ -48,6 +57,8 @@ public final class MathUtils
 
     /**
      * Returns the scientific notation coeficient of a number.
+	 * 
+	 * @param value The number.
      */
     public static function coefficientOf( value:Number ):Number
     {
@@ -56,6 +67,8 @@ public final class MathUtils
     
     /**
      * Returns the decimal portion of a number.
+	 * 
+	 * @param value The number.
      */
     public static function decimalOf( value:Number ):Number
     {
@@ -64,6 +77,8 @@ public final class MathUtils
     
     /**
      * Returns the decimal portion of a number.
+	 * 
+	 * @param value The number.
      */
     public static function log10( value:Number ):Number
     {
@@ -72,6 +87,8 @@ public final class MathUtils
     
     /**
      * Returns the base 10 exponential power of a number.
+	 * 
+	 * @param value The number.
      */
     public static function powerOf( value:Number ):int
     {
@@ -80,6 +97,8 @@ public final class MathUtils
     
    /**
      * Calculates the decimal place precision of a number.
+	 * 
+	 * @param value The number.
      */
     public static function precisionOf( value:Number):int
     {
@@ -97,27 +116,44 @@ public final class MathUtils
         return precision;
     }
     
-    public static function signOf( value:Number ): int
+	/**
+	 * Returns the sign of a number.
+	 * 
+	 * @param value The number.
+	 */
+	public static function signOf(value:Number): int
     {
     	if ( value == 0 )
     	{
     		return 1;
     	} else {
-    	    return Math.round( value /Math.abs( value ) );
+    	    return Math.round(value /Math.abs(value));
     	}
     }
     
-     /**
-     * Rounds a number to the specified decimal precision.
+    /**
+     * Returns a number as a percent to the specified decimal precision.
      * 
-     * @param value The number to be rounded.
+     * @param value The number to be converted to a percent.
      * @param precision The number of decimal places.
      */
-    public static function round( value:Number, precision:int = 0):Number
+    public static function percent( value:Number, precision:int = 0):Number
     {
     	var roundBase:int = Math.pow( 10, precision );
-    	return Math.round( value * roundBase ) / roundBase;
+    	return Math.round( value * roundBase * 100 ) / roundBase;
     }
+	
+	/**
+	 * Rounds a number to the specified decimal precision.
+	 * 
+	 * @param value The number to be rounded.
+	 * @param precision The number of decimal places.
+	 */
+	public static function round( value:Number, precision:int = 0):Number
+	{
+		var roundBase:int = Math.pow( 10, precision );
+		return Math.round( value * roundBase ) / roundBase;
+	}
 }
 
 }
