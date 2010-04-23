@@ -30,7 +30,6 @@
 			<Properties hasDebugMessages="{true}"/>
             <Properties dispatcher="{scope.dispatcher}"/>
         </ObjectBuilder>  
-		<MethodInvoker generator="{DebugManager}" method="testMe"/>
     </EventHandlers>
     
     <!-- FlexEvent.CREATION_COMPLETE _______________________________________ -->   

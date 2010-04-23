@@ -58,7 +58,15 @@ public class ComparisonUtils
      */
     public static function isEqualArray( primaryArray:Array, 
         secondaryArray:Array ):Boolean
-    {
+    {	
+		//Compare null values
+		if (primaryArray == null && secondaryArray == null)
+		{
+			return true;
+		} else if (primaryArray == null || secondaryArray == null) {
+			return false;
+		}
+		
         //Must have same length to be equal
         var length:int = primaryArray.length;
         if ( length == secondaryArray.length )
