@@ -163,7 +163,8 @@ public class PopUpPanel extends Panel implements IPopUpComponent
      */
     private var _popUpFactory:AFactory = null;
     
-    /**
+	[Bindable]
+	/**
      * The popUpFactory for the view.
      * 
      * @param value The popUpFactory.
