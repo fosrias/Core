@@ -14,6 +14,7 @@ import com.fosrias.core.events.StateEvent;
 import com.fosrias.core.events.ViewModelEvent;
 import com.fosrias.core.interfaces.ADispatcher;
 import com.fosrias.core.interfaces.AFactory;
+import com.fosrias.core.namespaces.app_internal;
 
 import flash.errors.IllegalOperationError;
 import flash.events.Event;
@@ -23,6 +24,8 @@ import flash.ui.Keyboard;
 
 import mx.events.FlexEvent;
 import mx.managers.IFocusManagerComponent;
+
+use namespace app_internal;
 
 [Bindable]
 /**
@@ -613,6 +616,45 @@ public class AViewModel extends ADispatcher
         dispatchEvent( new StateEvent( StateEvent.SET_SUBSTATE, index, 
             reference ) );
     }
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Namespace methods: app_internal
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Dispatches a ViewModelEvent.DIRTY event with the specified payload.
+	 */
+	app_internal function reportDirty(data:Object, 
+									  reference:String = null):void
+	{
+		reportDirty(data, reference); 
+	}
+	
+	/**
+	 * A utility method to set an object's property to a new value and 
+	 * report the object as dirty by dispatching a 
+	 * <code>ViewModelEvent.DIRTY</code> event with the new update object
+	 * as the <code>data</code> property of the event. 
+	 * 
+	 * <p>Use it in custom presentation model methods or call it directly in 
+	 * the view to report changes in a <code>change</code> or <code>click</code> 
+	 * handler, for example.</p>
+	 * 
+	 * @param object The object whose property has changed.
+	 * @param value The new value of the property.
+	 * @param property The property.
+	 * @param reference A reference passed to the <code>reference</code>
+	 * property of the event.
+	 */
+	app_internal function reportDirtyObject(object:Object, 
+											value:Object, 
+										    property:String, 
+											reference:String = null ):void
+	{
+		reportDirtyObject(object, value, property, reference);
+	}
     
     //--------------------------------------------------------------------------
     //
