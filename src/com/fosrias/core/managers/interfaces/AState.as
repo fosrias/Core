@@ -832,6 +832,19 @@ public class AState extends AClass
     }
         
     /**
+     * Cancels the state based on the <code>cancelImpl</code> protected method.
+     * 
+     * <p>Typically, this method is used as a handler for a
+     * <code>ViewModelEvent.CANCEL</code> event.</p>
+     * 
+     * @param event The <code>ViewModelEvent</code> event.
+     */
+    app_internal final function cancel( event:ViewModelEvent = null ):void
+    {
+        cancelImpl( event );
+    }
+    
+    /**
      * Clears the state based on the <code>clearImpl</code> protected method.
      * 
      * <p>Typically, this method is used as a handler for a
@@ -1282,6 +1295,19 @@ public class AState extends AClass
     {
        raiseImplementationError( "method", "callResultImpl" ); 
     }
+    
+    /**
+     * This is the actual implementation of the internal <code>cancel</code> 
+     * method.
+     * 
+     * <p>Because there are problems with overriding methods in custom 
+     * namespaces, this method is needed to let subclasses override 
+     * the <code>cancel</code> method.</p>
+     */
+    protected function cancelImpl( event:ViewModelEvent = null ):void
+    {
+        raiseImplementationError( "method", "cancelImpl" );
+    }   
     
     /**
      * This is the actual implementation of the internal <code>clear</code> 

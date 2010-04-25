@@ -583,6 +583,20 @@ public class AStatefulManager extends AManager
     }
     
     /**
+     * Cancels the current state by delegating to the current 
+     * state's <code>cancel</code> internal method.
+     * 
+     * <p>Typically, this method is used as a handler for a
+     * <code>ViewModelEvent.CANCEL</code> event.</p>
+     * 
+     * @param event The <code>ViewModelEvent</code> event.
+     */
+    public function cancel( event:ViewModelEvent = null ):void
+    {
+        state.cancel( event );
+    }
+    
+    /**
      * Clears the current state by delegating to the current 
      * state's <code>clear</code> internal method.
      * 
