@@ -770,10 +770,11 @@ public class AViewModel extends ADispatcher
      * @private
      * Updates an object's property to a new value.
      */
-    private function updateObject( object:Object, value:Object, 
-        property:String):Object
+    private function updateObject(object:Object, 
+								  value:Object, 
+        						  property:String):Object
     { 
-        if ( property == null )
+        /*if ( property == null )
         {
             return object;
         } else if ( !object.hasOwnProperty( property ) ) {
@@ -782,7 +783,74 @@ public class AViewModel extends ADispatcher
                 qualifiedClassName );
         }
         object[property] = value;
-        return object;
+        return object;*/
+		var objectName:String;
+		
+		if (property == null)
+		{
+			return object;
+		} else if (property.indexOf(".") > 0)  {
+			//Check dot-delimited properties
+			var obj:Object = object;
+			
+			var parts:Array = property.split(".");
+			var tracedProperty:String = '';
+			
+			var n:int = parts.length - 1;
+			for (var i:int = 0; i < n; i++)
+			{
+				try
+				{
+					tracedProperty += parts[i];
+					obj = obj[parts[i]];
+				}
+				catch(error:Error)
+				{
+					if ( ( error is TypeError ) &&
+						( error.message.indexOf( "null has no properties" ) 
+							!= -1) )
+					{
+						objectName =  
+							object.hasOwnProperty('qualifiedClassName') ?
+							object.qualifiedClassName : object.toString();
+						throw new IllegalOperationError("No '" + tracedProperty 
+							+ "' property defined for " + objectName + " in " 
+							+ qualifiedClassName );
+					}
+					else
+					{                    
+						throw error;
+					}
+				}
+			}
+			
+			//Check the property exists on the last property part
+			var part:String = parts[i];
+			if (!obj.hasOwnProperty(part)) 
+			{
+				objectName =  obj.hasOwnProperty('qualifiedClassName') ?
+					obj.qualifiedClassName : obj.toString();
+				throw new IllegalOperationError("No '" + part 
+					+ "' property defined for " + objectName + " in " 
+					+ qualifiedClassName );
+			}
+			obj[part] = value;
+			
+		} else if (property.indexOf(".") != 0) {
+			if ( !object.hasOwnProperty(property) ) 
+			{
+				objectName =  obj.hasOwnProperty('qualifiedClassName') ?
+					obj.qualifiedClassName : obj.toString();
+				throw new IllegalOperationError("No '" + property 
+					+ "' property defined for " + objectName + " in " 
+					+ qualifiedClassName );
+			}
+			object[property] = value;
+		} else {
+			raiseImplementationError( 'updateObject', "Property '" + property 
+				+ "' invalid.");
+		}
+		return object;
     }
 }
 
