@@ -18,7 +18,9 @@ import com.fosrias.core.namespaces.app_internal;
 import flash.errors.IllegalOperationError;
 import flash.events.Event;
 import flash.events.EventDispatcher;
+import flash.utils.clearTimeout;
 import flash.utils.getQualifiedClassName;
+import flash.utils.setTimeout;
 
 import mx.core.FlexGlobals;
 import mx.core.UIComponent;
@@ -82,7 +84,18 @@ public class AClass extends EventDispatcher
             sessionChangeHandler, false, 0, true );
 	} 
 	
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //  Variables
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * @private
+     */
+    private var _retryId:uint;
+    
+    //--------------------------------------------------------------------------
     //
     //  Properties
     //
@@ -230,6 +243,48 @@ public class AClass extends EventDispatcher
     //--------------------------------------------------------------------------
     
     /**
+     * A utility method to cancel a pending <code>retryMethod</code> call.
+     * 
+     * @param closure The method to retry.
+     * @param delay The delay in milliseconds.
+     * @param arguments The arguments of the method.
+     * 
+     */
+    protected function clearRetry():void
+    {
+        flash.utils.clearTimeout(_retryId);
+    }
+    
+    /**
+     * A utility method to retry a method after a specified delay.
+     * 
+     * @param closure The method to retry.
+     * @param delay The delay in milliseconds.
+     * @param arguments The arguments of the method.
+     * 
+     */
+    protected function retryMethod(closure:Function, 
+                                   delay:Number, 
+                                   ...arguments):void
+    {
+        _retryId = setTimeout.apply(null, [closure, delay].concat(arguments));
+    }
+    
+    /**
+     * Utility method to dispatch an event of the specified type.
+     * 
+     * @param The string event type.
+     */
+    protected function dispatchEventType( type:String ):Boolean
+    {
+        if ( type != null )
+        {
+           return dispatchEvent( new Event( type ) ); 
+        }
+        return false;
+    }
+    
+    /**
      * The return value for abstract methods, getters, and setters in 
      * abstract classes which raise and <code>IllegalOperationError</code> 
      * if not overridden. E.g. Abstract getter name must be overridden in 
@@ -247,20 +302,6 @@ public class AClass extends EventDispatcher
     	throw new IllegalOperationError( "Abstract " + type + " "
                 + name + " must be overridden in " 
                 + qualifiedClassName + "." );
-    }
-    
-    /**
-     * Utility method to dispatch an event of the specified type.
-     * 
-     * @param The string event type.
-     */
-    protected function dispatchEventType( type:String ):Boolean
-    {
-        if ( type != null )
-        {
-           return dispatchEvent( new Event( type ) ); 
-        }
-        return false;
     }
     
     //--------------------------------------------------------------------------
