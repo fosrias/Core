@@ -27,9 +27,9 @@ public final class MathUtils
 	 * 
 	 * @param value The number.
      */
-    public static function baseOf( value:Number ):int
+    public static function baseOf(value:Number):int
     {
-        return Math.pow( 10, powerOf( value ) );
+        return Math.pow(10, powerOf(value));
     }
     
     /**
@@ -39,9 +39,9 @@ public final class MathUtils
 	 * @param unit The interval unit.
 
      */
-    public static function ceilOf( value:Number, unit:Number = 1):Number
+    public static function ceilOf(value:Number, unit:Number = 1):Number
     {
-        return Math.ceil( value / unit ) * unit;
+        return Math.ceil(value / unit) * unit;
     }
     
     /**
@@ -50,9 +50,9 @@ public final class MathUtils
 	 * @param value The number.
 	 * @param unit The interval unit.
      */
-    public static function floorOf( value:Number, unit:Number = 1 ):Number
+    public static function floorOf(value:Number, unit:Number = 1):Number
     {
-        return Math.floor( value / unit ) * unit;
+        return Math.floor(value / unit) * unit;
     }
 
     /**
@@ -60,9 +60,21 @@ public final class MathUtils
 	 * 
 	 * @param value The number.
      */
-    public static function coefficientOf( value:Number ):Number
+    public static function coefficientOf(value:Number):Number
     {
-        return value / baseOf( value );
+        return value / baseOf(value);
+    }
+    
+    /**
+     * Returns the decimal portion of a number.
+	 * 
+	 * @param value The number.
+     * @param precision The precision to cutoff floating point errors. Default
+     * is 7.
+     */
+    public static function decimalOf(value:Number, precision:Number = 7):Number
+    {
+        return round(Math.abs(value) - Math.floor( Math.abs(value)), precision);
     }
     
     /**
@@ -70,17 +82,7 @@ public final class MathUtils
 	 * 
 	 * @param value The number.
      */
-    public static function decimalOf( value:Number ):Number
-    {
-        return Math.abs( value ) - Math.floor( Math.abs(value) );
-    }
-    
-    /**
-     * Returns the decimal portion of a number.
-	 * 
-	 * @param value The number.
-     */
-    public static function log10( value:Number ):Number
+    public static function log10(value:Number):Number
     {
         return Math.log( value ) / Math.LN10;
     }
@@ -90,29 +92,29 @@ public final class MathUtils
 	 * 
 	 * @param value The number.
      */
-    public static function powerOf( value:Number ):int
+    public static function powerOf(value:Number):int
     {
-        return Math.floor( Math.log( Math.abs( value ) ) / Math.LN10 );
+        return Math.floor(Math.log(Math.abs(value)) / Math.LN10);
     }
     
    /**
      * Calculates the decimal place precision of a number.
 	 * 
 	 * @param value The number.
+     * @param precision The precision to cutoff floating point errors. Default
+     * is 7.
      */
-    public static function precisionOf( value:Number):int
+    public static function precisionOf(value:Number, precision:Number = 7):int
     {
-    	var precision:Number = 0;
-        var decimal:Number = decimalOf( value );
+        var decimal:Number = decimalOf(value, precision);
             
-        precision =
-            decimal == 0 ? 0 : -Math.floor(Math.log(decimal) / Math.LN10);
-            
-        decimal = Math.abs(value) - Math.floor(Math.abs(value));
-            
-        precision = Math.max(precision,
-                decimal == 0 ? 0: -Math.floor(Math.log(decimal) / Math.LN10));
+        precision = 0;
         
+        while (decimal != 0)
+        {
+            precision += 1;
+            decimal = decimalOf(10*decimal);
+        }
         return precision;
     }
     
@@ -137,7 +139,7 @@ public final class MathUtils
      * @param value The number to be converted to a percent.
      * @param precision The number of decimal places.
      */
-    public static function percent( value:Number, precision:int = 0):Number
+    public static function percent(value:Number, precision:int = 0):Number
     {
     	var roundBase:int = Math.pow( 10, precision );
     	return Math.round( value * roundBase * 100 ) / roundBase;
@@ -149,10 +151,10 @@ public final class MathUtils
 	 * @param value The number to be rounded.
 	 * @param precision The number of decimal places.
 	 */
-	public static function round( value:Number, precision:int = 0):Number
+	public static function round(value:Number, precision:int = 0):Number
 	{
 		var roundBase:int = Math.pow( 10, precision );
-		return Math.round( value * roundBase ) / roundBase;
+		return Math.round(value * roundBase) / roundBase;
 	}
 }
 
