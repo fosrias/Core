@@ -142,7 +142,7 @@ public class AManager extends ADispatcher
      */
     public function callFault( fault:Fault, ... args ):*
     {
-        //Do nothing unless overridden
+        traceDebug(fault.message);
     }
     
     /**

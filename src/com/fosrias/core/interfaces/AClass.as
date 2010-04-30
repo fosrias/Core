@@ -227,13 +227,13 @@ public class AClass extends EventDispatcher
         {
             message = qualifiedClassName + "\n     " + message;
             
-            //Send debug messages to the internal debug console.
-            trace( "DebugMessage: " + message );
-            
             //Send debug messages to the DebugConsole.
 			FlexGlobals.topLevelApplication.dispatchEvent(
                 new DebugEvent( DebugEvent.SET_MESSAGE, message, reference ) );
          }
+        
+        //Always send debug messages to the internal debug console.
+        trace( "DebugMessage: " + message );
     } 
     
     //--------------------------------------------------------------------------

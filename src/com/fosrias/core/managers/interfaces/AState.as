@@ -1266,7 +1266,7 @@ public class AState extends AClass
     }
  
     /**
-     * This abstract method is the actual implementation of the internal 
+     * This method is the actual implementation of the internal 
      * <code>callFault</code> method.
      * 
      * <p>Because there are problems with overriding methods in custom
@@ -1274,12 +1274,11 @@ public class AState extends AClass
      * <code>callFault</code> method. It must be overridden in managers that 
      * handle remote calls.</p>
      *
-     * Must be overridden in concrete implementations of this class.
+     * The default behaviour is to traceDebug the fault message.
      */
     protected function callFaultImpl( fault:Fault, ... args ):*
     {
-        raiseImplementationError( "method", 
-            "ARemoteViewState.callFaultImpl" ); 
+        traceDebug(fault.message);
     }
     
     /**
