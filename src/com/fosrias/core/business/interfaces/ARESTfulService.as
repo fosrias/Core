@@ -29,19 +29,19 @@ import mx.rpc.remoting.mxml.RemoteObject;
  */
 public class ARESTfulService extends AService
 {
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     //
     //  Constructor
     //
     //--------------------------------------------------------------------------
-
+    
     /**
      * Constructor
      */
     public function ARESTfulService( self:AService, 
-        showBusyCursor:Boolean = false )
+                                     showBusyCursor:Boolean = false )
     {
-    	super( self, showBusyCursor );
+        super( self, showBusyCursor );
     }
     
     //--------------------------------------------------------------------------
@@ -73,9 +73,9 @@ public class ARESTfulService extends AService
     /**
      * Calls the index method in the remote service controller.
      */
-    public function index():void
+    public function index( ... args ):void
     {
-        call( 'index' );
+        call.apply(null, ['index'].concat(args));
     }
     
     /**
@@ -87,7 +87,7 @@ public class ARESTfulService extends AService
     {
         call.apply( null, ['show'].concat( args ) );
     }
-        
+    
     /**
      * Calls the create method in the remote service controller.
      * 
