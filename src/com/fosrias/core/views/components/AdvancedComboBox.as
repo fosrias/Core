@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Mark W. Foster    www.fosrias.com
+//  Copyright (c) 2009-2010    Mark W. Foster    www.fosrias.com
 //  All Rights Reserved.
 //
 //  NOTICE: Mark W. Foster permits you to use, modify, and distribute this file
@@ -13,10 +13,11 @@ package com.fosrias.core.views.components
 import mx.controls.ComboBox;
 
 /**
- * The DataComboBox class is a combo box extended to allow mapping 
+ * The AdvancedComboBox class is a combo box extended to allow mapping 
  * of selectedItem data fields to fields in the data provider if 
  * the mapping fields are set. Otherwise, it functions as a normal 
- * combo box.
+ * combo box. The AdvancedComboBox can be used as an inline itemEditor in 
+ * a DataGrid or AdvancedDataGrid as well.
  */
 public class AdvancedComboBox extends ComboBox
 {
@@ -51,6 +52,24 @@ public class AdvancedComboBox extends ComboBox
     //
     //--------------------------------------------------------------------------
 
+    //----------------------------------
+    //  editorData
+    //----------------------------------
+    
+    /**
+     * The editorData is the field in the dataProvider specified by the 
+     * <code>dataProviderField</code>.
+     */
+    public function get editorData():*
+    {
+        if (selectedItem != null)
+        {
+            return selectedItem[dataProviderField];
+        } else {
+            return data[itemField];
+        }
+    }
+        
     //----------------------------------
     //  itemField
     //----------------------------------
@@ -100,12 +119,12 @@ public class AdvancedComboBox extends ComboBox
     /**
      * @inheritDoc
      */
-    override public function set selectedItem( data:Object ):void
+    override public function set selectedItem(data:Object):void
     {
     	_selectedData = data;
-    	if ( itemField != null && dataProviderField != null 
-    	   && dataProvider != null && data != null && 
-           data.hasOwnProperty( itemField ) )
+    	if (itemField != null && dataProviderField != null && 
+            dataProvider != null && data != null && 
+           data.hasOwnProperty( itemField ))
     	{
             for each (var dp:Object in dataProvider) 
             {
@@ -116,7 +135,7 @@ public class AdvancedComboBox extends ComboBox
                 }
                
             }    
-            super.selectedItem = null;               
+            super.selectedItem = null;             
     	} else {
     		super.selectedItem = data;
     	}
