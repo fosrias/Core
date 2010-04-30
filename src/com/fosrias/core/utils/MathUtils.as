@@ -123,7 +123,7 @@ public final class MathUtils
 	 * 
 	 * @param value The number.
 	 */
-	public static function signOf(value:Number): int
+	public static function signOf(value:Number):int
     {
     	if ( value == 0 )
     	{
@@ -131,6 +131,27 @@ public final class MathUtils
     	} else {
     	    return Math.round(value /Math.abs(value));
     	}
+    }
+    
+    /**
+     * Returns the sign of a number.
+     * 
+     * @param value The number.
+     */
+    public static function signSymbolOf(value:Number):String
+    {
+        if ( value == 0 )
+        {
+            return "+";
+        } else {
+            value = Math.round(value /Math.abs(value));
+            if (value > 0)
+            {
+                return "+";
+            } else {
+                return "-";
+            }
+        }
     }
     
     /**
