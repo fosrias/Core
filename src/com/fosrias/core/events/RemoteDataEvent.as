@@ -77,10 +77,12 @@ public class RemoteDataEvent extends Event
     /**
      * Constructor
      */
-    public function RemoteDataEvent( type:String, data:Object = null, 
-        reference:String = null )
+    public function RemoteDataEvent(type:String, 
+                                    data:Object = null, 
+                                    reference:String = null, 
+                                    bubbles:Boolean = false)
     {
-        super( type, true );
+        super(type, bubbles);
         
         _data = data;
         _reference = reference;
