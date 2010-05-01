@@ -53,6 +53,19 @@ public class AdvancedComboBox extends ComboBox
     //--------------------------------------------------------------------------
 
     //----------------------------------
+    //  data
+    //----------------------------------
+    
+    /**
+     * @private
+     */
+    override public function set data(value:Object):void 
+    {
+        selectedItem = value;
+        super.data = value;
+    }
+    
+    //----------------------------------
     //  editorData
     //----------------------------------
     

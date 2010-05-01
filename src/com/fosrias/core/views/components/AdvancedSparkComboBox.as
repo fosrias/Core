@@ -58,6 +58,10 @@ public class AdvancedSparkComboBox extends spark.components.ComboBox
     //
     //--------------------------------------------------------------------------
     
+    //----------------------------------
+    //  data
+    //----------------------------------
+    
     /**
      * @private
      * Storage for the dataProperty 
