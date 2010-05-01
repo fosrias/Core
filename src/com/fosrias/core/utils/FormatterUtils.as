@@ -74,7 +74,8 @@ public class FormatterUtils
      * A <code>CurrencyFormatter</code> instance with localized currency 
      * formatting. 
      */
-    public static function currencyFormatter():CurrencyFormatter
+    public static function currencyFormatter(showThousands:Boolean = true
+        ):CurrencyFormatter
     {
         var resourceManager:IResourceManager = ResourceManager.getInstance();
         var formatter:CurrencyFormatter = new CurrencyFormatter;
@@ -83,8 +84,13 @@ public class FormatterUtils
             'CURRENCY_PRECISION');
         formatter.currencySymbol = resourceManager.getString('FormattingValues', 
             'CURRENCY_SYMBOL');
-        formatter.thousandsSeparatorTo= resourceManager.getString(
-            'FormattingValues', 'THOUSANDS_SEPARATOR'); 
+        if(showThousands)
+        {
+            formatter.thousandsSeparatorTo= resourceManager.getString(
+                'FormattingValues', 'THOUSANDS_SEPARATOR');
+        } else {
+            formatter.thousandsSeparatorTo = '';
+        }
         formatter.decimalSeparatorTo= resourceManager.getString(
             'FormattingValues', 'DECIMAL_SEPARATOR');
         return formatter;
@@ -93,13 +99,19 @@ public class FormatterUtils
     /**
      * A <code>NumberFormatter</code> instance with localized number formatting. 
      */
-    public static function numberFormatter():NumberFormatter
+    public static function numberFormatter(showThousands:Boolean = true
+        ):NumberFormatter
     {
         var resourceManager:IResourceManager = ResourceManager.getInstance();
         var formatter:NumberFormatter = new NumberFormatter;
         
-        formatter.thousandsSeparatorTo= resourceManager.getString(
-            'FormattingValues', 'THOUSANDS_SEPARATOR'); 
+        if(showThousands)
+        {
+            formatter.thousandsSeparatorTo= resourceManager.getString(
+                'FormattingValues', 'THOUSANDS_SEPARATOR');
+        } else {
+            formatter.thousandsSeparatorTo = '';
+        }
         formatter.decimalSeparatorTo= resourceManager.getString(
             'FormattingValues', 'DECIMAL_SEPARATOR');
         return formatter;
