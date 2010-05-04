@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application 
+    xmlns:fx="http://ns.adobe.com/mxml/2009" 
+    xmlns:s="library://ns.adobe.com/flex/spark" 
+    xmlns:mx="library://ns.adobe.com/flex/mx"
+    xmlns:views="com.fosrias.tradingAccount.views.*"
+    xmlns:coreViews="com.fosrias.core.views.*"
+    xmlns:maps="com.fosrias.core.maps.*"
+    creationComplete="onComplete();">
+    
+    <!-- Instructions ______________________________________________________ -->    
+    <!-- To use this application:
+            1. Layout your test interface in a Group container.
+            2. Specify the testComponent property class as the previous
+               container.
+            3. Set any styles. -->
+    
+    <!-- Styles ____________________________________________________________ -->    
+   
+    <!-- Script ____________________________________________________________ --> 
+<fx:Script>
+<![CDATA[
+    import mx.core.UIComponent;
+    
+    public var testComponent:Class;
+    
+    [Bindable]
+    public var debugConsoleHeight:int;
+    
+    protected function onComplete():void
+    {
+        if (testComponent != null)
+        {
+            var displayObject:UIComponent = UIComponent(new testComponent);
+            displayObject.percentHeight = 100;
+            debugBox.addChildAt(displayObject, 0);
+        } else {
+            throw new IllegalOperationError("Property testComponent not "
+                + "specified in " + this.className + ".");
+        }
+        if (debugConsoleHeight > 0)
+        {
+            debugConsole.height = debugConsoleHeight;
+        } else {
+            debugConsole.height = vBox.height - displayObject.height - 10;
+        }
+    }
+    
+]]>
+</fx:Script>
+    
+<fx:Declarations>
+
+    <!-- Event Maps ________________________________________________________ -->    
+    <maps:DebugEventMap/>
+    
+</fx:Declarations>
+    
+    <!-- GUI _______________________________________________________________ -->    
+    <s:Group width="1000" top="0" bottom="0" horizontalCenter="0">
+        <mx:VDividedBox id="vBox"
+                        left="10" right="10" top="10" bottom="30">
+            <mx:HDividedBox id="debugBox" width="100%" height="100%" 
+                            liveDragging="true">
+                <mx:Canvas width="0"/>
+            </mx:HDividedBox>
+            <coreViews:DebugConsole id="debugConsole"
+                                    width="100%" height="100%"/>
+        </mx:VDividedBox>
+    </s:Group>   
+</s:Application>

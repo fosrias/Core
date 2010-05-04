@@ -89,6 +89,7 @@
     <classEntry path="com.fosrias.core.validators.ServerErrorValidator"/>
     <classEntry path="com.fosrias.core.validators.ServerErrors"/>
     <classEntry path="com.fosrias.core.validators.ValidatorFactory"/>
+    <classEntry path="com.fosrias.core.views.DebugApplication"/>
     <classEntry path="com.fosrias.core.views.DebugConsole"/>
     <classEntry path="com.fosrias.core.views.HelpWindow"/>
     <classEntry path="com.fosrias.core.views.SiteStatusUI"/>
