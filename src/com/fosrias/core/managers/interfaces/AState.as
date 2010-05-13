@@ -1149,7 +1149,13 @@ public class AState extends AClass
     {
         if ( dispatcher == manager.dispatcher )
         {
-            return setSubstateImpl( index, reference );
+            if ( setSubstateImpl( index, reference ) )
+            {
+                //Notify the manager that state has changed
+                //so that binding events occur.
+                dispatchEventType( "substateChange" );
+                return true;
+            }
         }
         return false;
     }
