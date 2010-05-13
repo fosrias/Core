@@ -117,6 +117,24 @@ public class AdvancedSparkComboBox extends spark.components.ComboBox
     public var itemField:String = null;
     
     //----------------------------------
+    //  selectedField
+    //----------------------------------
+    
+    /**
+     * The field in the <code>selectedItem</code> items that maps to the 
+     * <code>dataProviderField</code>.
+     */
+    public function get selectedField():*
+    {
+        if (selectedItem != null)
+        {
+            return selectedItem[dataProviderField];
+        } else {
+            return null;
+        }
+    }
+
+    //----------------------------------
     //  dataProviderField
     //----------------------------------
     
