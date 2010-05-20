@@ -9,6 +9,7 @@
     <classEntry path="com.fosrias.core.business.Services"/>
     <classEntry path="com.fosrias.core.business.interfaces.ARESTfulService"/>
     <classEntry path="com.fosrias.core.business.interfaces.AService"/>
+    <classEntry path="com.fosrias.core.events.DataEvent"/>
     <classEntry path="com.fosrias.core.events.DebugEvent"/>
     <classEntry path="com.fosrias.core.events.PopUpLoaderEvent"/>
     <classEntry path="com.fosrias.core.events.RemoteDataEvent"/>
@@ -99,7 +100,9 @@
     <classEntry path="com.fosrias.core.views.components.EnumComboBox"/>
     <classEntry path="com.fosrias.core.views.components.FixedDatefield"/>
     <classEntry path="com.fosrias.core.views.components.HideableComboBox"/>
+    <classEntry path="com.fosrias.core.views.components.IconlessDateField"/>
     <classEntry path="com.fosrias.core.views.components.InputTextFormItem"/>
+    <classEntry path="com.fosrias.core.views.components.ManualProgressBar"/>
     <classEntry path="com.fosrias.core.views.components.PopUpCanvas"/>
     <classEntry path="com.fosrias.core.views.components.PopUpGroup"/>
     <classEntry path="com.fosrias.core.views.components.PopUpPanel"/>
@@ -117,6 +120,8 @@
     <classEntry path="com.fosrias.core.views.renderers.TextInputNumberRenderer"/>
     <classEntry path="com.fosrias.core.views.skins.HiddenCombo"/>
     <classEntry path="com.fosrias.core.views.skins.LeftCheckBoxSkin"/>
+    <classEntry path="com.fosrias.core.views.skins.NumericTextInput"/>
+    <classEntry path="com.fosrias.core.views.skins.ProgressBarSkin"/>
     <classEntry path="com.fosrias.core.vos.CallHash"/>
     <classEntry path="com.fosrias.core.vos.CallResult"/>
     <classEntry path="com.fosrias.core.vos.LoginData"/>
