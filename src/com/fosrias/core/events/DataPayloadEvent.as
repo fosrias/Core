@@ -15,7 +15,7 @@ import flash.events.Event;
 /**
  * Base class for data and reference payload events.
  */
-public class DataEvent extends Event
+public class DataPayloadEvent extends Event
 {
 	//--------------------------------------------------------------------------
     //
@@ -26,7 +26,7 @@ public class DataEvent extends Event
     /**
      * Constructor
      */
-    public function DataEvent(type:String, data:Object = null, 
+    public function DataPayloadEvent(type:String, data:Object = null, 
         reference:String = null, bubbles:Boolean = true)
     {
         super(type, bubbles);
@@ -87,7 +87,7 @@ public class DataEvent extends Event
      */
     override public function clone():Event
     {
-        return new DataEvent(type, data, reference);
+        return new DataPayloadEvent(type, data, reference, bubbles);
     }
 }
   

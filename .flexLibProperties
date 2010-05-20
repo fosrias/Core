@@ -9,7 +9,7 @@
     <classEntry path="com.fosrias.core.business.Services"/>
     <classEntry path="com.fosrias.core.business.interfaces.ARESTfulService"/>
     <classEntry path="com.fosrias.core.business.interfaces.AService"/>
-    <classEntry path="com.fosrias.core.events.DataEvent"/>
+    <classEntry path="com.fosrias.core.events.DataPayloadEvent"/>
     <classEntry path="com.fosrias.core.events.DebugEvent"/>
     <classEntry path="com.fosrias.core.events.PopUpLoaderEvent"/>
     <classEntry path="com.fosrias.core.events.RemoteDataEvent"/>
