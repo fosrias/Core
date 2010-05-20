@@ -739,9 +739,9 @@ public class AStatefulManager extends AManager
      */
     public final function setDirty( event:ViewModelEvent = null ):Boolean
     {
-    	_modelIsDirty = setDirtyImpl( event )
+    	_modelIsDirty = setDirtyImpl(event);
 
-        dispatchEventType( "dirtyChange" );
+        dispatchEventType("dirtyChange");
     	return _modelIsDirty;
     }
     
@@ -893,6 +893,15 @@ public class AStatefulManager extends AManager
         }
         dispatchEventType( "helpChange" );
     }
+    
+    /**
+     * Sets the model dirty status to the value.
+     */
+    app_internal function updateDirty(value:Boolean):void
+    {
+        _modelIsDirty = value;
+        dispatchEventType("dirtyChange");
+    }
 
     //--------------------------------------------------------------------------
     //
@@ -982,9 +991,9 @@ public class AStatefulManager extends AManager
      * 
      * @param event The <code>ViewModelEvent</code> event.
      */
-    protected function setDirtyImpl( event:ViewModelEvent = null ):Boolean
+    protected function setDirtyImpl(event:ViewModelEvent = null):Boolean
     {
-        return raiseImplementationError( "method", "setDirty" ); 
+        return state.setDirty(event);
     }
     
     /**

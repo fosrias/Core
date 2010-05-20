@@ -1063,6 +1063,20 @@ public class AState extends AClass
     }
     
     /**
+     * Tracks changes to the manager's presentation model based on the 
+     * <code>setDirtyImpl</code> protected method.
+     * 
+     * <p>Typically, this method is used as a handler for a
+     * <code>ViewModelEvent.DIRTY</code> event.</p>
+     * 
+     * @param event The <code>ViewModelEvent</code> event.
+     */
+    app_internal final function setDirty(event:ViewModelEvent = null):Boolean
+    {
+        return setDirtyImpl(event);
+    }
+ 
+    /**
      * Sets parameters from a browser address for the state, if any.
      * 
      * <p>If the parameters are valid and successfully set for the state,
@@ -1547,6 +1561,24 @@ public class AState extends AClass
             this, type ) );
     }
     
+    /**
+     * Abstract implmentation of the <code>setDirty</code> method. This
+     * function must be overridden in concrete implementations to reflect
+     * changes to the model.
+     * 
+     * <p>Typically, this method processes <code>ViewModelEvent.SET_DIRTY</code> 
+     * event data property which corresponds to the <code>data</code>
+     * property in a <code>AViewModel</code> presentation model. It should
+     * return <code>true</code> if the model has changed its dirty status. This
+     * method should return true if the model is dirty and false otherwise.</p>
+     * 
+     * @param event The <code>ViewModelEvent</code> event.
+     */
+    protected function setDirtyImpl(event:ViewModelEvent = null):Boolean
+    {
+        return raiseImplementationError( "method", "setDirty" ); 
+    }
+
     /**
      * Flags the state to close if another state is set that is not a 
      * siblling state and is a top-level state. Use this method only in the 
