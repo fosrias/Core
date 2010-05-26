@@ -176,18 +176,21 @@ public class AdvancedSparkComboBox extends spark.components.ComboBox
     override public function set selectedItem(value:*):void
     {
     	_selectedData = value;
-    	if ( itemField != null && dataProviderField != null 
-    	   && dataProvider != null && value != null && 
-		   value.hasOwnProperty( itemField ) )
+    	if (dataProviderField != null && dataProvider != null 
+            && value != null && (itemField != null && 
+                value.hasOwnProperty( itemField) || itemField == null))
     	{
             for each (var dp:Object in dataProvider) 
             {
-                if ( dp[dataProviderField] == value[itemField] ) 
+                if (itemField != null && 
+                    dp[dataProviderField] == value[itemField] ) 
                 {
                     super.selectedItem = dp;
                     return;     
-                }
-               
+                } else if ( dp[dataProviderField] == value ) {
+                    super.selectedItem = dp;
+                    return; 
+                } 
             }    
             super.selectedItem = null;               
     	} else {

@@ -99,11 +99,14 @@ public class FormatterUtils
     /**
      * A <code>NumberFormatter</code> instance with localized number formatting. 
      */
-    public static function numberFormatter(showThousands:Boolean = true
-        ):NumberFormatter
+    public static function numberFormatter(precision:int = 2,
+                                           showThousands:Boolean = true
+                                           ):NumberFormatter
     {
         var resourceManager:IResourceManager = ResourceManager.getInstance();
         var formatter:NumberFormatter = new NumberFormatter;
+        
+        formatter.precision = precision;
         
         if(showThousands)
         {
