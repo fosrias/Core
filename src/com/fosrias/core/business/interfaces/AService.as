@@ -230,12 +230,12 @@ public class AService extends ADispatcher
         	newFault.message = oldFault.message;
         }
         
-        dispatchEvent(new FaultEvent(FaultEvent.FAULT, false, true, 
-           newFault, event.token, event.message ));
-           
         traceDebug("Fault: " + newFault.message + " returned "
             + " in " + findTimestamp(now, event.token) + " .");
         
+        dispatchEvent(new FaultEvent(FaultEvent.FAULT, false, true, 
+           newFault, event.token, event.message ));
+           
         //Reset showBusyCursor property
         service.showBusyCursor = false; 
     }

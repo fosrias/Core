@@ -1298,7 +1298,7 @@ public class AState extends AClass
      */
     protected function callFaultImpl( fault:Fault, ... args ):*
     {
-        traceDebug(fault.message);
+        traceDebug(fault.faultString + '\n' + fault.message);
     }
     
     /**
