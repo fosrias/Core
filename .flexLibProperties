@@ -95,6 +95,7 @@
     <classEntry path="com.fosrias.core.views.HelpWindow"/>
     <classEntry path="com.fosrias.core.views.SiteStatusUI"/>
     <classEntry path="com.fosrias.core.views.components.AdvancedComboBox"/>
+    <classEntry path="com.fosrias.core.views.components.AdvancedModuleLoader"/>
     <classEntry path="com.fosrias.core.views.components.AdvancedSparkComboBox"/>
     <classEntry path="com.fosrias.core.views.components.BindingWatcherCanvas"/>
     <classEntry path="com.fosrias.core.views.components.EnumComboBox"/>
@@ -119,6 +120,7 @@
     <classEntry path="com.fosrias.core.views.models.SiteStatusViewModel"/>
     <classEntry path="com.fosrias.core.views.renderers.TextInputNumberRenderer"/>
     <classEntry path="com.fosrias.core.views.skins.HiddenCombo"/>
+    <classEntry path="com.fosrias.core.views.skins.InvisibleCombo"/>
     <classEntry path="com.fosrias.core.views.skins.LeftCheckBoxSkin"/>
     <classEntry path="com.fosrias.core.views.skins.NumericTextInput"/>
     <classEntry path="com.fosrias.core.views.skins.ProgressBarSkin"/>
@@ -129,6 +131,10 @@
     <classEntry path="com.fosrias.core.vos.UserData"/>
     <classEntry path="com.fosrias.core.vos.UserPermissions"/>
     <classEntry path="com.fosrias.core.vos.interfaces.ASelector"/>
+    <classEntry path="ws.tink.spark.modules.Module"/>
+    <classEntry path="ws.tink.spark.modules.ModuleLoadPolicy"/>
+    <classEntry path="ws.tink.spark.modules.ModuleLoader"/>
+    <classEntry path="ws.tink.spark.modules.ModuleLoaderStatus"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
