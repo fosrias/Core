@@ -137,6 +137,7 @@ is defined by the ComboBoxTextInputSkin class.
                         border.visible = true;
                     if (background)
                     {
+                        background.alpha = 0;
                         background.left = background.top = background.right = background.bottom = 1;
                     }
                     if (scroller)
@@ -151,7 +152,7 @@ is defined by the ComboBoxTextInputSkin class.
                 if (borderStroke)
                 {
                     borderStroke.color = getStyle("borderColor");
-                    borderStroke.alpha = getStyle("borderAlpha");
+                    borderStroke.alpha = 0;
                 }
                 super.updateDisplayList(unscaledWidth, unscaledHeight);
             }
@@ -226,10 +227,12 @@ is defined by the ComboBoxTextInputSkin class.
               skinClass="spark.skins.spark.ComboBoxButtonSkin"  includeIn="disabled,open"/>  
     <!--- @copy spark.components.ComboBox#textInput -->
     <s:TextInput id="textInput"
+                 editable="false"
                  left="0" right="18" top="0" bottom="0" 
-                 skinClass="spark.skins.spark.ComboBoxTextInputSkin"
-                 top.normal="0" left.normal="0" bottom.normal="0" right.normal="0" 
-                 editable.normal="false"/> 
+                 borderVisible="false" 
+                 selectable="false"
+                 contentBackgroundAlpha="0"
+                 top.normal="0" left.normal="0" bottom.normal="0" right.normal="0"/> 
     
 </s:SparkSkin>
 
