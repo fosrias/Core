@@ -10,6 +10,7 @@
 
 package com.fosrias.core.utils
 {
+import flash.errors.IllegalOperationError;
 import flash.media.Sound;
 
 import mx.styles.CSSStyleDeclaration;
@@ -60,17 +61,20 @@ public class SystemSounds
      * @param type The type of sound to play. Valid options are 
      * the constants.
      */
-    public static function play( type:String ):void
+    public static function play(type:String):void
     {
         //Get the current style declaration
     	var css:CSSStyleDeclaration = StyleManager.getStyleManager(null).
             getStyleDeclaration(".systemSounds");
         
+        if (css == null)
+            return;
+        
         //Get the sound style
-    	var soundClass:Class = css.getStyle( type );
+    	var soundClass:Class = css.getStyle(type);
     	
     	//Play the sound
-    	if ( soundClass != null )
+    	if (soundClass != null)
     	{
 	    	var sound:Sound = Sound(new soundClass);
 	        sound.play();

@@ -45,13 +45,24 @@ public class FormatterUtils
     /**
      * A <code>DateFormatter</code> instance with localized date formatting. 
      */
-    public static function dateFormatter():DateFormatter
+    public static function dateFormatter(hasTime:Boolean = false):DateFormatter
     {
         var resourceManager:IResourceManager = ResourceManager.getInstance();
         var formatter:DateFormatter = new DateFormatter;
         
         formatter.formatString = resourceManager.getString('FormattingValues', 
             'DATE_FORMAT');
+        
+        if (hasTime)
+        {
+            var timeFormat:String = resourceManager.getString('FormattingValues', 
+                'TIME_FORMAT');
+
+            //Hack if localization not set up
+            if (timeFormat == null)
+                formatter.formatString += " L:NN A";
+        }
+        
         return formatter;
     }
     
@@ -59,9 +70,10 @@ public class FormatterUtils
      * A <code>DateFormatter</code> instance with localized full year date 
      * formatting. 
      */
-    public static function dateFullYearFormatter():DateFormatter
+    public static function dateFullYearFormatter(
+        hasTime:Boolean = false):DateFormatter
     {
-        var formatter:DateFormatter = dateFormatter();
+        var formatter:DateFormatter = dateFormatter(hasTime);
         
         //Replace partial year with full year.
         if (!formatter.formatString.match(/YYYY/))
