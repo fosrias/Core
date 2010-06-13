@@ -131,9 +131,6 @@
     <classEntry path="com.fosrias.core.vos.UserData"/>
     <classEntry path="com.fosrias.core.vos.UserPermissions"/>
     <classEntry path="com.fosrias.core.vos.interfaces.ASelector"/>
-    <classEntry path="ws.tink.spark.modules.ModuleLoadPolicy"/>
-    <classEntry path="ws.tink.spark.modules.ModuleLoader"/>
-    <classEntry path="ws.tink.spark.modules.ModuleLoaderStatus"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
