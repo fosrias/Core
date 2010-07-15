@@ -579,7 +579,7 @@ public class AStatefulManager extends AManager
      */
     override public function callResult( result:CallResult, ... args ):*
     {
-        return state.callResult( result, args );
+        return state.callResult.apply(null, [result].concat(args) );
     }
     
     /**

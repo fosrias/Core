@@ -828,7 +828,7 @@ public class AState extends AClass
     app_internal final function callResult( callResult:CallResult, ... args ):*
     {
         manager.hasPendingRemoteCall = false;
-        return callResultImpl( callResult, args );
+        return callResultImpl.apply( null, [callResult].concat(args) );
     }
         
     /**
