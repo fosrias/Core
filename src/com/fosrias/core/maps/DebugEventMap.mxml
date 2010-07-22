@@ -18,7 +18,7 @@
     ]]>
     </fx:Script>
 	
-	<fx:Declarations>
+<fx:Declarations>
 		
 	<!-- Debugger __________________________________________________________ -->
     <!-- Remove during production. -->
@@ -55,6 +55,6 @@
             method="watchBrowserURLChange" arguments="{event}"/>
     </EventHandlers>
 	
-	</fx:Declarations>
+</fx:Declarations>
     
 </EventMap>

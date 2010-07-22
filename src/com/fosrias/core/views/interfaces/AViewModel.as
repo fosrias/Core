@@ -60,7 +60,7 @@ public class AViewModel extends ADispatcher
     /**
      * Constructor
      */
-	public function AViewModel( self:AViewModel )
+	public function AViewModel(self:AViewModel)
 	{
 	    super( self );
 	}

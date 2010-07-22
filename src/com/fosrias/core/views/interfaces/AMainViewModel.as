@@ -27,9 +27,9 @@ public class AMainViewModel extends AViewModel
     /**
      * Constructor
      */
-    public function AMainViewModel()
+    public function AMainViewModel(self:AMainViewModel)
 	{
-	   super(this);
+	   super(self);
 	}
 	
 	//--------------------------------------------------------------------------
