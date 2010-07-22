@@ -3,12 +3,15 @@
 	xmlns:fx="http://ns.adobe.com/mxml/2009" 
     xmlns:s="library://ns.adobe.com/flex/spark" 
     xmlns:mx="library://ns.adobe.com/flex/mx">
-	
-	<fx:Declarations>
-		
-	<s:RemoteObject id="messagesService" destination="rubyamf" 
-   	     source="MessagesController"/>
-		
-	</fx:Declarations>
+  
+    <!-- Services __________________________________________________________ -->
+<fx:Declarations>
+    
+    <mx:RemoteObject id="messagesService" 
+                     destination="rubyamf" 
+                     endpoint="http://localhost:3000/rubyamf/gateway"
+                     source="MessagesController"/>
+    
+</fx:Declarations>
 	
 </fx:Object>
