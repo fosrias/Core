@@ -12,6 +12,8 @@ package com.fosrias.core.vos
 {
 import com.fosrias.core.utils.ArrayUtils;
 
+import flash.events.Event;
+
 import mx.controls.menuClasses.MenuBarItem;
 
 /**
@@ -23,6 +25,21 @@ public dynamic class MenuBarItem
 {
     //--------------------------------------------------------------------------
     //
+    //  Constants
+    //
+    //--------------------------------------------------------------------------
+    
+    public static const CHECK:String = "check";
+    
+    public static const NORMAL:String = "normal";
+    
+    public static const RADIO:String = "radio";
+    
+    public static const SEPARATOR:String = "separator";
+    
+    
+    //--------------------------------------------------------------------------
+    //
     //  Constructor
     //
     //--------------------------------------------------------------------------
@@ -30,13 +47,17 @@ public dynamic class MenuBarItem
     /**
      * Constructor
      */
-    public function MenuBarItem(label:String, groupType:String = null,
-        state:Object = null, substate:Object = null)
+    public function MenuBarItem(label:String, 
+                                event:Event = null, 
+                                type:String = "normal",
+                                groupType:String = null)
     {
         _label = label;
+        _event = event
+        
+        //REFACTOR: Add type checking
+        _type = type;
         _groupType = groupType;
-        _state = state;
-        _substate = substate;
     }
     
     //--------------------------------------------------------------------------
@@ -49,19 +70,10 @@ public dynamic class MenuBarItem
     //  children
     //----------------------------------
     
-//    /**
-//     * @private
-//     * Storage for the children property.
-//     */
-//    private var _children:Array = [];
-//    
-//    /**
-//     * The children of the item.
-//     */
-//    public function get children():Array
-//    {
-//        return _children;
-//    }
+    /**
+     * The children property is dynamically added if child menu items
+     * are added to the class.
+     */        
     
     //----------------------------------
     //  clone
@@ -72,12 +84,47 @@ public dynamic class MenuBarItem
      */
     public function get clone():MenuBarItem
     {
+        var eventClone:Event = null;
+        
+        if (_event != null)
+            eventClone = _event.clone();
+        
         var clone:MenuBarItem = 
-            new MenuBarItem(_label, _groupType, _state, _substate);
+            new MenuBarItem(_label, eventClone, _type, _groupType);
+        
+        clone.enabled = enabled;
+        clone.toggled = toggled;
         
         if (hasOwnProperty("children"))
             clone["children"] = ArrayUtils.clone(this.children);
         return clone;
+    }
+    
+    //----------------------------------
+    //  enabled
+    //----------------------------------
+    
+    /**
+     * Whether the menu item is enabled or not. 
+     */
+    public var enabled:Boolean = true;
+    
+    //----------------------------------
+    //  event
+    //----------------------------------
+    
+    /**
+     * @private
+     * Storage for the event property.
+     */
+    private var _event:Event;
+    
+    /**
+     * The event to be dispatched when the menu item is selected.
+     */
+    public function get event():Event
+    {
+        return _event;
     }
     
     //----------------------------------
@@ -89,7 +136,7 @@ public dynamic class MenuBarItem
      * Storage for the groupType property.
      */
     private var _groupType:String;
-
+    
     /**
      * The group type used to group labels in the toolbar.
      */
@@ -97,29 +144,17 @@ public dynamic class MenuBarItem
     {
         return _groupType;
     }
-
+    
     //----------------------------------
-    //  hasState
+    //  hasEvent
     //----------------------------------
     
     /**
-     * Whether the item has a state or not.
+     * Whether the item has an event associated with it or not.
      */
-    public function get hasState():Boolean
+    public function get hasEvent():Boolean
     {
-        return _state != null;
-    }
-    
-    //----------------------------------
-    //  hasSubstate
-    //----------------------------------
-    
-    /**
-     * Whether the item has a substate or not.
-     */
-    public function get hasSubstate():Boolean
-    {
-        return _substate != null;
+        return _event != null;
     }
     
     //----------------------------------
@@ -141,39 +176,30 @@ public dynamic class MenuBarItem
     }
     
     //----------------------------------
-    //  state
+    //  toggled
+    //----------------------------------
+    
+    /**
+     * Whether the menu item is toggled or not. 
+     */
+    public var toggled:Boolean = false;
+    
+    //----------------------------------
+    //  type
     //----------------------------------
     
     /**
      * @private
-     * Storage for the state property.
+     * Storage for the type property.
      */
-    private var _state:Object;
-
-    /**
-     * The state associated with the menu.
-     */
-    public function get state():Object
-    {
-        return _state;
-    }
-    
-    //----------------------------------
-    //  substate
-    //----------------------------------
+    private var _type:String;
     
     /**
-     * @private
-     * Storage for the substate property.
+     * The type of item.
      */
-    private var _substate:Object;
-
-    /**
-     * The substate associated with the menu
-     */
-    public function get substate():Object
+    public function get type():String
     {
-        return _substate;
+        return _type;
     }
     
     //--------------------------------------------------------------------------

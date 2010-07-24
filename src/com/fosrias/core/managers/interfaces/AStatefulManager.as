@@ -876,8 +876,8 @@ public class AStatefulManager extends AManager
         //in the FragmentManager and let main application know the 
         //state registered so that child manager can register in 
         //AState.register event handler
-        UIComponent(FlexGlobals.topLevelApplication ).dispatchEvent( new StateEvent( 
-            StateEvent.REGISTER, this, reference ) );
+        UIComponent(FlexGlobals.topLevelApplication ).dispatchEvent(
+            new StateEvent(StateEvent.REGISTER, this, reference));
     }
 
     /**

@@ -213,6 +213,14 @@ public class AClass extends EventDispatcher
     }
     
     /**
+     * Determines whether a session exists or not.
+     */
+    public function checkSession():Boolean
+    {
+        return sessionManager.hasSession;
+    }
+
+    /**
      * Broadcasts a debug message to the <code>DebugConsole</code> and 
      * calls trace() on the message.
      *  

@@ -502,13 +502,19 @@ public class AState extends AClass
     //----------------------------------
     
     /**
+     * @private
+     * Storage for the isDefaultChildState property.
+     */
+    private var _isDefaultChildState:Boolean = false;
+    
+    /**
      * Whether the state is a default child state. This corresponds to a 
      * state with a <code>FragmentSegment</code> that is the 
      * <code>PATH_SEPARATOR</code> and is not a top-level state.
      */
     public function get isDefaultChildState():Boolean
     {
-        return fragmentSegment == PATH_SEPARATOR && !isTopLevel;
+        return _isDefaultChildState;
     }
     
     //----------------------------------
@@ -1129,12 +1135,12 @@ public class AState extends AClass
             //Try again later
             _pendingCallTimeout = setTimeout( setState, 10, type, parameters );
         } else {
-            var event:Event; 
+            var event:StateEvent; 
             
             //Get the correct type
             if ( type is StateEvent )
             {
-                event = Event( type );
+                event = StateEvent( type );
                 parameters = type.data;
                 type = type.reference;
             } else if ( !type is String ) {
@@ -1508,12 +1514,15 @@ public class AState extends AClass
      * @param browserTitle The browser title string.
      * @param fragmentSegment The fragment segment string.
      * @param isTopLevel <code>true</code> if the state is top level.
+     * @param isDefaultChildState <code>true</code> if the state is the default 
+     * child state. This must be false for top-level states.
      * @param requiresHomePage <code>true</code> if the state is top level
      * and requires the Home page to be set with it. 
      */
     protected final function setBrowserProperties( browserTitle:String, 
         fragmentSegment:String, isTopLevel:Boolean = false, 
-        requiresHomePage:Boolean = false ):void
+        isDefaultChildState:Boolean = false, 
+        requiresHomePage:Boolean = false):void
     {
         _browserTitle = browserTitle;
         
@@ -1531,6 +1540,14 @@ public class AState extends AClass
         
         _fragmentSegment = fragmentSegment;
         _isTopLevel = isTopLevel;
+        
+        if (isTopLevel && isDefaultChildState)
+            throw new IllegalOperationError("The state " +
+                qualifiedClassName + ".setBrowserProperties is setting a " +
+                "default child state when it is a top-level state."  );
+        
+        _isDefaultChildState = isDefaultChildState;
+        
         this.requiresHomePage = requiresHomePage && _isTopLevel
     }
     
@@ -1702,7 +1719,7 @@ public class AState extends AClass
      */
     protected function setStateImpl( type:String, 
                                      parameters:Object,
-                                     event:Event ):Boolean
+                                     event:StateEvent ):Boolean
     {
         //See if the manager contains the state.
         var newState:AState = manager.stateMap[type];
@@ -1771,11 +1788,15 @@ public class AState extends AClass
                         dispatchEventType( "stateChange" );
                         
                         //Notify the world that a state has been set
-                        //(actually the Fragment Manager).
+                        //(primarily the Fragment Manager).
                         dispatchEvent( new StateEvent(
                             StateEvent.STATE_SET, newState, 
-                            newState.type ) );
-
+                            newState.type));
+                        
+                        //If a related event exits, dispatch it
+                        if (event != null && event.relatedEvent != null)
+                            dispatchEvent(event.relatedEvent);
+                        
                         return true;
                     }
                 }
@@ -1788,6 +1809,11 @@ public class AState extends AClass
                 
                 //Reset the state if current
                 newState.reset();
+                
+                //If a related event exits, dispatch it
+                if (event != null && event.relatedEvent != null)
+                    dispatchEvent(event.relatedEvent);
+                
                 dispatchEventType( "stateChange" );
                 return true;
             }

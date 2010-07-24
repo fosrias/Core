@@ -26,12 +26,16 @@ public class DataPayloadEvent extends Event
     /**
      * Constructor
      */
-    public function DataPayloadEvent(type:String, data:Object = null, 
-        reference:String = null, bubbles:Boolean = true)
+    public function DataPayloadEvent(type:String, 
+                                     data:Object = null,
+                                     reference:String = null, 
+                                     bubbles:Boolean = true, 
+                                     relatedEvent:Event = null)
     {
         super(type, bubbles);
         _data = data;
         _reference = reference;
+        _relatedEvent = relatedEvent;
     }
     
     //--------------------------------------------------------------------------
@@ -76,6 +80,24 @@ public class DataPayloadEvent extends Event
         return _reference;
     }
     
+    //----------------------------------
+    //  relatedEvent
+    //----------------------------------
+    
+    /**
+     * @private
+     * Storage for the relatedEvent property 
+     */
+    private var _relatedEvent:Event;
+    
+    /**
+     * An event associated with the event, if any.
+     */
+    public function get relatedEvent():Event
+    {
+        return _relatedEvent;
+    }
+    
     //--------------------------------------------------------------------------
     //
     //  Overridden Methods 
@@ -87,7 +109,8 @@ public class DataPayloadEvent extends Event
      */
     override public function clone():Event
     {
-        return new DataPayloadEvent(type, data, reference, bubbles);
+        return new DataPayloadEvent(type, data, reference, bubbles, 
+            relatedEvent);
     }
 }
   

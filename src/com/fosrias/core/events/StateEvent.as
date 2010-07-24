@@ -33,7 +33,7 @@ import flash.events.Event;
  * @see com.fosrias.core.interface.AStateManager
  * @see com.fosrias.core.views.interfaces.AViewModel.
  */
-public class StateEvent extends Event
+public class StateEvent extends DataPayloadEvent
 {
 	//--------------------------------------------------------------------------
     //
@@ -112,55 +112,10 @@ public class StateEvent extends Event
     /**
      * Constructor
      */
-    public function StateEvent( type:String, data:Object = null, 
-        reference:String = null )
+    public function StateEvent(type:String, data:Object = null, 
+        reference:String = null, relatedEvent:Event = null)
     {
-        super( type, true );
-        
-        _data = data;
-        _reference = reference;
-    }
-    
-    //--------------------------------------------------------------------------
-    //
-    //  Properties
-    //
-    //--------------------------------------------------------------------------
-
-    //----------------------------------
-    //  data
-    //----------------------------------
-    
-    /**
-     * @private
-     * Storage for the data property 
-     */
-    private var _data:Object;
-    
-    /**
-     * The data payload.
-     */
-    public function get data():Object
-    {
-    	return _data;
-    }
-    
-    //----------------------------------
-    //  reference
-    //----------------------------------
-    
-    /**
-     * @private
-     * Storage for the reference property 
-     */
-    private var _reference:String;
-    
-    /**
-     * A reference associated with the event and its payload, if any.
-     */
-    public function get reference():String
-    {
-        return _reference;
+        super(type, data, reference, true, relatedEvent);
     }
     
     //--------------------------------------------------------------------------
@@ -174,7 +129,7 @@ public class StateEvent extends Event
      */
     override public function clone():Event
     {
-    	return new StateEvent( type, data, reference );
+    	return new StateEvent(type, data, reference, relatedEvent);
     }
 }
   
