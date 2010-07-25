@@ -414,7 +414,7 @@ public class AViewModel extends ADispatcher
      */
     public function back(  ... args ):void
     {
-        dispatchEvent(new ViewModelEvent(ViewModelEvent.BACK));
+        dispatchEvent(new ViewModelEvent(ViewModelEvent.BACK, args));
     }
     
 	/**

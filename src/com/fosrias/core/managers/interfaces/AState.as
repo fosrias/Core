@@ -1815,6 +1815,13 @@ public class AState extends AClass
                     dispatchEvent(event.relatedEvent);
                 
                 dispatchEventType( "stateChange" );
+                
+                //Notify the world that a state has been set
+                //(primarily the Fragment Manager).
+                dispatchEvent( new StateEvent(
+                    StateEvent.STATE_SET, newState, 
+                    newState.type));
+                
                 return true;
             }
         }
