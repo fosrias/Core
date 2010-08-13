@@ -13,11 +13,13 @@ package com.fosrias.core.managers.fragment
 import com.fosrias.core.events.StateEvent;
 import com.fosrias.core.events.ViewModelEvent;
 import com.fosrias.core.events.WebBrowserEvent;
+import com.fosrias.core.managers.interfaces.AManager;
 import com.fosrias.core.managers.interfaces.AState;
 import com.fosrias.core.managers.interfaces.AStatefulManager;
 import com.fosrias.core.models.interfaces.AUser;
 import com.fosrias.core.namespaces.app_internal;
 import com.fosrias.core.utils.interfaces.IIterator;
+import com.fosrias.core.views.interfaces.AMainViewModel;
 
 import flash.errors.IllegalOperationError;
 import flash.utils.Dictionary;
@@ -227,7 +229,7 @@ public class FragmentManager extends AStatefulManager
     public function register( event:StateEvent ):void
     {
     	//Only process intial registration events
-    	if ( event.reference == AStatefulManager.INITIAL_REGISTRATION )
+    	if (event.reference == AManager.INITIAL_REGISTRATION)
     	{
 	    	var manager:AStatefulManager = AStatefulManager( event.data );
 	    	var states:IIterator = manager.registeredStates;

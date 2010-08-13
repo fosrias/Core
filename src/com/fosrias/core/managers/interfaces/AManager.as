@@ -22,6 +22,8 @@ import flash.events.Event;
 import flash.utils.clearTimeout;
 import flash.utils.setTimeout;
 
+import mx.core.FlexGlobals;
+import mx.core.UIComponent;
 import mx.rpc.Fault;
 
 use namespace app_internal;
@@ -31,7 +33,19 @@ use namespace app_internal;
  */		
 public class AManager extends ADispatcher
 {
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
+    //
+    //  Constants
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * The fragment that corresponds to the Home page of the application.
+     */
+    public static const INITIAL_REGISTRATION:String 
+        = "com.fosrias.core.AManager.initialRegistration";
+    
+    //--------------------------------------------------------------------------
     //
     //  Constructor
     //
@@ -103,6 +117,23 @@ public class AManager extends ADispatcher
         return sessionManager.user;
     }
 
+    //----------------------------------
+    //  watchedStates
+    //----------------------------------
+    
+    /**
+     * @private 
+     */
+    private var _watchedStates:Array;
+    
+    /**
+     * The states watched by this manager if any.
+     */
+    app_internal function get watchedStates():Array
+    {
+        return _watchedStates;
+    }
+    
     //--------------------------------------------------------------------------
     //
     //  Protected properties
@@ -204,6 +235,48 @@ public class AManager extends ADispatcher
         sessionManager.user = value;
     }
     
+    /**
+     * Montitors other states being set in the system.
+     * 
+     * <p>This method is typically called in a global event listener. By doing
+     * this, other states and managers communicate their state to this manager 
+     * by dispatching a <code>StateEvent.STATE_SET</code> event.</p>
+     * 
+     * <p>The default use of this method is to auto-close a state that
+     * is set to automatically close (see the <code>AState.stateSet</code> 
+     * internal method.</p>
+     * 
+     * @param event The event with and AState payload
+     */
+    public function stateSet(event:StateEvent):void
+    {
+        raiseImplementationError("method", "stateSet");
+    }
+
+    //--------------------------------------------------------------------------
+    //
+    //  Internal Methods
+    //
+    //--------------------------------------------------------------------------
+    
+    /**
+     * Dispatches an event to the main application to register the manager.
+     */
+    app_internal final function registerManager(initial:Boolean = false):void
+    {
+        var reference:String = null;
+        if ( initial )
+        {
+            reference = INITIAL_REGISTRATION;
+        }
+        //Dispatch the manager so the it can be registered
+        //in the FragmentManager and let main application know the 
+        //state registered so that child manager can register in 
+        //AState.register event handler
+        UIComponent(FlexGlobals.topLevelApplication ).dispatchEvent(
+            new StateEvent(StateEvent.REGISTER, this, reference));
+    }
+
     //--------------------------------------------------------------------------
     //
     //  Overriden Methods
@@ -265,6 +338,19 @@ public class AManager extends ADispatcher
             _modelServerErrors = null;
         }
         dispatchEvent( new Event( "serverErrorsChange" ) );
+    }
+    
+    /**
+     * Sets the watched states for the manager.
+     */
+    protected function setWatchedStates(value:Array):void
+    {
+        _watchedStates = value;
+        
+        if ( !(this is AStatefulManager) )
+        {
+            registerManager(true);
+        }
     }
 }
 

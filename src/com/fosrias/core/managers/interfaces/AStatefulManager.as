@@ -55,18 +55,6 @@ public class AStatefulManager extends AManager
 {      
 	//--------------------------------------------------------------------------
     //
-    //  Constants
-    //
-    //--------------------------------------------------------------------------
-
-    /**
-     * The fragment that corresponds to the Home page of the application.
-     */
-    public static const INITIAL_REGISTRATION:String 
-        = "com.fosrias.core.AStateManager.initialRegistration";
-    
-    //--------------------------------------------------------------------------
-    //
     //  Constructor
     //
     //--------------------------------------------------------------------------
@@ -806,9 +794,9 @@ public class AStatefulManager extends AManager
      * 
      * @param event The event with and AState payload
      */
-    public function stateSet( event:StateEvent ):void
+    override public function stateSet(event:StateEvent):void
     {
-        state.stateSet( event );
+        state.stateSet(event);
     }
     
     //--------------------------------------------------------------------------
@@ -862,24 +850,6 @@ public class AStatefulManager extends AManager
         return state.setState( _initialStateType, _initialParameters );
     }
     
-    /**
-     * Dispatches an event to the main application to register the manager.
-     */
-    app_internal final function registerManager( initial:Boolean = false ):void
-    {
-    	var reference:String = null;
-    	if ( initial )
-    	{
-    		reference = INITIAL_REGISTRATION;
-    	}
-    	//Dispatch the manager so the it can be registered
-        //in the FragmentManager and let main application know the 
-        //state registered so that child manager can register in 
-        //AState.register event handler
-        UIComponent(FlexGlobals.topLevelApplication ).dispatchEvent(
-            new StateEvent(StateEvent.REGISTER, this, reference));
-    }
-
     /**
      * Sets or clears the modelHelpText property from its related message.
      */
