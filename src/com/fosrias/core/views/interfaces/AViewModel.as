@@ -16,12 +16,15 @@ import com.fosrias.core.interfaces.ADispatcher;
 import com.fosrias.core.interfaces.AFactory;
 import com.fosrias.core.namespaces.app_internal;
 
+import flash.display.DisplayObject;
 import flash.errors.IllegalOperationError;
 import flash.events.Event;
 import flash.events.IEventDispatcher;
 import flash.events.KeyboardEvent;
 import flash.ui.Keyboard;
 
+import mx.core.FlexGlobals;
+import mx.core.UIComponent;
 import mx.events.FlexEvent;
 import mx.managers.IFocusManagerComponent;
 
@@ -663,13 +666,29 @@ public class AViewModel extends ADispatcher
     //--------------------------------------------------------------------------
     
     /**
-     *  The <code>initialize</code> method is a hook called in the 
+     * The <code>initialize</code> method is a hook called in the 
      * <code>dispatcher</code> setter. Override it to set listeners on 
      * validated properties.
      */
     protected function initialize():void
     {
     	//Do nothing unless overridden.
+    }
+    
+    /** 
+     * Checks if the object or its parents are visible or not.
+     * It is only <code>true</code> if the chain is visible to the application.
+     */
+    protected function isVisibleInDisplayChain(object:Object):Boolean
+    {
+        var displayObject:DisplayObject = DisplayObject(object);
+        
+        while (displayObject != null && displayObject.visible && 
+            displayObject !== FlexGlobals.topLevelApplication) 
+        {
+            displayObject = displayObject.parent;
+        }
+        return displayObject != null && displayObject.visible;
     }
     
     /**
