@@ -75,6 +75,26 @@ public class AViewModel extends ADispatcher
     //--------------------------------------------------------------------------
     
     //----------------------------------
+    //  activation
+    //----------------------------------
+    
+    /**
+     * Sets the model activation by delegating to the <code>activate</code> or 
+     * <code>deactivate</code> methods accordingly to the value.
+     */
+    public function set activation(value:Boolean):void
+    {
+        if (value)
+        {
+            //If the model does not activate, make sure it is deactivated
+            if (!activate())
+                deactivate();
+        } else {
+            deactivate();
+        }
+    }
+    
+    //----------------------------------
     //  helpText
     //----------------------------------
     
@@ -97,7 +117,7 @@ public class AViewModel extends ADispatcher
      */
     public function set helpText( value:String ):void
     {
-       _helpText = value;
+        _helpText = value;
     }
     
     //----------------------------------
@@ -268,6 +288,24 @@ public class AViewModel extends ADispatcher
     }
     
     //----------------------------------
+    //  isActive
+    //----------------------------------
+    
+    /**
+     * @private 
+     */
+    private var _isActive:Boolean = false;
+    
+    [Bindable(event="activeChange")]
+    /**
+     * Whether the view is active or not.
+     */
+    public function get isActive():Boolean
+    {
+        return _isActive;
+    }
+    
+    //----------------------------------
     //  isClearEnabled
     //----------------------------------
     
@@ -409,6 +447,17 @@ public class AViewModel extends ADispatcher
     //--------------------------------------------------------------------------
     
     /**
+     * Activates the view model. 
+     * 
+     */
+    public function activate():Boolean
+    {
+        _isActive = true;
+        dispatchEventType("activeChange");
+        return _isActive;
+    }
+    
+    /**
      * A utility method that dispatches a <code>ViewModelEvent.BACK</code> 
      * event.
      *  
@@ -466,6 +515,17 @@ public class AViewModel extends ADispatcher
     public function closeHelp( ... args ):void
     { 
         dispatchEvent( new ViewModelEvent( ViewModelEvent.CLOSE_HELP, args) );
+    }
+    
+    /**
+     * Dectivates the view model. 
+     * 
+     */
+    public function deactivate():Boolean
+    {
+        _isActive = false;
+        dispatchEventType("activeChange");
+        return _isActive;
     }
     
     /**
