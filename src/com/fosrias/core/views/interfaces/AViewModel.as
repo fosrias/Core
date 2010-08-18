@@ -686,7 +686,23 @@ public class AViewModel extends ADispatcher
 	//
 	//--------------------------------------------------------------------------
 	
-	/**
+    /** 
+     * Checks if the object or its parents are visible or not.
+     * It is only <code>true</code> if the chain is visible to the application.
+     */
+    app_internal function isVisibleInDisplayChain(object:Object):Boolean
+    {
+        var displayObject:DisplayObject = DisplayObject(object);
+        
+        while (displayObject != null && displayObject.visible && 
+            displayObject !== FlexGlobals.topLevelApplication) 
+        {
+            displayObject = displayObject.parent;
+        }
+        return displayObject != null && displayObject.visible;
+    }
+    
+    /**
 	 * Dispatches a ViewModelEvent.DIRTY event with the specified payload.
 	 */
 	app_internal function reportDirty(data:Object, 
@@ -733,22 +749,6 @@ public class AViewModel extends ADispatcher
     protected function initialize():void
     {
     	//Do nothing unless overridden.
-    }
-    
-    /** 
-     * Checks if the object or its parents are visible or not.
-     * It is only <code>true</code> if the chain is visible to the application.
-     */
-    protected function isVisibleInDisplayChain(object:Object):Boolean
-    {
-        var displayObject:DisplayObject = DisplayObject(object);
-        
-        while (displayObject != null && displayObject.visible && 
-            displayObject !== FlexGlobals.topLevelApplication) 
-        {
-            displayObject = displayObject.parent;
-        }
-        return displayObject != null && displayObject.visible;
     }
     
     /**
