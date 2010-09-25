@@ -24,6 +24,7 @@ import flash.events.Event;
  *     <li>clear</li>
  *     <li>dirty</li>
  *     <li>execute</li>
+ *     <li>menuChange</li>
  *     <li>next</li>
  *     <li>openHelp</li>
  *     <li>open</li>
@@ -86,14 +87,21 @@ public class ViewModelEvent extends Event
     public static const EXECUTE:String = 
         "com.fosrias.events.ViewModelEvent.execute";
         
-    /**
-     * The ViewModelEvent.NEXT constant defines the value of the type 
-     * property of the event object for a next event.
-     */
-    public static const NEXT:String = 
-        "com.fosrias.events.ViewModelEvent.next";
-        
-    /**
+	/**
+	 * The ViewModelEvent.MENU_CHANGE constant defines the value of the type 
+	 * property of the event object for a menuChange event.
+	 */
+	public static const MENU_CHANGE:String = 
+		"com.fosrias.events.ViewModelEvent.menuChange";
+	
+	/**
+	 * The ViewModelEvent.NEXT constant defines the value of the type 
+	 * property of the event object for a next event.
+	 */
+	public static const NEXT:String = 
+		"com.fosrias.events.ViewModelEvent.next";
+	
+	/**
      * The ViewModelEvent.OPEN constant defines the value of the type 
      * property of the event object for an open event.
      */
