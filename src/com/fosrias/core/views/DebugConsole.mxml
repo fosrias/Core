@@ -5,6 +5,8 @@
 	xmlns:mx="library://ns.adobe.com/flex/mx" 
 	xmlns:maps="com.fosrias.core.maps.*"
     width="100%" height="100%" tabEnabled="false"
+    horizontalScrollPolicy="off"
+    verticalScrollPolicy="off"
     creationComplete="onComplete();">
 
 <!-- Define Script _________________________________________________________ -->     
@@ -87,7 +89,8 @@
 	
 	<!-- Define GUI ________________________________________________________ -->   
     <mx:TextArea id="taDebug" editable="false" 
-    	tabEnabled="false" focusThickness="0" left="10" top="10" bottom="39" right="10"/>
-    <mx:Button label="clear" click="clearMessages();" bottom="10" left="10"/>
-    <s:CheckBox id="chkEvents" label="Show Events" bottom="12" left="95"/>
+    	tabEnabled="false" focusThickness="0" 
+        left="0" top="0" bottom="39" right="0"/>
+    <mx:Button label="Clear" click="clearMessages();" bottom="10" left="0"/>
+    <s:CheckBox id="chkEvents" label="Show Events" bottom="12" left="85"/>
 </mx:Canvas>
