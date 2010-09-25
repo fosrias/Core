@@ -604,7 +604,7 @@ public class AViewModel extends ADispatcher
         }
     }
     
-    /**
+	/**
      * A utility method that dispatches a <code>ViewModelEvent.NEXT</code> event.
      *  
      * @param args Optional arguments passed to the <code>data</code> property
