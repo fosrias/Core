@@ -199,8 +199,13 @@ public class AService extends ADispatcher
 
         dispatchEvent(new ResultEvent(ResultEvent.RESULT, false, true, 
            event.result, event.token, event.message ));
-           
-        traceDebug("Result: " + event.result.toString() + " returned "
+        
+		var resultString:String = "Null";
+		
+		if (event.result != null)
+			resultString = event.result.toString()
+			
+        traceDebug("Result: " + resultString + " returned "
             + " in " + findTimestamp(now, event.token) + " ."); 
         
         //Reset showBusyCursor property
