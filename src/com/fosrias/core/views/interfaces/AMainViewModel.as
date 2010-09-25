@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Mark W. Foster    www.fosrias.com
+//  Copyright (c) 2009-2010   Mark W. Foster    www.fosrias.com
 //  All Rights Reserved.
 //
 //  NOTICE: Mark W. Foster permits you to use, modify, and distribute this file
@@ -10,10 +10,11 @@
 
 package com.fosrias.core.views.interfaces
 {
-import flash.events.Event;
 import com.fosrias.core.events.ViewModelEvent;
 import com.fosrias.core.events.WebBrowserEvent;
 import com.fosrias.core.views.interfaces.AViewModel;
+
+import flash.events.Event;
 
 [Bindable]
 public class AMainViewModel extends AViewModel
@@ -32,11 +33,37 @@ public class AMainViewModel extends AViewModel
 	   super(self);
 	}
 	
-	//--------------------------------------------------------------------------
+    //--------------------------------------------------------------------------
     //
-    //  Properties
+    //  Injected properties
     //
     //--------------------------------------------------------------------------
+    
+	//----------------------------------
+	//  menuBarDataProvider
+	//----------------------------------
+	
+	public var menuBarDataProvider:Array;
+	
+	//----------------------------------
+	//  menuBarDataProvider
+	//----------------------------------
+	
+	public var bodyViewStackIndex:int = 0;
+	
+	//----------------------------------
+    //  setSiteItems
+    //----------------------------------
+    
+    /**
+     * @private
+     * Storage for the mainViewStackIndex property. 
+     */    
+    
+    public function setSiteItems(value:Object):void
+    {
+        
+    }
     
     //----------------------------------
     //  mainViewStackIndex
@@ -49,6 +76,7 @@ public class AMainViewModel extends AViewModel
     private var _mainViewStackIndex:int
     
     [Bindable(event="viewStackIndexChanged")]
+	[Deprecated]
     /**
      * 
      * @return 
@@ -127,6 +155,61 @@ public class AMainViewModel extends AViewModel
         _siteViewStackIndex = value;
         dispatchEvent(new Event("viewStackIndexChanged"));
     }
+    
+    //--------------------------------------------------------------------------
+    //
+    //  Properties
+    //
+    //--------------------------------------------------------------------------
+    
+    //----------------------------------
+    //  menubarDataProvider
+    //----------------------------------
+    
+    /**
+     * @private
+     * Storage for the menubarDataProvider property 
+     */
+    private var _menubarDataProvider:Array;
+    
+    /**
+     * @private 
+     */
+    private var _menubarSessionDataProvider:Array;
+    
+    [Bindable("sessionChange")]
+    /**
+     * The data provider for the site menu bar.
+     */
+    public function get menubarDataProvider():Array
+    {
+        if (hasSession)
+        {
+            return _menubarSessionDataProvider;
+        } else {
+            return _menubarDataProvider;
+        }
+    }
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * A utility method that dispatches a <code>ViewModelEvent.MENU_CHANGE</code> 
+	 * event.
+	 *  
+	 * @param args Optional arguments passed to the <code>data</code> property
+	 * of the <code>ViewModelEvent</code>.
+	 */
+	public function menuChange( ... args ):void
+	{ 
+		dispatchEvent( new ViewModelEvent(ViewModelEvent.MENU_CHANGE, args) );
+	}
+	
+	
 }
 
 }
