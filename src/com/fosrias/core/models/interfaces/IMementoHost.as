@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Mark W. Foster    www.fosrias.com
+//  Copyright (c) 2010 Mark W. Foster    www.fosrias.com
 //  All Rights Reserved.
 //
 //  NOTICE: Mark W. Foster permits you to use, modify, and distribute this file
@@ -10,12 +10,18 @@
 
 package com.fosrias.core.models.interfaces
 {
-	
+import com.fosrias.core.namespaces.memento_internal;
+
+use namespace memento_internal
+
 /**
- * The IMemento interface is implemented on classes who carry state
- * information. 
+ * The IMementoRestore interface is implemented on classes who use IMemento
+ * implementations to restore state information. Classes implementing this
+ * interface must use the namespace memento_internal.
+ * 
+ * @see com.fosrias.core.models.interfaces.IMemento
  */
-public interface IMemento extends IIsEqual
+public interface IMementoHost
 {
     //--------------------------------------------------------------------------
     //
@@ -24,13 +30,13 @@ public interface IMemento extends IIsEqual
     //--------------------------------------------------------------------------
     
     //----------------------------------
-    //  isEmpty
+    //  memento
     //----------------------------------
     
     /**
-     * Whether the memento has been cleared or not.
+     * Returns a new instance of the an IMemento implementation.
      */
-    function get isEmpty():Boolean;
+    function get memento():IMemento;
     
     //--------------------------------------------------------------------------
     //
@@ -39,18 +45,12 @@ public interface IMemento extends IIsEqual
     //--------------------------------------------------------------------------
  
     /**
-     * Restores the state of an object from the memento.
+     * Restores the state of an object from the memento. This function
+	 * must call them mementos restore function.
      * 
-     * @param value The object to restore its state to that of the memento.
-	 * @param clearForGC Clears the memento for garbage collection.
+     * @param memento The memento carrying state information.
      */
-	function restore(value:Object, 
-					 clearForGC:Boolean = true):*
-        
-    /**
-     * Clears the property map in a memento for garbage collection. 
-     */
-    function clear():void
+	function restore(memento:IMemento):*
 }
 
 }
