@@ -24,6 +24,7 @@ import flash.utils.setTimeout;
 
 import mx.core.FlexGlobals;
 import mx.core.UIComponent;
+import mx.rpc.AsyncToken;
 import mx.rpc.Fault;
 
 use namespace app_internal;
@@ -69,6 +70,17 @@ public class AManager extends ADispatcher
      * @private
      */
     private var _remoteCallIntervalId:int;
+	
+	/**
+	 * @private
+	 */
+	protected var _lastRemoteCall:String;
+	
+	/**
+	 * @private
+	 */
+	protected var _lastRemoteCallParameters:Object;
+	
     
     //--------------------------------------------------------------------------
     //
@@ -177,14 +189,29 @@ public class AManager extends ADispatcher
     }
     
     /**
-     * Handles a remote call result.
+     * Handles a remote call result. Override this and call super to 
+	 * set the <code>lastCall</code> and <code>lastParameters</code>.
      * 
      * @param callResult The <code>CallResult</code> returned by the remote
      * call.
      */
-    public function callResult( result:CallResult, ... args ):*
+    public function callResult( result:CallResult, ... args):*
     {
-        //Do nothing unless overridden
+		for each (var object:Object in args[0])
+		{
+			if (object is AsyncToken)
+			{
+				_lastRemoteCall = object.message.operation;
+				_lastRemoteCallParameters = object.message.body;
+				
+				if (_lastRemoteCallParameters is Array && 
+					_lastRemoteCallParameters.length == 0)
+					_lastRemoteCallParameters = null;
+				
+				break;
+			}
+		}
+        //Do nothing else unless overridden
     }
     
     /**
