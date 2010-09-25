@@ -68,7 +68,8 @@ public class AdvancedComboBox extends ComboBox
     //----------------------------------
     //  editorData
     //----------------------------------
-    
+	
+	[Inspectable(category="Data")]
     /**
      * The editorData is the field in the dataProvider specified by the 
      * <code>dataProviderField</code>.
@@ -87,9 +88,12 @@ public class AdvancedComboBox extends ComboBox
     //  itemField
     //----------------------------------
     
-    /**
+	[Inspectable(category="Data")]
+	/**
      * The field in the <code>selectedItem</code> that maps to the 
-     * <code>dataProviderField</code> in the <code>dataProvider</code>.
+     * <code>dataProviderField</code> in the <code>dataProvider</code>. If
+	 * this value is not set and a dataProvider field is, the selectedItem
+	 * is matched to the dateField in the dataProvider.
      */
     public var itemField:String = null;
     
@@ -97,7 +101,8 @@ public class AdvancedComboBox extends ComboBox
     //  dataProviderField
     //----------------------------------
     
-    /**
+	[Inspectable(category="Data")]
+	/**
      * The field in the <code>dataProvider</code> items that maps to the 
      * <code>itemField</code> in the <code>selectedItem</code>. If this 
      * field is not set, it defaults to the same value as the label field.
@@ -135,11 +140,13 @@ public class AdvancedComboBox extends ComboBox
     override public function set selectedItem(data:Object):void
     {
     	_selectedData = data;
+		var dp:Object;
+		
     	if (itemField != null && dataProviderField != null && 
             dataProvider != null && data != null && 
            data.hasOwnProperty( itemField ))
     	{
-            for each (var dp:Object in dataProvider) 
+            for each (dp in dataProvider) 
             {
                 if ( dp[dataProviderField] == data[itemField] ) 
                 {
@@ -147,9 +154,23 @@ public class AdvancedComboBox extends ComboBox
                     return;     
                 }
                
-            }    
-            super.selectedItem = null;             
-    	} else {
+            }   
+			
+            super.selectedItem = null;  
+			
+    	} else if (itemField == null && dataProviderField != null && 
+			dataProvider != null && data != null ) {
+			for each (dp in dataProvider) 
+			{
+				if ( dp[dataProviderField] == data ) 
+				{
+					super.selectedItem = dp;
+					return;     
+				}
+				
+			}    
+			super.selectedItem = null; 
+		} else {
     		super.selectedItem = data;
     	}
     }
