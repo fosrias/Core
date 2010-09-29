@@ -92,7 +92,8 @@ public class AdvancedSparkComboBox extends spark.components.ComboBox
     //  editorData
     //----------------------------------
     
-    /**
+	[Inspectable(category="Data")]
+	/**
      * The editorData is the field in the dataProvider specified by the 
      * <code>dataProviderField</code>.
      */
@@ -110,34 +111,18 @@ public class AdvancedSparkComboBox extends spark.components.ComboBox
     //  itemField
     //----------------------------------
     
-    /**
+	[Inspectable(category="Data")]
+	/**
      * The field in the <code>selectedItem</code> that maps to the 
      * <code>dataProviderField</code> in the <code>dataProvider</code>.
      */
     public var itemField:String = null;
     
     //----------------------------------
-    //  selectedField
-    //----------------------------------
-    
-    /**
-     * The field in the <code>selectedItem</code> items that maps to the 
-     * <code>dataProviderField</code>.
-     */
-    public function get selectedField():*
-    {
-        if (selectedItem != null)
-        {
-            return selectedItem[dataProviderField];
-        } else {
-            return null;
-        }
-    }
-
-    //----------------------------------
     //  dataProviderField
     //----------------------------------
     
+	[Inspectable(category="Data")]
     /**
      * The field in the <code>dataProvider</code> items that maps to the 
      * <code>itemField</code> in the <code>selectedItem</code>. If this 
@@ -145,7 +130,26 @@ public class AdvancedSparkComboBox extends spark.components.ComboBox
      */
     public var dataProviderField:String = 'label';
     
-    //--------------------------------------------------------------------------
+	//----------------------------------
+	//  selectedField
+	//----------------------------------
+	
+	[Inspectable(category="Data")]
+	/**
+	 * The field in the <code>selectedItem</code> items that maps to the 
+	 * <code>dataProviderField</code>.
+	 */
+	public function get selectedField():*
+	{
+		if (selectedItem != null)
+		{
+			return selectedItem[dataProviderField];
+		} else {
+			return null;
+		}
+	}
+	
+	//--------------------------------------------------------------------------
     //
     //  Overridden properties
     //
@@ -173,30 +177,43 @@ public class AdvancedSparkComboBox extends spark.components.ComboBox
     /**
      * @inheritDoc
      */
-    override public function set selectedItem(value:*):void
-    {
-    	_selectedData = value;
-    	if (dataProviderField != null && dataProvider != null 
-            && value != null && (itemField != null && 
-                value.hasOwnProperty( itemField) || itemField == null))
-    	{
-            for each (var dp:Object in dataProvider) 
-            {
-                if (itemField != null && 
-                    dp[dataProviderField] == value[itemField] ) 
-                {
-                    super.selectedItem = dp;
-                    return;     
-                } else if ( dp[dataProviderField] == value ) {
-                    super.selectedItem = dp;
-                    return; 
-                } 
-            }    
-            super.selectedItem = null;               
-    	} else {
-    		super.selectedItem = value;
-    	}
-    }
+	override public function set selectedItem(value:*):void
+	{
+		_selectedData = value;
+		var dp:Object;
+		
+		if (itemField != null && dataProviderField != null && 
+			dataProvider != null && value != null && 
+			value.hasOwnProperty(itemField) )
+		{
+			for each (dp in dataProvider) 
+			{
+				if ( dp[dataProviderField] == value[itemField] ) 
+				{
+					super.selectedItem = dp;
+					return;     
+				}
+				
+			}   
+			
+			super.selectedItem = null;  
+			
+		} else if (itemField == null && dataProviderField != null && 
+			dataProvider != null && value != null ) {
+			for each (dp in dataProvider) 
+			{
+				if ( dp[dataProviderField] == value ) 
+				{
+					super.selectedItem = dp;
+					return;     
+				}
+				
+			}    
+			super.selectedItem = null; 
+		} else {
+			super.selectedItem = value;
+		}
+	}
 }
 
 }
