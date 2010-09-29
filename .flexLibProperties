@@ -3,7 +3,15 @@
   <includeClasses>
     <classEntry path="com.asual.swfaddress.SWFAddress"/>
     <classEntry path="com.asual.swfaddress.SWFAddressEvent"/>
+    <classEntry path="com.firemoss.controls.loading.LoadingSpinner"/>
+    <classEntry path="com.firemoss.controls.loading.Tick"/>
+    <classEntry path="com.firemoss.drawing.layout.RadialRepeater"/>
+    <classEntry path="com.firemoss.effects.BlurOutIn"/>
+    <classEntry path="com.firemoss.effects.FadeInOut"/>
+    <classEntry path="com.firemoss.effects.ZoomInOut"/>
+    <classEntry path="com.firemoss.util.serialization.Serialization"/>
     <classEntry path="com.fosrias.core.CoreApplication"/>
+    <classEntry path="com.fosrias.core.SpinnerTester"/>
     <classEntry path="com.fosrias.core.business.MessageService"/>
     <classEntry path="com.fosrias.core.business.RESTfulService"/>
     <classEntry path="com.fosrias.core.business.Services"/>
@@ -22,6 +30,7 @@
     <classEntry path="com.fosrias.core.interfaces.AFactory"/>
     <classEntry path="com.fosrias.core.managers.DebugManager"/>
     <classEntry path="com.fosrias.core.managers.SessionManager"/>
+    <classEntry path="com.fosrias.core.managers.StateManager"/>
     <classEntry path="com.fosrias.core.managers.WebBrowserManager"/>
     <classEntry path="com.fosrias.core.managers.fragment.FragmentInvalidState"/>
     <classEntry path="com.fosrias.core.managers.fragment.FragmentManager"/>
@@ -38,6 +47,7 @@
     <classEntry path="com.fosrias.core.maps.FragmentEventMap"/>
     <classEntry path="com.fosrias.core.maps.MessageEventMap"/>
     <classEntry path="com.fosrias.core.maps.SiteStatusLocalEventMap"/>
+    <classEntry path="com.fosrias.core.maps.StateEventMap"/>
     <classEntry path="com.fosrias.core.maps.WebBrowserEventMap"/>
     <classEntry path="com.fosrias.core.models.DebugMessage"/>
     <classEntry path="com.fosrias.core.models.InputCreditCard"/>
@@ -47,13 +57,16 @@
     <classEntry path="com.fosrias.core.models.InputText"/>
     <classEntry path="com.fosrias.core.models.Memento"/>
     <classEntry path="com.fosrias.core.models.NullUser"/>
+    <classEntry path="com.fosrias.core.models.OldMemento"/>
     <classEntry path="com.fosrias.core.models.User"/>
     <classEntry path="com.fosrias.core.models.interfaces.AInputData"/>
     <classEntry path="com.fosrias.core.models.interfaces.AUser"/>
     <classEntry path="com.fosrias.core.models.interfaces.IInputDateRange"/>
     <classEntry path="com.fosrias.core.models.interfaces.IIsEqual"/>
     <classEntry path="com.fosrias.core.models.interfaces.IMemento"/>
+    <classEntry path="com.fosrias.core.models.interfaces.IMementoHost"/>
     <classEntry path="com.fosrias.core.namespaces.app_internal"/>
+    <classEntry path="com.fosrias.core.namespaces.memento_internal"/>
     <classEntry path="com.fosrias.core.utils.ArrayUtils"/>
     <classEntry path="com.fosrias.core.utils.Builder"/>
     <classEntry path="com.fosrias.core.utils.ClonableArray"/>
@@ -89,14 +102,17 @@
     <classEntry path="com.fosrias.core.validators.ModelValidator"/>
     <classEntry path="com.fosrias.core.validators.ServerErrorValidator"/>
     <classEntry path="com.fosrias.core.validators.ServerErrors"/>
+    <classEntry path="com.fosrias.core.validators.URLValidator"/>
     <classEntry path="com.fosrias.core.validators.ValidatorFactory"/>
     <classEntry path="com.fosrias.core.views.DebugApplication"/>
     <classEntry path="com.fosrias.core.views.DebugConsole"/>
     <classEntry path="com.fosrias.core.views.HelpWindow"/>
     <classEntry path="com.fosrias.core.views.SiteStatusUI"/>
     <classEntry path="com.fosrias.core.views.components.AdvancedComboBox"/>
+    <classEntry path="com.fosrias.core.views.components.AdvancedDownloadProgressBar"/>
     <classEntry path="com.fosrias.core.views.components.AdvancedModuleLoader"/>
     <classEntry path="com.fosrias.core.views.components.AdvancedSparkComboBox"/>
+    <classEntry path="com.fosrias.core.views.components.AutosizingRichEditableText"/>
     <classEntry path="com.fosrias.core.views.components.BindingWatcherCanvas"/>
     <classEntry path="com.fosrias.core.views.components.EnumComboBox"/>
     <classEntry path="com.fosrias.core.views.components.FixedDatefield"/>
@@ -108,10 +124,12 @@
     <classEntry path="com.fosrias.core.views.components.PopUpGroup"/>
     <classEntry path="com.fosrias.core.views.components.PopUpPanel"/>
     <classEntry path="com.fosrias.core.views.components.PopUpTitleWindow"/>
+    <classEntry path="com.fosrias.core.views.components.Spinner"/>
     <classEntry path="com.fosrias.core.views.components.StatefulPopUpCanvas"/>
     <classEntry path="com.fosrias.core.views.components.StatefulPopUpGroup"/>
     <classEntry path="com.fosrias.core.views.components.StatefulPopUpPanel"/>
     <classEntry path="com.fosrias.core.views.components.StatefulPopUpTitleWindow"/>
+    <classEntry path="com.fosrias.core.views.components.Tick"/>
     <classEntry path="com.fosrias.core.views.interfaces.AInputFormItem"/>
     <classEntry path="com.fosrias.core.views.interfaces.AMainViewModel"/>
     <classEntry path="com.fosrias.core.views.interfaces.AValidatedViewModel"/>
@@ -119,6 +137,7 @@
     <classEntry path="com.fosrias.core.views.interfaces.AViewModel"/>
     <classEntry path="com.fosrias.core.views.models.SiteStatusViewModel"/>
     <classEntry path="com.fosrias.core.views.renderers.TextInputNumberRenderer"/>
+    <classEntry path="com.fosrias.core.views.skins.AutosizingTextAreaSkin"/>
     <classEntry path="com.fosrias.core.views.skins.HiddenCombo"/>
     <classEntry path="com.fosrias.core.views.skins.InvisibleCombo"/>
     <classEntry path="com.fosrias.core.views.skins.LeftCheckBoxSkin"/>
@@ -127,6 +146,7 @@
     <classEntry path="com.fosrias.core.vos.CallHash"/>
     <classEntry path="com.fosrias.core.vos.CallResult"/>
     <classEntry path="com.fosrias.core.vos.LoginData"/>
+    <classEntry path="com.fosrias.core.vos.MenuBarItem"/>
     <classEntry path="com.fosrias.core.vos.Message"/>
     <classEntry path="com.fosrias.core.vos.UserData"/>
     <classEntry path="com.fosrias.core.vos.UserPermissions"/>
