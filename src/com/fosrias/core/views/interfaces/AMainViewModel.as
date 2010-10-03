@@ -43,7 +43,7 @@ public class AMainViewModel extends AViewModel
 	//  menuBarDataProvider
 	//----------------------------------
 	
-	public var menuBarDataProvider:Array;
+	public var menuBarDataProvider:Object;
 	
 	//----------------------------------
 	//  menuBarDataProvider
@@ -170,18 +170,18 @@ public class AMainViewModel extends AViewModel
      * @private
      * Storage for the menubarDataProvider property 
      */
-    private var _menubarDataProvider:Array;
+    private var _menubarDataProvider:Object;
     
     /**
      * @private 
      */
-    private var _menubarSessionDataProvider:Array;
+    private var _menubarSessionDataProvider:Object;
     
     [Bindable("sessionChange")]
     /**
      * The data provider for the site menu bar.
      */
-    public function get menubarDataProvider():Array
+    public function get menubarDataProvider():Object
     {
         if (hasSession)
         {
