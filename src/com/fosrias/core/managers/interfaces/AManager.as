@@ -29,6 +29,7 @@ import mx.rpc.Fault;
 
 use namespace app_internal;
 
+[Bindable]
 /**
  * The AManager class is the base class for all manager subclasses.
  */		

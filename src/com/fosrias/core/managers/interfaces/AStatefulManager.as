@@ -32,6 +32,7 @@ import mx.rpc.Fault;
 
 use namespace app_internal;
 
+[Bindable]
 /**
  * The AStateManager class is the base class for all managers that maintain
  * the application model statefully. It implements a State Design pattern using 
