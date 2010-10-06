@@ -5,12 +5,16 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.fosrias.core.vos
+package com.fosrias.site.vos
 {
-import com.fosrias.core.vos.interfaces.ANestedListItem;
+	import com.fosrias.site.vos.interfaces.AHierarchicalItem;
+	import com.fosrias.site.vos.interfaces.ANestedListItem;
 
-
-public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
+/**
+ * The HierachicalItemWrapper class is a concrete wrapper for elements of
+ * the HierarchicalItemData class.
+ */	
+public dynamic class HierarchicalItemWrapper extends AHierarchicalItem
 {
 	//--------------------------------------------------------------------------
 	//
@@ -33,7 +37,7 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	/**
 	 * Constructor
 	 */
-	public function SiteItemWrapper(value:ANestedListItem)
+	public function HierarchicalItemWrapper(value:ANestedListItem)
 	{
 		super(value);
 	}
@@ -51,53 +55,20 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	//--------------------------------------------------------------------------
 	
 	//----------------------------------
-	//  content
+	//  basic
 	//----------------------------------
 	
 	/**
 	 * @private
 	 * Storage for the basic property.
 	 */
-	public function get content():SiteItemContent
-	{
-		return SiteItem(source).content;
-	}
 	
-	public function set content(value:SiteItemContent):void
-	{
-		SiteItem(source).content = value;
-	}
+	//--------------------------------------------------------------------------
+	//
+	//  Methods
+	//
+	//--------------------------------------------------------------------------
 	
-	//----------------------------------
-	//  hasLoadedContent
-	//----------------------------------
-	
-	/**
-	 * Whether the content for the site item is loaded.
-	 */
-	public function get hasLoadedContent():Boolean
-	{
-		return SiteItem(source).hasLoadedContent;
-	}
-	
-	//----------------------------------
-	//  text
-	//----------------------------------
-	
-	/**
-	 * The text of the content, if loaded.
-	 */
-	public function get text():String
-	{
-		if (hasLoadedContent)
-		{
-			return SiteItem(source).content.text;
-			
-		} else {
-			
-			return null;
-		}
-	}	
 }
 	
 }

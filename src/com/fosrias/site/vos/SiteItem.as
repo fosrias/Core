@@ -5,7 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.fosrias.core.vos
+package com.fosrias.site.vos
 {    
 import com.fosrias.core.models.Memento;
 import com.fosrias.core.models.interfaces.IIsEqual;
@@ -13,13 +13,16 @@ import com.fosrias.core.models.interfaces.IMemento;
 import com.fosrias.core.models.interfaces.IMementoHost;
 import com.fosrias.core.namespaces.app_internal;
 import com.fosrias.core.namespaces.memento_internal;
+import com.fosrias.site.vos.interfaces.AListItem;
+import com.fosrias.site.vos.interfaces.ANestedListItem;
 
 import flash.errors.IllegalOperationError;
 
+import flashx.textLayout.conversion.TextConverter;
+import flashx.textLayout.elements.TextFlow;
+
 import mx.controls.DataGrid;
 import mx.controls.dataGridClasses.DataGridColumn;
-import com.fosrias.core.vos.interfaces.AListItem;
-import com.fosrias.core.vos.interfaces.ANestedListItem;
 	
 use namespace app_internal;
 use namespace memento_internal;
@@ -265,6 +268,21 @@ public class SiteItem extends ANestedListItem
 	public function get memento():IMemento
 	{
 		return new Memento(this);
+	}
+	
+	//----------------------------------
+	//  textFlow
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 * The text formated as a text flow for insertion into <code>TextArea</code>
+	 * instances.
+	 */
+	public function get textFlow():TextFlow
+	{
+		return TextConverter.importToFlow(content.text, 
+			TextConverter.TEXT_FIELD_HTML_FORMAT)
 	}
 	
 	//--------------------------------------------------------------------------

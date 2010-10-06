@@ -556,7 +556,8 @@ public class AStatefulManager extends AManager
      */
     override public function callFault( fault:Fault, ... args ):*
     {
-        return state.callFault( fault, args );
+		super.callFault.apply(null, [fault].concat(args) );
+        return state.callFault.apply(null, [fault].concat(args) );
     }
     
     /**
@@ -568,6 +569,7 @@ public class AStatefulManager extends AManager
      */
     override public function callResult( result:CallResult, ... args ):*
     {
+		super.callResult.apply(null, [result].concat(args) );
         return state.callResult.apply(null, [result].concat(args) );
     }
     

@@ -5,7 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.fosrias.core.vos
+package com.fosrias.site.vos
 {    
 import com.fosrias.core.models.Memento;
 import com.fosrias.core.models.interfaces.IIsEqual;

@@ -5,7 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.fosrias.core.vos.interfaces
+package com.fosrias.site.vos.interfaces
 {
 import com.fosrias.core.utils.ArrayUtils;
 import com.fosrias.core.utils.ComparisonUtils;
@@ -349,7 +349,7 @@ public class AHierarchicalItem extends ANestedListItem
 	private function sourceChanged(event:PropertyChangeEvent):void
 	{
 		//Rebroadcast the change
-		if ( hasOwnProperty(event.property) )
+		if ( this.hasOwnProperty(event.property) )
 		{
 			this[event.property] = event.newValue;
 		}

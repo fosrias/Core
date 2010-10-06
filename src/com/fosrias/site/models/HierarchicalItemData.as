@@ -5,12 +5,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.fosrias.core.models
+package com.fosrias.site.models
 {
-import com.fosrias.core.vos.HierarchicalItemWrapper;
-import com.fosrias.core.vos.interfaces.AHierarchicalItem;
-import com.fosrias.core.vos.interfaces.AListItem;
-import com.fosrias.core.vos.interfaces.ANestedListItem;
+import com.fosrias.site.vos.HierarchicalItemWrapper;
+import com.fosrias.site.vos.interfaces.AHierarchicalItem;
+import com.fosrias.site.vos.interfaces.AListItem;
+import com.fosrias.site.vos.interfaces.ANestedListItem;
 
 import flash.errors.IllegalOperationError;
 import flash.events.Event;
@@ -164,6 +164,22 @@ public class HierarchicalItemData extends HierarchicalData
 	}
 	
 	//----------------------------------
+	//  rootChildren
+	//----------------------------------
+	
+	/**
+	 * The children of the top level node
+	 */
+	public function get rootChildren():ArrayCollection
+	{
+		if (source != null && source.length > 0)
+		{
+			return source[0].children;
+		}
+		return null;
+	}
+	
+	//----------------------------------
 	//  selectedItem
 	//----------------------------------
 	
@@ -252,6 +268,18 @@ public class HierarchicalItemData extends HierarchicalData
 	{
 		var item:AHierarchicalItem = AHierarchicalItem( _itemIdMap[value] );
 		if (item != null)
+			return item;
+		
+		return null;
+	}
+	
+	/**
+	 * Returns an item source based on its id;
+	 */
+	public function findSourceItemById(value:int):AListItem
+	{
+		var item:AHierarchicalItem = AHierarchicalItem( _itemIdMap[value] );
+		if (item != null)
 			return item.source;
 			
 		return null;
@@ -274,15 +302,25 @@ public class HierarchicalItemData extends HierarchicalData
 	}
 	
 	/**
+	 *  Resets the selected item.
+	 */
+	public function resetSelectedItem():void
+	{
+		var item:Object = _selectedItem;
+		selectedItem = null;
+		selectedItem = item;
+	}
+	
+	/**
 	 *  Updates the parent item on the selected item.
 	 */
 	public function updateParentItem(value:AHierarchicalItem, 
-									 view:IHierarchicalCollectionView):void
+									 view:IHierarchicalCollectionView):Object
 	{
 		//No changes. Don't warn if parent is set to the same item. Just
 		//ignore.
 		if (_selectedItem.id == value.id || _selectedItem.parentId ==  value.id)
-			return;
+			return null;
 		
 		//Checks if it is valid (not a child of itself)
 		var parentIsChild:Boolean = false;
@@ -316,7 +354,7 @@ public class HierarchicalItemData extends HierarchicalData
 			//sets the new selected parent. Gets moved by the itemChange
 			//handler in this class
 			var isMovingtoGrandParent:Boolean = 
-				parentId == _selectedParent.parentId;
+				value.id == _selectedParent.parentId;
 			
 			_selectedListItem.parentId = value.id;
 			
@@ -341,11 +379,11 @@ public class HierarchicalItemData extends HierarchicalData
 				//Need to check if we moved to be the post sibling of the
 				//the previous parent since our previous parent rgt will 
 				//decrease since moving out of it
-				if(isMovingtoGrandParent && previousSibling.id == 
+				/*if(isMovingtoGrandParent && previousSibling.id == 
 					_selectedListItem.parentId)
 				{
 					lft -= nestedRange + 1;
-				}
+				}*/
 			}
 			
 			_selectedListItem.lft = lft;
@@ -353,6 +391,7 @@ public class HierarchicalItemData extends HierarchicalData
 			//Set this last to trigger update in itemChange handler
 			_selectedListItem.rgt = lft + nestedRange;
 		}
+		return _selectedParent;
 	}
 	
 	/**

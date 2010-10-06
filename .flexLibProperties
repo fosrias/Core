@@ -151,16 +151,17 @@
     <classEntry path="com.fosrias.core.vos.UserData"/>
     <classEntry path="com.fosrias.core.vos.UserPermissions"/>
     <classEntry path="com.fosrias.core.vos.interfaces.ASelector"/>
-    <classEntry path="com.fosrias.core.vos.interfaces.AListItem"/>
-    <classEntry path="com.fosrias.core.vos.interfaces.AHierarchicalItem"/>
-    <classEntry path="com.fosrias.core.vos.interfaces.ANestedListItem"/>
+    <classEntry path="com.fosrias.site.vos.interfaces.AListItem"/>
+    <classEntry path="com.fosrias.site.vos.interfaces.AHierarchicalItem"/>
+    <classEntry path="com.fosrias.site.vos.interfaces.ANestedListItem"/>
     <classEntry path="com.fosrias.core.vos.interfaces.ATimestamp"/>
-    <classEntry path="com.fosrias.core.models.HierarchicalItemData"/>
-    <classEntry path="com.fosrias.core.vos.HierarchicalItemWrapper"/>
-    <classEntry path="com.fosrias.core.vos.SiteDefaults"/>
-    <classEntry path="com.fosrias.core.vos.SiteItemContent"/>
-    <classEntry path="com.fosrias.core.vos.SiteItem"/>
-    <classEntry path="com.fosrias.core.vos.SiteItemWrapper"/>
+    <classEntry path="com.fosrias.site.models.HierarchicalItemData"/>
+    <classEntry path="com.fosrias.site.vos.HierarchicalItemWrapper"/>
+    <classEntry path="com.fosrias.site.vos.SiteDefaults"/>
+    <classEntry path="com.fosrias.site.vos.SiteItemContent"/>
+    <classEntry path="com.fosrias.site.vos.SiteItem"/>
+    <classEntry path="com.fosrias.site.vos.SiteItemWrapper"/>
+    <classEntry path="com.fosrias.core.events.DataServiceEvent"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

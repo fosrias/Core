@@ -5,7 +5,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-package com.fosrias.core.vos.interfaces
+package com.fosrias.site.vos.interfaces
 {
 import com.fosrias.core.interfaces.AClass;
 import com.fosrias.core.utils.DateUtils;
