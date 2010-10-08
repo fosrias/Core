@@ -83,6 +83,48 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	}
 	
 	//----------------------------------
+	//  hasSubmenus
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 * Whether the item is a menu that should show submenus or not.
+	 */
+	public function get hasSubmenus():Boolean
+	{
+		return isMenu && isMenuItem;
+	}
+	
+	//----------------------------------
+	//  isMenu
+	//----------------------------------
+	
+	/**
+	 * Whether item is a menu or not.
+	 */
+	public function get isMenu():Boolean
+	{
+		return SiteItem(source).isMenu;
+	}
+	
+	//----------------------------------
+	//  isMenuItem
+	//----------------------------------
+	
+	/**
+	 * Whether item is a menu item or not.
+	 */
+	public function get isMenuItem():Boolean
+	{
+		return SiteItem(source).isMenuItem;
+	}
+	
+	public function set isMenuItem(value:Boolean):void
+	{
+		SiteItem(source).isMenuItem = value;
+	}
+	
+	//----------------------------------
 	//  text
 	//----------------------------------
 	
