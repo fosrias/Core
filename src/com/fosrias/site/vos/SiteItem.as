@@ -50,6 +50,7 @@ public class SiteItem extends ANestedListItem
 	public static const LIST:String = "LIST";
 	public static const MENU:String = "MENU";
 	public static const POST:String = "POST";
+	public static const SEARCH:String = "SEARCH";
 	public static const SITE:String = "SITE";
 	public static const TEXT:String = "TEXT";
 	public static const URL_LINK:String = "URL_LINK";
@@ -202,6 +203,20 @@ public class SiteItem extends ANestedListItem
 	}
 	
 	//----------------------------------
+	//  hasSubmenus
+	//----------------------------------
+	
+	[Bindable("typeChange")]
+	[Transient]
+	/**
+	 * Whether the item is a menu that should show submenus or not.
+	 */
+	public function get hasSubmenus():Boolean
+	{
+		return type == MENU && isMenuItem;
+	}
+	
+	//----------------------------------
 	//  hasURL
 	//----------------------------------
 	
@@ -239,6 +254,20 @@ public class SiteItem extends ANestedListItem
 	public function get isMaster():Boolean
 	{
 		return id == _masterSiteItemId;
+	}
+	
+	//----------------------------------
+	//  isMenu
+	//----------------------------------
+	
+	[Bindable("typeChange")]
+	[Transient]
+	/**
+	 * Whether the item is a menu or not.
+	 */
+	public function get isMenu():Boolean
+	{
+		return type == MENU;
 	}
 	
 	//----------------------------------
