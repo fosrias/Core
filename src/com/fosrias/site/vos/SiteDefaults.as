@@ -13,7 +13,7 @@ import mx.collections.ArrayCollection;
 
 use namespace app_internal;
 
-[RemoteClass(alias="CMService.com.fosrias.cm.components.utility.Defaults")]
+[RemoteClass(alias="com.fosrias.site.components.utility.Defaults")]
 [Bindable]
 public class SiteDefaults
 {    
