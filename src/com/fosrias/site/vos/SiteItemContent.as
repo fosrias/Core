@@ -19,7 +19,7 @@ import com.fosrias.core.vos.interfaces.ATimestamp;
 use namespace app_internal
 use namespace memento_internal;
 
-[RemoteClass(alias="CMService.com.fosrias.cm.components.physical.SiteItemContent")]
+[RemoteClass(alias="com.fosrias.site.components.physical.SiteItemContent")]
 [Bindable]
 /**
  * The SiteItemContent class is content of a corresponding <code>SiteItem</code>
@@ -41,8 +41,7 @@ public class SiteItemContent extends ATimestamp
 	public function SiteItemContent(id:int = 0,
 								    siteItemId:int = 0,
 									text:String = null,
-								    isHTMLFormat:Boolean = false,
-									link:String = null,
+								    link:String = null,
 									fileLocation:String = null,
 								    fileName:String = null,
 									fileSize:Number = NaN,
@@ -55,7 +54,6 @@ public class SiteItemContent extends ATimestamp
 		this.id           = id;
 		this.siteItemId   = siteItemId;
 		this.text         = text;
-		this.isHTMLFormat = isHTMLFormat;
 		this.link         = link;
 		this.fileLocation = fileLocation;
 		this.fileName     = fileName;
@@ -84,8 +82,7 @@ public class SiteItemContent extends ATimestamp
 	public function get clone():SiteItemContent
 	{
 		var clone:SiteItemContent =  new SiteItemContent(id, siteItemId, text, 
-			isHTMLFormat, link, fileLocation, fileName, fileSize, fileContent,
-			revision);
+			link, fileLocation, fileName, fileSize, fileContent, revision);
 		
 		if (item != null)
 			clone.item = SiteItem(item.noContentClone);
@@ -130,7 +127,7 @@ public class SiteItemContent extends ATimestamp
 	 */
 	app_internal function get noItemClone():SiteItemContent
 	{
-		return  new SiteItemContent(id, siteItemId, text, isHTMLFormat, link, 
+		return  new SiteItemContent(id, siteItemId, text, link, 
 			fileLocation, fileName, fileSize, fileContent, revision);
 	}
 	
@@ -189,15 +186,6 @@ public class SiteItemContent extends ATimestamp
 	 * The text content.
 	 */
 	public var text:String;
-	
-	//----------------------------------
-	//  isHTMLFormat
-	//----------------------------------
-	
-	/**
-	 * Whether the text is in HTMLFormat or not.
-	 */
-	public var isHTMLFormat:Boolean;
 	
 	//----------------------------------
 	//  link
@@ -341,7 +329,6 @@ public class SiteItemContent extends ATimestamp
 			var isEqual:Boolean = value.id == id &&
 								  value.siteItemId == siteItemId &&
 								  value.text == text &&
-								  value.isHTMLFormat == isHTMLFormat &&
 								  value.fileLocation == fileLocation &&
 								  value.fileName == fileName &&
 								  value.fileType == fileType &&
@@ -370,7 +357,6 @@ public class SiteItemContent extends ATimestamp
 		id 	         = propertyMap.id; 
 		siteItemId   = propertyMap.siteItemId; 
 		text		 = propertyMap.text; 
-		isHTMLFormat = propertyMap.isHTMLFormat; 
 		link         = propertyMap.link; 
 		fileLocation = propertyMap.fileLocation; 
 		fileName	 = propertyMap.fileName; 
