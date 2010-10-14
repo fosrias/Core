@@ -9,11 +9,11 @@ package com.fosrias.site.vos.interfaces
 {
 import com.fosrias.core.interfaces.AClass;
 import com.fosrias.core.utils.DateUtils;
+import com.fosrias.core.vos.interfaces.ATimestamp;
 
 import mx.collections.ArrayCollection;
 
 import org.osmf.layout.AbsoluteLayoutFacet;
-import com.fosrias.core.vos.interfaces.ATimestamp;
 
 /**
  * The AListItem class is the abstract base class for all list item classes.
@@ -34,19 +34,21 @@ public class AListItem extends ATimestamp
      * Constructor
 	 */
 	public function AListItem(id:int = 0,
-							  sortOrder:int = 0,
 							  type:String = null,
 					          name:String = null,
 							  description:String = null,
+							  isLocked:Boolean = false,
+							  isSystem:Boolean = false,
 							  convertRemoteDates:Boolean = false)
     {
         super(convertRemoteDates);
 		
         this.id = id;
-        this.sortOrder = sortOrder;
 		this.type = type;
 		this.name = name;
 		this.description = description;
+		this.isLocked = isLocked;
+		this.isSystem = isSystem;
 		_convertRemoteDates = convertRemoteDates;
     }
     
@@ -214,7 +216,7 @@ public class AListItem extends ATimestamp
 	}
 
     
-    //----------------------------------
+	//----------------------------------
 	//  description
 	//----------------------------------
 	
@@ -222,9 +224,28 @@ public class AListItem extends ATimestamp
 	 * The name for the list item.
 	 */
 	public var description:String;
-
-    
-    //----------------------------------
+	
+	
+	//----------------------------------
+	//  isLocked
+	//----------------------------------
+	
+	/**
+	 * Whether the item is locked or not.
+	 */
+	public var isLocked:Boolean;
+	
+	
+	//----------------------------------
+	//  isSystem
+	//----------------------------------
+	
+	/**
+	 * Whether the item is as system item or not.
+	 */
+	public var isSystem:Boolean;
+	
+	//----------------------------------
     //  name
     //----------------------------------
     
@@ -233,15 +254,6 @@ public class AListItem extends ATimestamp
      */
     public var name:String;
     
-	//----------------------------------
-	//  sortOrder
-	//----------------------------------
-	
-	/**
-	 * The sort order of the list item.
-	 */
-	public var sortOrder:int;
-	
 	//--------------------------------------------------------------------------
     //
     //  Methods
@@ -265,7 +277,6 @@ public class AListItem extends ATimestamp
 		if (value is AListItem)
 		{
 			var isEqual:Boolean = value.id == id &&
-								  value.sortOrder == sortOrder &&
 								  value.type == _type &&
 								  value.name == name &&
 								  value.description == description;

@@ -48,8 +48,9 @@ public class AHierarchicalItem extends ANestedListItem
 		_source.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, 
 			sourceChanged);
 
-		super(value.id, value.parentId, value.sortOrder, value.type, value.name, 
-			value.description, value.lft, value.rgt, value.convertRemoteDates);
+		super(value.id, value.parentId,  value.type, value.name, 
+			value.description, value.lft, value.rgt, value.isLocked,
+			value.isSystem, value.convertRemoteDates);
 	}
 	
 	//--------------------------------------------------------------------------

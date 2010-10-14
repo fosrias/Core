@@ -22,15 +22,17 @@ public class ANestedListItem extends AListItem
 	 */
 	public function ANestedListItem(id:int=0, 
 									parentId:int=0, 
-									sortOrder:int=0, 
 									type:String=null, 
 									name:String=null, 
 									description:String=null,
 									lft:int = 0,
 									rgt:int = 0,
+									isLocked:Boolean = false,
+									isSystem:Boolean = false,
 									convertRemoteDates:Boolean=false)
 	{
-		super(id, sortOrder, type, name, description, convertRemoteDates);
+		super(id, type, name, description, isLocked, isSystem, 
+			convertRemoteDates);
 		this.parentId = parentId;
 		this.lft = lft;
 		this.rgt = rgt;
