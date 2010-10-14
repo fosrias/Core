@@ -501,33 +501,36 @@ public class HierarchicalItemData extends HierarchicalData
 		
 		_selectedParent = _itemIdMap[_selectedListItem.parentId];
 		
-		//HACK: Set the selected Item here to prevent collectionViewError
-		selectedItem = _selectedParent;
-		
-		//Add at end of child list location initially.
-		//REFACTOR. Not DRY see setLocationByNestedIndex
-		
-		_isRelocatingItem = true;
-		
-		//Find the correct position under the parent
-		var length:int = _selectedParent.childrenLength;
-		for (var i:int = 0; i < length; i++)
+		if (_selectedParent != null)
 		{
-			if (_selectedParent.children[i].lft + 1 == 
-				_selectedListItem.lft || (_selectedListItem.isNew &&
-					_selectedParent.children[i].lft == 
-					_selectedListItem.lft) )
+			//HACK: Set the selected Item here to prevent collectionViewError
+			selectedItem = _selectedParent;
+			
+			//Add at end of child list location initially.
+			//REFACTOR. Not DRY see setLocationByNestedIndex
+			
+			_isRelocatingItem = true;
+			
+			//Find the correct position under the parent
+			var length:int = _selectedParent.childrenLength;
+			for (var i:int = 0; i < length; i++)
 			{
-				break;
+				if (_selectedParent.children[i].lft + 1 == 
+					_selectedListItem.lft || (_selectedListItem.isNew &&
+						_selectedParent.children[i].lft == 
+						_selectedListItem.lft) )
+				{
+					break;
+				}
 			}
+			
+			//Add back to correct location
+			_selectedListItemChildIndex = i;
+			_selectedParent.addChildAt( AHierarchicalItem(newHierarchicalItem),
+				_selectedListItemChildIndex);
+			
+			_isRelocatingItem = false;
 		}
-		
-		//Add back to correct location
-		_selectedListItemChildIndex = i;
-		_selectedParent.addChildAt( AHierarchicalItem(newHierarchicalItem),
-			_selectedListItemChildIndex);
-		
-		_isRelocatingItem = false;
 		
 		//Always add after home page
 		selectedItem = newHierarchicalItem;
@@ -630,8 +633,12 @@ public class HierarchicalItemData extends HierarchicalData
 	{
 		_itemMap[_selectedListItem] = null;
 		delete _itemMap[_selectedListItem];
-		_selectedParent.removeChildAt(_selectedListItemChildIndex);
-		_selectedParent = null;
+		
+		if (_selectedParent != null)
+		{
+			_selectedParent.removeChildAt(_selectedListItemChildIndex);
+			_selectedParent = null;
+		}
 	}
 	
 	/**
@@ -672,7 +679,6 @@ public class HierarchicalItemData extends HierarchicalData
 	private function setLocationByNestedIndex():void
 	{
 		//Flag to block stack flow loop since this method tr
-		//_isRelocatingItem = true;
 		
 		var parentLeft:int = _selectedParent.lft;
 		
@@ -689,22 +695,14 @@ public class HierarchicalItemData extends HierarchicalData
 			
 		} else if (_selectedListItem.lft != parentLeft + 1 ) {
 			
-			//var nestedRange:int = _selectedListItem.rgt - _selectedListItem.lft;
-			
 			//Find the correct position under the parent
 			var length:int = _selectedParent.childrenLength;
 			
 			for (var i:int = 0; i < length; i++)
 			{
-//				nestedRange = _selectedParent.children[i].rgt - 
-//					_selectedParent.children[i].lft
 					
 				if (_selectedParent.children[i].lft == 
 					_selectedListItem.lft)
-				
-//				|| (_selectedListItem.isNew &&
-//						_selectedParent.children[i].lft == 
-//						_selectedListItem.lft) )
 				{
 					break;
 				}
@@ -721,8 +719,6 @@ public class HierarchicalItemData extends HierarchicalData
 					_selectedListItemChildIndex);
 			}
 		}
-		
-		//_isRelocatingItem = false;
 	}
 }
 	
