@@ -8,8 +8,14 @@
 package com.fosrias.site.vos
 {
 import com.fosrias.core.namespaces.app_internal;
+import com.fosrias.site.models.HierarchicalItemData;
+
+import flash.utils.Dictionary;
 
 import mx.collections.ArrayCollection;
+import mx.collections.HierarchicalCollectionView;
+import mx.collections.HierarchicalData;
+import mx.controls.Alert;
 
 use namespace app_internal;
 
@@ -31,13 +37,69 @@ public class SiteDefaults
     
     }    
     
-    //--------------------------------------------------------------------------
-    //
-    //    Properties
-    //
-    //--------------------------------------------------------------------------
-    
-    //----------------------------------
+	//--------------------------------------------------------------------------
+	//
+	//    Variables
+	//
+	//--------------------------------------------------------------------------
+	
+	private var _authorSource:Object;
+	
+	private var _categorySource:Object;
+	
+	private var _hierarchicalItems:HierarchicalItemData;
+	
+	private var _linkToItemMap:Dictionary = new Dictionary;
+	
+	private var _siteSource:Object;
+	
+	
+	//--------------------------------------------------------------------------
+	//
+	//    Properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//    homeItem
+	//----------------------------------
+	
+	/**
+	 * The home item.
+	 */
+	public function get homeItem():Object
+	{
+		return _hierarchicalItems.findItemById(items[1].id);
+	}
+	
+	//----------------------------------
+	//    menuSource
+	//----------------------------------
+	
+	/**
+	 * The menu source for the site.
+	 */
+	public function get menuSource():HierarchicalData
+	{
+		return new HierarchicalData(_siteSource);
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//    Remote properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//    items
+	//----------------------------------
+	
+	/**
+	 * The site default items.
+	 */
+	public var items:Array; /* of SiteItem */
+	
+	//----------------------------------
     //    itemTypes
     //----------------------------------
     
@@ -72,6 +134,85 @@ public class SiteDefaults
 	    if (_masterItem != null)
 		    _masterItem.setAsMaster();
     }
+	
+	//--------------------------------------------------------------------------
+	//
+	//    Methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Initializes the defaults.
+	 */
+	public function initialize():void
+	{
+		//Create Hierarchical version
+		_hierarchicalItems = new HierarchicalItemData(items, 
+			SiteItemWrapper);
+		
+		//Extract the groups
+		_siteSource     = _hierarchicalItems.source[0];
+		_authorSource   = _hierarchicalItems.source[1];
+		_categorySource = _hierarchicalItems.source[2];
+		
+		//Map the links	
+		
+		var linksCollection:ArrayCollection = 
+			new ArrayCollection( items.slice() );
+		
+		linksCollection.filterFunction = linksFilter;
+		linksCollection.refresh();
+		
+		var parent:Object;
+		
+		for each (var item:Object in linksCollection)
+		{
+			if (item.isLink)
+			{
+				_linkToItemMap[item.name] = item;
+				
+			} else if (item.isLinkItem) {
+				
+				//Links are always directly related to another item.
+				_linkToItemMap[item.name] = 
+					_hierarchicalItems.findItemById(item.relatedItemId);
+			}
+		}
+	}
+	
+	/**
+	 * Returns the item associated with a link. 
+	 * 
+	 * @see com.fosrias.views.components.SiteLink;
+	 */
+	public function findLinkedItem(value:String):Object
+	{
+		var item:Object = _linkToItemMap[value];
+		
+		if (item != null)
+		{
+			return item;
+			
+		} else {
+			
+			Alert.show("We are sorry. The link you clicked " + 
+				"appears to be broken.", "Link Error");
+			
+			//REFACTOR: Add error reporting functionality here.
+			return null;
+		}	
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//    Private methods
+	//
+	//--------------------------------------------------------------------------
+		
+	private function linksFilter(item:Object):Boolean
+	{
+		return item.isLink || item.isLinkItem;
+	}
 }
 
 }
