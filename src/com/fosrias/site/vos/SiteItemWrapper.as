@@ -96,18 +96,6 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	}
 	
 	//----------------------------------
-	//  isMenu
-	//----------------------------------
-	
-	/**
-	 * Whether item is a menu or not.
-	 */
-	public function get isMenu():Boolean
-	{
-		return SiteItem(source).isMenu;
-	}
-	
-	//----------------------------------
 	//  isLink
 	//----------------------------------
 	
@@ -125,6 +113,18 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	}
 	
 	//----------------------------------
+	//  isLinkItem
+	//----------------------------------
+	
+	/**
+	 * Whether item is a link or not.
+	 */
+	/*public function get isLinkItem():Boolean
+	{
+		return SiteItem(source).isLinkItem;
+	}*/
+	
+	//----------------------------------
 	//  isList
 	//----------------------------------
 	
@@ -135,6 +135,43 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	public function get isList():Boolean
 	{
 		return SiteItem(source).isList;
+	}
+	
+	//----------------------------------
+	//  isListDetail
+	//----------------------------------
+	
+	/**
+	 * Whether the item is detail in a list.
+	 */
+	public function get isListDetail():Boolean
+	{
+		return SiteItem(source).isListDetail;
+	}
+	
+	//----------------------------------
+	//  isListFilter
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 * Whether the item is a list filter or not.
+	 */
+	public function get isListFilter():Boolean
+	{
+		return SiteItem(source).isListFilter;
+	}
+	
+	//----------------------------------
+	//  isMenu
+	//----------------------------------
+	
+	/**
+	 * Whether item is a menu or not.
+	 */
+	public function get isMenu():Boolean
+	{
+		return SiteItem(source).isMenu;
 	}
 	
 	//----------------------------------

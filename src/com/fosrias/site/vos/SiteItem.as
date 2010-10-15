@@ -48,8 +48,11 @@ public class SiteItem extends ANestedListItem
 	public static const GROUP:String 		  = "GROUP";
 	public static const GROUP_AUTHOR:String   = "GROUP_AUTHOR";
 	public static const GROUP_CATEGORY:String = "GROUP_CATEGORY";
+	public static const GROUP_LINK:String     = "GROUP_LINK";
 	public static const HOME:String 		  = "HOME";
 	public static const LIST:String 		  = "LIST";
+	public static const LIST_BY_DATE:String   = "LIST_BY_DATE";
+	public static const LIST_BY_NAME:String   = "LIST_BY_NAME";
 	public static const LIST_AUTHOR:String    = "LIST_AUTHOR";
 	public static const LIST_CATEGORY:String  = "LIST_CATEGORY";
 	public static const LIST_DATE:String      = "LIST_DATE";
@@ -62,8 +65,7 @@ public class SiteItem extends ANestedListItem
 	public static const POST:String           = "POST";
 	public static const SEARCH:String         = "SEARCH";
 	public static const SITE:String           = "SITE";
-	public static const SITE_LINK:String      = "SITE_LINK";
-	public static const SITE_MAP:String      = "SITE_MAP";
+	public static const SITE_MAP:String       = "SITE_MAP";
 	public static const TEXT:String           = "TEXT";
 	public static const URL_LINK:String       = "URL_LINK";
 	
@@ -107,6 +109,7 @@ public class SiteItem extends ANestedListItem
 	 */
 	public function SiteItem(id:int = 0,
 							 parentId:int = 0,
+							 relatedItemId:int = 0,
 							 type:String = null,
 							 name:String = "New Item",
 							 description:String = "",
@@ -118,6 +121,7 @@ public class SiteItem extends ANestedListItem
 							 tags:String = "",
 							 isActive:Boolean = false,
 							 isLink:Boolean = false,
+							 isListDetail:Boolean = false,
 							 lft:int = 0,
 							 rgt:int = 0,
 							 isLocked:Boolean = false,
@@ -168,12 +172,14 @@ public class SiteItem extends ANestedListItem
 			this.content = content;
 		}
 		this.contentId = contentId;
+		this.relatedItemId = relatedItemId;
 		this.isMenuItem = isMenuItem;
 		this.urlFragment = urlFragment;
 		this.browserTitle = browserTitle;
 		this.tags = tags;
 		this.isLink = isLink;
 		this.isActive = isActive;
+		this.isListDetail = isListDetail;
 	}
 	
 	//--------------------------------------------------------------------------
@@ -192,9 +198,10 @@ public class SiteItem extends ANestedListItem
 	 */
 	public function get cloneContentCopy():AListItem
 	{
-		var clone:SiteItem = new SiteItem( id, parentId,  type, name, 
-			description, contentId, isMenuItem, menuSeparator, urlFragment, 
-			browserTitle, tags, isActive, isLink, lft, rgt, isLocked, isSystem);
+		var clone:SiteItem = new SiteItem( id, parentId, relatedItemId, type, 
+			name, description, contentId, isMenuItem, menuSeparator, 
+			urlFragment, browserTitle, tags, isActive, isLink, isListDetail, 
+			lft, rgt, isLocked, isSystem);
 		
 		if (content != null)
 			clone.content = content.noItemCopy;
@@ -230,7 +237,8 @@ public class SiteItem extends ANestedListItem
 	public function get hasEditableType():Boolean
 	{
 		return type != SITE && type != HOME && type != GROUP && 
-			type != GROUP_AUTHOR && type != GROUP_CATEGORY;
+			type != GROUP_AUTHOR && type != GROUP_CATEGORY && 
+			type != GROUP_LINK;
 	}
 	
 	//----------------------------------
@@ -341,7 +349,21 @@ public class SiteItem extends ANestedListItem
 	 */
 	public function get isGroupItem():Boolean
 	{
-		return type == GROUP || type == GROUP_AUTHOR || type == GROUP_CATEGORY;
+		return type == GROUP || type == GROUP_AUTHOR || type == GROUP_CATEGORY
+			|| type == GROUP_LINK;
+	}
+	
+	//----------------------------------
+	//  isLinkItem
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 * Whether the item is a link or not.
+	 */
+	public function get isLinkItem():Boolean
+	{
+		return type == GROUP_LINK;
 	}
 	
 	//----------------------------------
@@ -356,6 +378,20 @@ public class SiteItem extends ANestedListItem
 	{
 		return type == FAQ || type == LIST || type == MARQUEE || 
 			type == POST || type == SEARCH;
+	}
+	
+	//----------------------------------
+	//  isListFilter
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 * Whether the item is a list filter or not.
+	 */
+	public function get isListFilter():Boolean
+	{
+		return type == LIST_AUTHOR || type == LIST_CATEGORY || 
+			type == LIST_DATE;;
 	}
 	
 	//----------------------------------
@@ -395,10 +431,10 @@ public class SiteItem extends ANestedListItem
 	/**
 	 * Whether the item is an internal site link or not
 	 */
-	public function get isSiteLink():Boolean
+	/*public function get isSiteLink():Boolean
 	{
 		return type == SITE_LINK;
-	}
+	}*/
 	
 	//----------------------------------
 	//  isText
@@ -461,9 +497,10 @@ public class SiteItem extends ANestedListItem
 	 */
 	app_internal function get noContentClone():AListItem
 	{
-		var clone:SiteItem = new SiteItem(id, parentId, type, name, description, 
-			contentId, isMenuItem, menuSeparator, urlFragment, browserTitle, 
-			tags, isActive, isLink, lft, rgt, isLocked, isSystem);
+		var clone:SiteItem = new SiteItem(id, parentId, relatedItemId, type, 
+			name, description, contentId, isMenuItem, menuSeparator, 
+			urlFragment, browserTitle, tags, isActive, isLink, isListDetail, 
+			lft, rgt, isLocked, isSystem);
 		clone.isDeleted = isDeleted;
 		
 		return clone;
@@ -482,8 +519,9 @@ public class SiteItem extends ANestedListItem
 	{
 		//Copies always have zero for id and false for isActive and isDeleted
 		//is always false
-		return new SiteItem( 0, parentId,  type, name, description, contentId, 
-			isMenuItem, menuSeparator, urlFragment, browserTitle, tags);
+		return new SiteItem( 0, parentId, relatedItemId,  type, name, 
+			description, contentId, isMenuItem, menuSeparator, urlFragment, 
+			browserTitle, tags);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -502,10 +540,10 @@ public class SiteItem extends ANestedListItem
 	 */
 	override public function get clone():AListItem
 	{
-		var clone:SiteItem = new SiteItem( id, parentId, type, name, 
-			description, contentId, isMenuItem, menuSeparator, 
-			urlFragment, browserTitle, tags, isActive, isLink, lft, rgt,
-			isLocked, isSystem);
+		var clone:SiteItem = new SiteItem( id, parentId, relatedItemId, type, 
+			name, description, contentId, isMenuItem, menuSeparator, 
+			urlFragment, browserTitle, tags, isActive, isLink, isListDetail, 
+			lft, rgt, isLocked, isSystem);
 		
 		if (content != null)
 			clone.content = content.noItemClone;
@@ -527,10 +565,10 @@ public class SiteItem extends ANestedListItem
 	{
 		//Copies always have zero for id and false for isActive and isDeleted
 		//is always false and lft and rgt are zero indicate new
-		var copy:SiteItem =  new SiteItem( 0, parentId, type, name, 
-			description, contentId, isMenuItem, menuSeparator, urlFragment,
-			browserTitle, tags, false, false, 0, 0, false, false, 
-			content.noItemCopy);
+		var copy:SiteItem =  new SiteItem( 0, parentId, relatedItemId, type, 
+			name, description, contentId, isMenuItem, menuSeparator, 
+			urlFragment, browserTitle, tags, false, false, false, 0, 0, false, 
+			false, content.noItemCopy);
 		
 		if (content != null)
 			copy.content = content.noItemClone;
@@ -622,7 +660,7 @@ public class SiteItem extends ANestedListItem
 		}
 		
 		//A link cannot link to itself and it is never used in a menu
-		if (type == SITE_LINK)
+		if (type == GROUP_LINK)
 		{
 			isLink = false;
 			isMenuItem = false;
@@ -653,6 +691,15 @@ public class SiteItem extends ANestedListItem
 	 * @private 
 	 */
 	public var contentId:int;
+	
+	//----------------------------------
+	//  relatedItemId
+	//----------------------------------
+	
+	/**
+	 * @private 
+	 */
+	public var relatedItemId:int;
 	
 	//----------------------------------
 	//  menuSeparator
@@ -689,6 +736,15 @@ public class SiteItem extends ANestedListItem
 	 * Whether the item name should be registered as an internal site link.
 	 */
 	public var isLink:Boolean;
+	
+	//----------------------------------
+	//  isListDetail
+	//----------------------------------
+	
+	/**
+	 * Whether the item is detail in a list.
+	 */
+	public var isListDetail:Boolean;
 	
 	//----------------------------------
 	//  urlFragment
@@ -831,11 +887,13 @@ public class SiteItem extends ANestedListItem
 	{
 		id			  = propertyMap.id;
 		contentId     = propertyMap.contentId;
+		relatedItemId = propertyMap.relatedItemId;
 		name          = propertyMap.name;
 		description   = propertyMap.description;
 		menuSeparator = propertyMap.menuSeparator;
 		isActive      = propertyMap.isActive;
 		isLink        = propertyMap.isLink;
+		isListDetail  = propertyMap.isListDetail;
 		isMenuItem    = propertyMap.isMenuItem;
 		urlFragment   = propertyMap.urlFragment;
 		browserTitle  = propertyMap.browserTitle;
@@ -881,13 +939,15 @@ public class SiteItem extends ANestedListItem
 		if ( value is SiteItem && super.isEqual(value) )
 		{
 			var isEqual:Boolean = value.contentId == contentId &&
-							      value.isMenuItem == isMenuItem &&
+								  value.relatedItemId == relatedItemId &&
+								  value.isMenuItem == isMenuItem &&
 								  value.menuSeparator == menuSeparator &&
 								  value.urlFragment == urlFragment &&
 								  value.browserTitle == browserTitle &&
 								  value.tags == tags &&
 								  value.isActive == isActive &&
-								  value.isLink == isLink;
+								  value.isLink == isLink &&
+								  value.isListDetail == isListDetail;
 			return isEqual;
 		}
 		return false;
@@ -968,8 +1028,8 @@ public class SiteItem extends ANestedListItem
 	 */
 	public static function createPage(parentId:int, parentlft:int):SiteItem
 	{
-		var item:SiteItem = new SiteItem(0, parentId, SiteItem.TEXT,
-			"New Item", "", 0, true, null, "", "", "", true, false, 
+		var item:SiteItem = new SiteItem(0, parentId, 0, SiteItem.TEXT,
+			"New Item", "", 0, true, null, "", "", "", true, false, false, 
 			parentlft + 1, parentlft + 2);
 		return item;
 	}
