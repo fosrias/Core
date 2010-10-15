@@ -1026,11 +1026,11 @@ public class SiteItem extends ANestedListItem
 	/**
 	 * Utility method to create the a new Text Page Item
 	 */
-	public static function createPage(parentId:int, parentlft:int):SiteItem
+	public static function createPage(parentId:int, lft:int):SiteItem
 	{
 		var item:SiteItem = new SiteItem(0, parentId, 0, SiteItem.TEXT,
 			"New Item", "", 0, true, null, "", "", "", true, false, false, 
-			parentlft + 1, parentlft + 2);
+			lft, lft + 1);
 		return item;
 	}
 	
