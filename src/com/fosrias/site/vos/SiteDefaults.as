@@ -8,7 +8,7 @@
 package com.fosrias.site.vos
 {
 import com.fosrias.core.namespaces.app_internal;
-import com.fosrias.site.models.HierarchicalItemData;
+import com.fosrias.site.models.SiteHierarchicalItemData;
 
 import flash.utils.Dictionary;
 
@@ -47,9 +47,11 @@ public class SiteDefaults
 	
 	private var _categorySource:Object;
 	
-	private var _hierarchicalItems:HierarchicalItemData;
+	private var _hierarchicalItems:SiteHierarchicalItemData;
 	
 	private var _linkToItemMap:Dictionary = new Dictionary;
+	
+	private var _linkToRelatedItemIdMap:Dictionary = new Dictionary;
 	
 	private var _siteSource:Object;
 	
@@ -147,8 +149,7 @@ public class SiteDefaults
 	public function initialize():void
 	{
 		//Create Hierarchical version
-		_hierarchicalItems = new HierarchicalItemData(items, 
-			SiteItemWrapper);
+		_hierarchicalItems = new SiteHierarchicalItemData(items);
 		
 		//Extract the groups
 		_siteSource     = _hierarchicalItems.source[0];
@@ -176,6 +177,8 @@ public class SiteDefaults
 				//Links are always directly related to another item.
 				_linkToItemMap[item.name] = 
 					_hierarchicalItems.findItemById(item.relatedItemId);
+				
+				_linkToRelatedItemIdMap[item.name] = item.relatedItemId;
 			}
 		}
 	}
@@ -195,12 +198,19 @@ public class SiteDefaults
 			
 		} else {
 			
-			Alert.show("We are sorry. The link you clicked " + 
-				"appears to be broken.", "Link Error");
+			var id:Number = _linkToRelatedItemIdMap[value];
 			
-			//REFACTOR: Add error reporting functionality here.
-			return null;
-		}	
+			if ( !isNaN(id) )
+			{
+				return id;
+			} 
+		}
+		
+		Alert.show("We are sorry. The link you clicked " + 
+			"appears to be broken.", "Link Error");
+		
+		//REFACTOR: Add error reporting functionality here.
+		return null;
 	}
 	
 	//--------------------------------------------------------------------------

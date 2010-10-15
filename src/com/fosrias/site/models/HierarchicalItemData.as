@@ -104,13 +104,12 @@ public class HierarchicalItemData extends HierarchicalData
 	 * @private
 	 * REFACTOR Using getItem on child array collections
 	 */
-	private var _selectedListItemChildIndex:int;
+	protected var _selectedListItemChildIndex:int;
 	
 	/**
 	 * @private
 	 */
-	private var _selectedParent:AHierarchicalItem;
-	
+	protected var _selectedParent:AHierarchicalItem;
 	
 	/**
 	 * @private

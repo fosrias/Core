@@ -162,6 +162,7 @@
     <classEntry path="com.fosrias.site.vos.SiteItem"/>
     <classEntry path="com.fosrias.site.vos.SiteItemWrapper"/>
     <classEntry path="com.fosrias.core.events.DataServiceEvent"/>
+    <classEntry path="com.fosrias.site.models.SiteHierarchicalItemData"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
