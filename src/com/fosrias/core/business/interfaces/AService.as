@@ -110,19 +110,30 @@ public class AService extends ADispatcher
      * so that all response events include a token with its associated 
      * properties including a reference to the initial arguments in the 
      * <code>message.body</code> property of the event token.
+	 * 
+	 * If this method is called using a single data element, it must be an
+	 * array that starts with the remote operation name.
      * 
      * @param remoteOperation The remote operation to be called.
      * @param arguments The arguments to be passed to the remote operation.
      */
-    public function call( remoteOperation:String, ... args ):void
+    public function call(... args):void
     {
     	//Show the cursor
     	service.showBusyCursor = _showBusyCursor;
+		
+		//Allows event.data to be used as the sole argument in a call.
+		if (args[0] is Array)
+		{
+			args = args[0];
+		}
+		
+		var remoteOperation:String = args.shift();
     	
     	//Create the token
     	var token:AsyncToken;
     	var operation:Operation 
-    	    = Operation( service.getOperation( remoteOperation ) );
+    	    = Operation( service.getOperation(remoteOperation) );
     	
         //Get a timestamp
     	var now:Date = new Date();
@@ -144,6 +155,37 @@ public class AService extends ADispatcher
     	//Display debug message
     	traceDebug( className + "." + remoteOperation + " called.");
     }
+	
+	public function oldCall(remoteOperation:String, ... args):void
+	{
+		//Show the cursor
+		service.showBusyCursor = _showBusyCursor;
+		
+		//Create the token
+		var token:AsyncToken;
+		var operation:Operation 
+		= Operation( service.getOperation(remoteOperation) );
+		
+		//Get a timestamp
+		var now:Date = new Date();
+		
+		//Call the remote operation
+		if ( args.length > 0 )
+		{
+			token = operation.send.apply( null, args );
+		}  else {
+			token = operation.send();
+		} 
+		
+		//Set the token responder
+		token.addResponder( new Responder( onResult, onFault ) );
+		
+		//Store the time for reference
+		pendingCallTimestamps[token] = now;
+		
+		//Display debug message
+		traceDebug( className + "." + remoteOperation + " called.");
+	}
     
     /**
      * Changes the remote object of the service.
