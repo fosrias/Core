@@ -223,7 +223,7 @@ public class SiteItem extends ANestedListItem
 	public function get hasEditableContent():Boolean
 	{
 		return type == CONTACT || type == HOME || type == LOCATION || 
-			type == TEXT;
+			type == TEXT || type == FILE;
 	}
 	
 	//----------------------------------
@@ -252,6 +252,33 @@ public class SiteItem extends ANestedListItem
 	public function get hasLoadedContent():Boolean
 	{
 		return contentId == content.id;
+	}
+	
+	//----------------------------------
+	//  hasLoadedFile
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 * Whether the item content file is loaded.
+	 */
+	public function get hasLoadedFile():Boolean
+	{
+		return contentId == content.id && content.fileLocation != null &&
+			content.fileContent != null;
+	}
+	
+	//----------------------------------
+	//  hasRemoteFile
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 * Whether item corresponds to an unloaded remote file
+	 */
+	public function get hasRemoteFile():Boolean
+	{
+		return contentId == content.id && content.fileLocation != null;
 	}
 	
 	//----------------------------------
@@ -376,8 +403,7 @@ public class SiteItem extends ANestedListItem
 	 */
 	public function get isList():Boolean
 	{
-		return type == FAQ || type == LIST || type == MARQUEE || 
-			type == POST || type == SEARCH;
+		return type == FAQ || type == LIST || type == POST || type == SEARCH;
 	}
 	
 	//----------------------------------
@@ -423,18 +449,17 @@ public class SiteItem extends ANestedListItem
 	}
 	
 	//----------------------------------
-	//  isSiteLink
+	//  isSWF
 	//----------------------------------
 	
-	[Bindable("typeChange")]
 	[Transient]
 	/**
-	 * Whether the item is an internal site link or not
+	 * Whether the file type is a swf.
 	 */
-	/*public function get isSiteLink():Boolean
+	public function get isSWF():Boolean
 	{
-		return type == SITE_LINK;
-	}*/
+		return content.fileType == ".swf";
+	}
 	
 	//----------------------------------
 	//  isText
@@ -470,6 +495,7 @@ public class SiteItem extends ANestedListItem
 	//----------------------------------
 	
 	[Transient]
+	[Bindable("contentChange")]
 	/**
 	 * The text formated as a text flow for insertion into <code>TextArea</code>
 	 * instances.
@@ -666,6 +692,12 @@ public class SiteItem extends ANestedListItem
 			isMenuItem = false;
 		}
 		
+		//A link cannot link to itself and it is never used in a menu
+		if (type == SEARCH)
+		{
+			isLink = true;
+		}
+		
 		//Site always has no parent
 		if (value == SITE)
 		{
@@ -815,6 +847,7 @@ public class SiteItem extends ANestedListItem
 				//	"out of sync with the item.");
 			}
 		}
+		dispatchEventType("contentChange");
 	}
 	
 	//----------------------------------

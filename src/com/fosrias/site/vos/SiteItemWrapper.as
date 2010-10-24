@@ -83,6 +83,30 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	}
 	
 	//----------------------------------
+	//  hasLoadedFile
+	//----------------------------------
+	
+	/**
+	 * Whether the item content file is loaded.
+	 */
+	public function get hasLoadedFile():Boolean
+	{
+		return SiteItem(source).hasLoadedFile;
+	}
+	
+	//----------------------------------
+	//  hasRemoteFile
+	//----------------------------------
+	
+	/**
+	 * Whether item corresponds to an unloaded remote file
+	 */
+	public function get hasRemoteFile():Boolean
+	{
+		return SiteItem(source).hasRemoteFile;
+	}
+	
+	//----------------------------------
 	//  hasSubmenus
 	//----------------------------------
 	
@@ -147,6 +171,11 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	public function get isListDetail():Boolean
 	{
 		return SiteItem(source).isListDetail;
+	}
+	
+	public function set isListDetail(value:Boolean):void
+	{
+		SiteItem(source).isListDetail = value;
 	}
 	
 	//----------------------------------

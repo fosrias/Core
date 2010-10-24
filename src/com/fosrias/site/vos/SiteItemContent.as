@@ -12,9 +12,10 @@ import com.fosrias.core.models.interfaces.IIsEqual;
 import com.fosrias.core.models.interfaces.IMemento;
 import com.fosrias.core.namespaces.app_internal;
 import com.fosrias.core.namespaces.memento_internal;
+import com.fosrias.core.vos.interfaces.ATimestamp;
 
 import flash.display.Bitmap;
-import com.fosrias.core.vos.interfaces.ATimestamp;
+import flash.utils.ByteArray;
 
 use namespace app_internal
 use namespace memento_internal;
@@ -45,7 +46,8 @@ public class SiteItemContent extends ATimestamp
 									fileLocation:String = null,
 								    fileName:String = null,
 									fileSize:Number = NaN,
-									fileContent:Bitmap = null,
+									fileType:String = null,
+									fileContent:ByteArray = null,
 									revision:int = 0,
 									item:SiteItem = null,
 									convertRemoteDates:Boolean = false)
@@ -59,6 +61,7 @@ public class SiteItemContent extends ATimestamp
 		this.fileName     = fileName;
 		this.fileSize     = fileSize;
 		this.fileContent  = fileContent;
+		this.fileType 	  = fileType;
 		this.revision     = revision;
 		
 		if (item != null)
@@ -82,7 +85,8 @@ public class SiteItemContent extends ATimestamp
 	public function get clone():SiteItemContent
 	{
 		var clone:SiteItemContent =  new SiteItemContent(id, siteItemId, text, 
-			link, fileLocation, fileName, fileSize, fileContent, revision);
+			link, fileLocation, fileName, fileSize, fileType, fileContent, 
+			revision);
 		
 		if (item != null)
 			clone.item = SiteItem(item.noContentClone);
@@ -128,7 +132,7 @@ public class SiteItemContent extends ATimestamp
 	app_internal function get noItemClone():SiteItemContent
 	{
 		return  new SiteItemContent(id, siteItemId, text, link, 
-			fileLocation, fileName, fileSize, fileContent, revision);
+			fileLocation, fileName, fileSize, fileType, fileContent, revision);
 	}
 	
 	//----------------------------------
@@ -240,7 +244,7 @@ public class SiteItemContent extends ATimestamp
 	 * The content of a file, if uploaded to the server and stored in
 	 * the database.
 	 */
-	public var fileContent:Bitmap;
+	public var fileContent:ByteArray;
 	
 	//----------------------------------
 	//  revision
@@ -361,6 +365,7 @@ public class SiteItemContent extends ATimestamp
 		fileLocation = propertyMap.fileLocation; 
 		fileName	 = propertyMap.fileName; 
 		fileSize     = propertyMap.fileSize; 
+		fileType     = propertyMap.fileType; 
 		fileContent  = propertyMap.fileContent
 		revision     = propertyMap.revision;
 
