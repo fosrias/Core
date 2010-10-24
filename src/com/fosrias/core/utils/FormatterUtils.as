@@ -66,7 +66,7 @@ public class FormatterUtils
         return formatter;
     }
     
-    /**
+	/**
      * A <code>DateFormatter</code> instance with localized full year date 
      * formatting. 
      */
@@ -81,8 +81,8 @@ public class FormatterUtils
                 'YYYY');
         return formatter;
     }
-    
-    /**
+	
+	/**
      * A <code>CurrencyFormatter</code> instance with localized currency 
      * formatting. 
      */
@@ -108,7 +108,51 @@ public class FormatterUtils
         return formatter;
     } 
     
-    /**
+	/**
+	 * A <code>DateFormatter</code> instance with localized date formatting. 
+	 */
+	public static function fullMonthDateFormatter(hasTime:Boolean = false):DateFormatter
+	{
+		var resourceManager:IResourceManager = ResourceManager.getInstance();
+		var formatter:DateFormatter = new DateFormatter;
+		formatter.formatString = "MMMM D, YYYY";
+		
+		if (hasTime)
+		{
+			var timeFormat:String = resourceManager.getString('FormattingValues', 
+				'TIME_FORMAT');
+			
+			//Hack if localization not set up
+			if (timeFormat == null)
+				formatter.formatString += " L:NN A";
+		}
+		
+		return formatter;
+	}
+	
+	/**
+	 * A <code>DateFormatter</code> instance with localized date formatting. 
+	 */
+	public static function monthDateFormatter(hasTime:Boolean = false):DateFormatter
+	{
+		var resourceManager:IResourceManager = ResourceManager.getInstance();
+		var formatter:DateFormatter = new DateFormatter;
+		formatter.formatString = "MMM D, YYYY";
+		
+		if (hasTime)
+		{
+			var timeFormat:String = resourceManager.getString('FormattingValues', 
+				'TIME_FORMAT');
+			
+			//Hack if localization not set up
+			if (timeFormat == null)
+				formatter.formatString += " L:NN A";
+		}
+		
+		return formatter;
+	}
+	
+	/**
      * A <code>NumberFormatter</code> instance with localized number formatting. 
      */
     public static function numberFormatter(precision:int = 2,
