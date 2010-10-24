@@ -10,6 +10,7 @@ package com.fosrias.site.vos
 import com.fosrias.core.namespaces.app_internal;
 import com.fosrias.site.models.SiteHierarchicalItemData;
 
+import flash.events.Event;
 import flash.utils.Dictionary;
 
 import mx.collections.ArrayCollection;
@@ -157,7 +158,6 @@ public class SiteDefaults
 		_categorySource = _hierarchicalItems.source[2];
 		
 		//Map the links	
-		
 		var linksCollection:ArrayCollection = 
 			new ArrayCollection( items.slice() );
 		
@@ -186,7 +186,7 @@ public class SiteDefaults
 	/**
 	 * Returns the item associated with a link. 
 	 * 
-	 * @see com.fosrias.views.components.SiteLink;
+	 * @see com.fosrias.views.components.ItemLinkButton;
 	 */
 	public function findLinkedItem(value:String):Object
 	{
@@ -213,15 +213,62 @@ public class SiteDefaults
 		return null;
 	}
 	
+	/**
+	 * Returns an array of list items.
+	 */
+	public function findLists():Array
+	{
+		var listsCollection:ArrayCollection = 
+			new ArrayCollection( items.slice() );
+		
+		var lists:Array = [];
+		
+		listsCollection.filterFunction = listsFilter;
+		listsCollection.refresh();
+		
+		for each (var item:Object in listsCollection)
+		{
+			
+			lists.push( _hierarchicalItems.findItemById(item.id) );
+		}
+		
+		//Check if a search item is included
+		if (_linkToItemMap["Search"] == null)
+		{
+			//Add system search item.
+			var search:SiteItem = new SiteItem(0, _masterItem.id, 0, 
+				SiteItem.SEARCH, "Search", "Search List", 0, false, null, 
+				"search", "Search","", true, true, false, 0,0, true, true);
+			
+			//Register it as a link.
+			_linkToItemMap[search.name] = search;
+			
+			lists.push( new SiteItemWrapper(search) );
+		}
+		
+		return lists;
+	}
+	
 	//--------------------------------------------------------------------------
 	//
 	//    Private methods
 	//
 	//--------------------------------------------------------------------------
 		
+	/**
+	 * @private
+	 */
 	private function linksFilter(item:Object):Boolean
 	{
 		return item.isLink || item.isLinkItem;
+	}
+	
+	/**
+	 * @private
+	 */
+	private function listsFilter(item:Object):Boolean
+	{
+		return item.isList || item.isListFilter;
 	}
 }
 
