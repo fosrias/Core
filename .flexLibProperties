@@ -18,6 +18,7 @@
     <classEntry path="com.fosrias.core.business.interfaces.ARESTfulService"/>
     <classEntry path="com.fosrias.core.business.interfaces.AService"/>
     <classEntry path="com.fosrias.core.events.DataPayloadEvent"/>
+    <classEntry path="com.fosrias.core.events.DataServiceEvent"/>
     <classEntry path="com.fosrias.core.events.DebugEvent"/>
     <classEntry path="com.fosrias.core.events.PopUpLoaderEvent"/>
     <classEntry path="com.fosrias.core.events.RemoteDataEvent"/>
@@ -109,9 +110,10 @@
     <classEntry path="com.fosrias.core.views.HelpWindow"/>
     <classEntry path="com.fosrias.core.views.SiteStatusUI"/>
     <classEntry path="com.fosrias.core.views.components.AdvancedComboBox"/>
-    <classEntry path="com.fosrias.core.views.components.AdvancedDownloadProgressBar"/>
+    <classEntry path="com.fosrias.core.views.components.AdvancedMXDownloadProgressBar"/>
     <classEntry path="com.fosrias.core.views.components.AdvancedModuleLoader"/>
     <classEntry path="com.fosrias.core.views.components.AdvancedSparkComboBox"/>
+    <classEntry path="com.fosrias.core.views.components.AdvancedSparkDownloadProgressBar"/>
     <classEntry path="com.fosrias.core.views.components.AutosizingRichEditableText"/>
     <classEntry path="com.fosrias.core.views.components.BindingWatcherCanvas"/>
     <classEntry path="com.fosrias.core.views.components.EnumComboBox"/>
@@ -151,18 +153,20 @@
     <classEntry path="com.fosrias.core.vos.UserData"/>
     <classEntry path="com.fosrias.core.vos.UserPermissions"/>
     <classEntry path="com.fosrias.core.vos.interfaces.ASelector"/>
-    <classEntry path="com.fosrias.site.vos.interfaces.AListItem"/>
-    <classEntry path="com.fosrias.site.vos.interfaces.AHierarchicalItem"/>
-    <classEntry path="com.fosrias.site.vos.interfaces.ANestedListItem"/>
     <classEntry path="com.fosrias.core.vos.interfaces.ATimestamp"/>
     <classEntry path="com.fosrias.site.models.HierarchicalItemData"/>
+    <classEntry path="com.fosrias.site.models.SiteHierarchicalItemData"/>
     <classEntry path="com.fosrias.site.vos.HierarchicalItemWrapper"/>
     <classEntry path="com.fosrias.site.vos.SiteDefaults"/>
-    <classEntry path="com.fosrias.site.vos.SiteItemContent"/>
     <classEntry path="com.fosrias.site.vos.SiteItem"/>
+    <classEntry path="com.fosrias.site.vos.SiteItemContent"/>
     <classEntry path="com.fosrias.site.vos.SiteItemWrapper"/>
-    <classEntry path="com.fosrias.core.events.DataServiceEvent"/>
-    <classEntry path="com.fosrias.site.models.SiteHierarchicalItemData"/>
+    <classEntry path="com.fosrias.site.vos.interfaces.AHierarchicalItem"/>
+    <classEntry path="com.fosrias.site.vos.interfaces.AListItem"/>
+    <classEntry path="com.fosrias.site.vos.interfaces.ANestedListItem"/>
+    <classEntry path="com.fosrias.core.managers.interfaces.ADownloadProgressManager"/>
+    <classEntry path="com.fosrias.core.utils.FileLoader"/>
+    <classEntry path="com.fosrias.core.views.components.FileLoaderProgressBar"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
