@@ -167,6 +167,7 @@
     <classEntry path="com.fosrias.core.managers.interfaces.ADownloadProgressManager"/>
     <classEntry path="com.fosrias.core.utils.FileLoader"/>
     <classEntry path="com.fosrias.core.views.components.FileLoaderProgressBar"/>
+    <classEntry path="com.fosrias.core.business.RemoteService"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

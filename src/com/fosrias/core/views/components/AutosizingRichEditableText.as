@@ -1,6 +1,7 @@
 package com.fosrias.core.views.components
 {
 import spark.components.RichEditableText;
+import spark.components.TextArea;
 
 /**
  * The AutoScaleRichEditableText class is used as the textDisplay object in 
@@ -25,6 +26,15 @@ public class AutosizingRichEditableText extends RichEditableText
 												 postLayoutTransform:Boolean 
 												 	 = true):void
 	{
+		//This makes sure that if the text is programmatically reset,
+		//the height of the rich editable text tracks with the text area size.
+		//Without this, programmatically resetting the text would result in a
+		//0 height skin since RichEditableText has heightInLines = NaN.
+		if (parentDocument.owner is TextArea)
+		{
+			height = parentDocument.owner;
+		}
+		
 		super.setLayoutBoundsSize(width, height, postLayoutTransform);
 		
 		//This is all it takes (plus hours of tracing source code)
