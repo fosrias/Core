@@ -129,13 +129,16 @@ public class AService extends ADispatcher
 		}
 		
 		var remoteOperation:String = args.shift();
-    	
-    	//Create the token
+		
+		//Create the token
     	var token:AsyncToken;
     	var operation:Operation 
     	    = Operation( service.getOperation(remoteOperation) );
-    	
-        //Get a timestamp
+			
+		//Apply user credentials
+		service.setRemoteCredentials(sessionUser.login, sessionUser.password);
+			
+		 //Get a timestamp
     	var now:Date = new Date();
             
         //Call the remote operation
