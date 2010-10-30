@@ -150,7 +150,7 @@ public class DataServiceEvent extends DataPayloadEvent
 	public function DataServiceEvent(type:String, 
 									 data:Object=null, 
 									 reference:String=null, 
-									 bubbles:Boolean=true, 
+									 bubbles:Boolean=false, 
 									 relatedEvent:Event=null)
 	{
 		super(type, data, reference, bubbles, relatedEvent);
