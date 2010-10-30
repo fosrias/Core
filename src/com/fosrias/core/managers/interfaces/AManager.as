@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Mark W. Foster    www.fosrias.com
+//  Copyright (c) 2009-2010   Mark W. Foster    www.fosrias.com
 //  All Rights Reserved.
 //
 //  NOTICE: Mark W. Foster permits you to use, modify, and distribute this file
@@ -12,6 +12,7 @@ package com.fosrias.core.managers.interfaces
 {
 import com.fosrias.core.events.StateEvent;
 import com.fosrias.core.interfaces.ADispatcher;
+import com.fosrias.core.vos.SessionToken;
 import com.fosrias.core.models.User;
 import com.fosrias.core.models.interfaces.AUser;
 import com.fosrias.core.namespaces.app_internal;
@@ -90,6 +91,22 @@ public class AManager extends ADispatcher
     //--------------------------------------------------------------------------
 	
 	//----------------------------------
+	//  sessionUser
+	//----------------------------------
+	
+	[Transient] 
+	[Deprecated(replacement="Use sessionToken.")]
+	[Bindable(event="sessionChange")]
+	/**
+	 * The current session user. <code>null</code> if there is no current
+	 * session.
+	 */
+	protected function get sessionUser():AUser
+	{
+		return _sessionManager.user;
+	}
+	
+	//----------------------------------
     //  modelServerErrors
     //----------------------------------
     
@@ -117,20 +134,7 @@ public class AManager extends ADispatcher
     //
     //--------------------------------------------------------------------------
     
-    //----------------------------------
-    //  sessionUser
-    //----------------------------------
-    
-    [Bindable (event="sessionChange")]
-    /**
-     * The current session user.
-     */
-    app_internal function get sessionUser():AUser
-    {
-        return sessionManager.user;
-    }
-
-    //----------------------------------
+	//----------------------------------
     //  watchedStates
     //----------------------------------
     
@@ -173,7 +177,7 @@ public class AManager extends ADispatcher
      * returns arguments to be used in a remote call. Only call this 
      * function to initiate a remote call.
      */
-    public function callArguments( ... args):*
+    public function callArguments(... args):*
     {
         return raiseImplementationError( "method", "AManager.callArguments" ); 
     }
@@ -184,9 +188,10 @@ public class AManager extends ADispatcher
      * @param fault The <code>Fault</code> returned by the remote
      * call.
      */
-    public function callFault( fault:Fault, ... args ):*
+    public function callFault(fault:Fault, ...args):*
     {
-        traceDebug(fault.message);
+		processLastCall(args[0]);
+        traceDebug(fault.faultString + '\n' + fault.faultDetail);
     }
     
     /**
@@ -196,26 +201,13 @@ public class AManager extends ADispatcher
      * @param callResult The <code>CallResult</code> returned by the remote
      * call.
      */
-    public function callResult( result:CallResult, ... args):*
+    public function callResult( result:CallResult, ...args):*
     {
-		for each (var object:Object in args[0])
-		{
-			if (object is AsyncToken)
-			{
-				_lastRemoteCall = object.message.operation;
-				_lastRemoteCallParameters = object.message.body;
-				
-				if (_lastRemoteCallParameters is Array && 
-					_lastRemoteCallParameters.length == 0)
-					_lastRemoteCallParameters = null;
-				
-				break;
-			}
-		}
-        //Do nothing else unless overridden
+		processLastCall(args[0]);
     }
     
-    /**
+	[Deprecated(replacement="Override sessionChangeHook instead.")]
+	/**
      * Handler for <code>StateEvent.LOGGED_IN</code> events.
      * 
      *  <p>Event priority should be set lower for managers that must 
@@ -237,6 +229,7 @@ public class AManager extends ADispatcher
         }
     }
     
+	[Deprecated(replacement="Override sessionChangeHook instead.")]
     /**
      * Handler for <code>StateEvent.LOGGED_OUT</code> events.
      * 
@@ -252,13 +245,15 @@ public class AManager extends ADispatcher
      */
     public function loggedOut( event:StateEvent = null ):void
     {
-        sessionManager.user = null;
+        _sessionManager.user = null;
+		_sessionManager.token = null;
     }
     
+	[Deprecated]
     /**
      * Sets the session user, which is a class variable.
      */
-    public function setSessionUser( value:AUser ):void
+    public function setSessionUser(value:AUser):void
     {
         sessionManager.user = value;
     }
@@ -293,7 +288,7 @@ public class AManager extends ADispatcher
     app_internal final function registerManager(initial:Boolean = false):void
     {
         var reference:String = null;
-        if ( initial )
+        if (initial)
         {
             reference = INITIAL_REGISTRATION;
         }
@@ -301,8 +296,8 @@ public class AManager extends ADispatcher
         //in the FragmentManager and let main application know the 
         //state registered so that child manager can register in 
         //AState.register event handler
-        UIComponent(FlexGlobals.topLevelApplication ).dispatchEvent(
-            new StateEvent(StateEvent.REGISTER, this, reference));
+        UIComponent(FlexGlobals.topLevelApplication).dispatchEvent(
+            new StateEvent(StateEvent.REGISTER, this, reference) );
     }
 
     //--------------------------------------------------------------------------
@@ -325,8 +320,8 @@ public class AManager extends ADispatcher
     	}
     	return super.dispatchEvent( event );
     }
-    
-    //--------------------------------------------------------------------------
+	
+	//--------------------------------------------------------------------------
     //
     //  Protected methods
     //
@@ -344,9 +339,9 @@ public class AManager extends ADispatcher
     /**
      * The current sessioin user.
      */
-    protected function setCallTimeout( closure:Function, 
-                                       delay:Number, 
-                                       ... arguments ):void
+    protected function setCallTimeout(closure:Function, 
+                                      delay:Number, 
+                                      ... arguments):void
     {
         hasPendingRemoteCall = true;
        _remoteCallIntervalId = setTimeout( closure, delay, arguments );
@@ -380,6 +375,33 @@ public class AManager extends ADispatcher
             registerManager(true);
         }
     }
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Private methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Sets the watched states for the manager.
+	 */
+	private function processLastCall(objects:Array):void
+	{
+		for each (var object:Object in objects)
+		{
+			if (object is AsyncToken)
+			{
+				_lastRemoteCall = object.message.operation;
+				_lastRemoteCallParameters = object.message.body;
+				
+				if (_lastRemoteCallParameters is Array && 
+					_lastRemoteCallParameters.length == 0)
+					_lastRemoteCallParameters = null;
+				
+				break;
+			}
+		}
+	}
 }
 
 }

@@ -10,8 +10,9 @@
 
 package com.fosrias.core.managers
 {
-import com.fosrias.core.models.interfaces.AUser;
 import com.fosrias.core.models.NullUser;
+import com.fosrias.core.vos.SessionToken;
+import com.fosrias.core.models.interfaces.AUser;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
@@ -19,7 +20,10 @@ import flash.events.EventDispatcher;
 [Bindable]  
 /**
  * The SessionUserManager class is a singleton that maintains the session
- * state and updates subclasses if the session state changes.
+ * state and notifies subclasses if the session state changes that listen
+ * for a <code>SessionManager.SESSION_CHANGE</code> event. Classes that
+ * extend the abstract class AClass can use the hook method 
+ * <code>sessionChangeHook</code> to manage session changes.
  */
 public class SessionManager extends EventDispatcher 
 {     
@@ -38,7 +42,7 @@ public class SessionManager extends EventDispatcher
      * @private 
      */
     private static const _instance:SessionManager 
-    = new SessionManager( SingletonLock );  
+    	= new SessionManager(SingletonEnforcer);  
     
     //--------------------------------------------------------------------------
     //
@@ -51,10 +55,10 @@ public class SessionManager extends EventDispatcher
      *  
      * @param lock The Singleton lock class to prevent outside instantiation. 
      */  
-    public function SessionManager( lock:Class )  
+    public function SessionManager(enforcer:Class)  
     {  
         // Verify that the lock is the correct class reference.  
-        if ( lock != SingletonLock )  
+        if (enforcer != SingletonEnforcer)  
         {  
             throw new Error( "Invalid Singleton access. " +
                 "Use SessionManager.getInstance()." );  
@@ -76,10 +80,67 @@ public class SessionManager extends EventDispatcher
      */
     public function get hasSession():Boolean
     {
-        return _user.id != -1;
+        return _token.hasSession || _user.id != -1;
     }
     
-    //----------------------------------
+	//----------------------------------
+	//  login
+	//----------------------------------
+	
+	/**
+	 * The login of the current token.
+	 */
+	public function get login():String
+	{
+		return _token.login;
+	}
+	
+	//----------------------------------
+	//  password
+	//----------------------------------
+	
+	/**
+	 * The password of the current token.
+	 */
+	public function get password():String
+	{
+		return _token.login;
+	}
+	
+	//----------------------------------
+	//  token
+	//----------------------------------
+	
+	/**
+	 * @private
+	 * Storage of the token property.
+	 */
+	private var _token:SessionToken = new SessionToken;
+	
+	/**
+	 * The session user.
+	 */
+	public function get token():SessionToken
+	{
+		return _token;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set token(value:SessionToken):void
+	{
+		if (value != null)
+		{
+			_token = value;
+			
+		} else {
+			_token = new SessionToken;
+		}
+		dispatchEvent( new Event(SESSION_CHANGE) );
+	}
+	
+	//----------------------------------
     //  user
     //----------------------------------
     
@@ -89,6 +150,7 @@ public class SessionManager extends EventDispatcher
      */
     private var _user:AUser = new NullUser;
     
+	[Deprecated (replacement="Use token.")]
     /**
      * The session user.
      */
@@ -108,16 +170,18 @@ public class SessionManager extends EventDispatcher
         } else {
             _user = new NullUser;
         }
-        dispatchEvent( new Event( SESSION_CHANGE ) );
+        dispatchEvent( new Event(SESSION_CHANGE) );
     }
     
     //--------------------------------------------------------------------------
-    //
-    //  Methods
-    //
-    //--------------------------------------------------------------------------
-    
-    /** Provides singleton access to the instance. */  
+	//
+	//  Static methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/** 
+	 * Provides singleton access to the instance. 
+	 */  
     public static function getInstance():SessionManager  
     {  
         return _instance;  
@@ -133,6 +197,4 @@ public class SessionManager extends EventDispatcher
  * reference to this class to pass to the constructor, which 
  * enables us to prevent outside instantiation. 
  */  
-class SingletonLock  
-{  
-}
+class SingletonEnforcer {}

@@ -10,6 +10,8 @@
 
 package com.fosrias.core.models.interfaces
 {
+import com.fosrias.core.interfaces.AClass;
+import com.fosrias.core.interfaces.ADispatcher;
 import com.fosrias.core.utils.DateMath;
 import com.fosrias.core.vos.LoginData;
 import com.fosrias.core.vos.UserData;
@@ -34,13 +36,7 @@ public class AUser
      */
     public function AUser(self:AUser) 
     {
-    	if(self != this)
-        {
-            //only a subclass can pass a valid reference to self
-            throw new IllegalOperationError("Abstract class did not receive " + 
-                    "reference to self. AUser cannot be " + 
-                    "instantiated directly.");
-        }  
+    	super();
     }
     
     //--------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Copyright (c) 2009 Mark W. Foster    www.fosrias.com
+//  Copyright (c) 2009-2010   Mark W. Foster    www.fosrias.com
 //  All Rights Reserved.
 //
 //  NOTICE: Mark W. Foster permits you to use, modify, and distribute this file
@@ -12,8 +12,10 @@ package com.fosrias.core.interfaces
 {
 import com.fosrias.core.events.DebugEvent;
 import com.fosrias.core.managers.SessionManager;
+import com.fosrias.core.vos.SessionToken;
 import com.fosrias.core.models.interfaces.AUser;
 import com.fosrias.core.namespaces.app_internal;
+import com.fosrias.core.utils.NullIterator;
 
 import flash.errors.IllegalOperationError;
 import flash.events.Event;
@@ -29,15 +31,16 @@ import mx.events.PropertyChangeEvent;
 use namespace app_internal;
 
 /**
- * The AClass class is the base class for all core classes. It ensures abstract 
- * classes cannot be instantiated directly and provides methods and properties 
- * used in abstract and concrete subclasses.
+ * The AClass class is the base class for all abstract core classes. It ensures 
+ * abstract classes cannot be instantiated directly and provides methods and 
+ * properties used in abstract and concrete subclasses.
  * 
  * <p>Only subclasses of this class can directly dispatch messages to the 
- * <code>DebugConsole</code>. Implement this as the base class for any 
- * classes which will dispatch messages to the <code>DebugConsole</code> and 
- * set the <code>hasDebugMessages</code> property on one sublclass, 
- * typically the main manager for the application. </p>
+ * <code>DebugConsole</code> through the <code>traceDebug</code) method. 
+ * Implement this as the base class for any classes which will dispatch 
+ * messages to the <code>DebugConsole</code>.</p>
+ * 
+ * @see com.fosrias.core.views.DebugConsole	
  */
 public class AClass extends EventDispatcher
 {
@@ -51,13 +54,13 @@ public class AClass extends EventDispatcher
      * @private
      * Flag for broadcasting debug messages.
      */
-    private static var debugMessagesEnabled:Boolean = false;
+    private static var _debugMessagesEnabled:Boolean = false;
     
     /**
      * @private
      * Storage for the sessionManager instance.
      */
-    protected static var sessionManager:SessionManager 
+    protected static var _sessionManager:SessionManager 
         = SessionManager.getInstance();
     
     //--------------------------------------------------------------------------
@@ -69,7 +72,7 @@ public class AClass extends EventDispatcher
     /**
      * Constructor
      */
-    public function AClass( self:AClass )
+    public function AClass(self:AClass)
 	{
 		if( self != this)
         {
@@ -79,9 +82,10 @@ public class AClass extends EventDispatcher
                 +  "instantiated directly." );
         } 
         
-        //Broadcasts sessionChange event to all subclasses.
-        sessionManager.addEventListener( SessionManager.SESSION_CHANGE,
-            sessionChangeHandler, false, 0, true );
+        //Broadcasts sessionChange event to all subclasses and calls
+		//the sessionChangeHook method
+        sessionManager.addEventListener(SessionManager.SESSION_CHANGE,
+            sessionChangeHandler, false, 0, true);
 	} 
 	
     //--------------------------------------------------------------------------
@@ -124,6 +128,7 @@ public class AClass extends EventDispatcher
     //  hasDebugMessages
     //----------------------------------
     
+	[Transient]
     /**
      * Sets whether the application dispatches debug messages to a
      * <code>DebugConsole</code> or not. This property only needs to be set 
@@ -134,9 +139,17 @@ public class AClass extends EventDispatcher
      * @param value <code>true</code>, if the application monitors debug 
      * messages.
      */
-    public function set hasDebugMessages(value:Boolean):void
+	public function get hasDebugMessages():Boolean
+	{
+		return _debugMessagesEnabled;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set hasDebugMessages(value:Boolean):void
     {
-        debugMessagesEnabled = value;
+        _debugMessagesEnabled = value;
     }
     
     //----------------------------------
@@ -150,7 +163,7 @@ public class AClass extends EventDispatcher
      */
     public function get hasSession():Boolean
     {
-        return sessionManager.hasSession;
+        return _sessionManager.hasSession;
     }
 	
 	//----------------------------------
@@ -164,31 +177,50 @@ public class AClass extends EventDispatcher
      */
     public final function get qualifiedClassName():String
     {
-        return  getQualifiedClassName( this );
+        return  getQualifiedClassName(this);
     }
 	
-    //----------------------------------
-    //  sessionUser
-    //----------------------------------
-    
-    [Transient] 
-    [Bindable(event="sessionChange")]
-    /**
-     * The current session user. <code>null</code> if there is no current
-     * session.
-     */
-    public function get sessionUser():AUser
-    {
-        return sessionManager.user;
-    }
-    
-    //--------------------------------------------------------------------------
-    //
-    //  Methods
-    //
-    //--------------------------------------------------------------------------
-    
-    /**
+	//----------------------------------
+	//  sessionManager
+	//----------------------------------
+	
+	[Transient] 
+	/**
+	 * The session manager instance.
+	 */
+	public function get sessionManager():SessionManager
+	{
+		return _sessionManager;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Protected properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  sessionToken
+	//----------------------------------
+	
+	[Transient] 
+	[Bindable(event="sessionChange")]
+	/**
+	 * The current session token. <code>null</code> if there is no current
+	 * session.
+	 */
+	protected function get sessionToken():SessionToken
+	{
+		return _sessionManager.token;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
      * Queues a function to be called later.
      *
      * <p>Before each update of the screen, Flash Player or AIR calls
@@ -205,11 +237,10 @@ public class AClass extends EventDispatcher
      * the method.
      *
      */
-    public function callLater( method:Function,
-                               args:Array /* of Object */ = null ):void
+    public function callLater(method:Function,
+                              args:Array = null):void
     {
-        UIComponent( FlexGlobals.topLevelApplication ).callLater( method, 
-            args );
+        UIComponent(FlexGlobals.topLevelApplication).callLater(method, args);
     }
     
     /**
@@ -231,17 +262,17 @@ public class AClass extends EventDispatcher
                                 reference:String = null ):void
     {
         //Broadcast messages if enabled and not from the DebugManager
-        if ( debugMessagesEnabled && !( className == "DebugManager" ) )
+        if (_debugMessagesEnabled && className != "DebugManager")
         {
             message = qualifiedClassName + "\n     " + message;
             
             //Send debug messages to the DebugConsole.
 			FlexGlobals.topLevelApplication.dispatchEvent(
-                new DebugEvent( DebugEvent.SET_MESSAGE, message, reference ) );
+                new DebugEvent(DebugEvent.SET_MESSAGE, message, reference) );
          }
         
         //Always send debug messages to the internal debug console.
-        trace( "DebugMessage: " + message );
+        trace("DebugMessage: " + message);
     } 
     
     //--------------------------------------------------------------------------
@@ -258,39 +289,58 @@ public class AClass extends EventDispatcher
      * @param arguments The arguments of the method.
      * 
      */
-    protected function clearRetry():void
+    protected function clearRetry(retryIndex:Number = NaN):void
     {
-        flash.utils.clearTimeout(_retryId);
+		if ( isNaN(retryIndex) )
+		{
+			clearTimeout(_retryId);
+			
+		} else {
+			
+			clearTimeout(retryIndex);
+		}
     }
     
     /**
-     * A utility method to retry a method after a specified delay.
-     * 
-     * @param closure The method to retry.
-     * @param delay The delay in milliseconds.
-     * @param arguments The arguments of the method.
-     * 
-     */
-    protected function retryMethod(closure:Function, 
-                                   delay:Number, 
-                                   ...arguments):void
-    {
-        _retryId = setTimeout.apply(null, [closure, delay].concat(arguments));
-    }
-    
-    /**
-     * Utility method to dispatch an event of the specified type.
+     * Utility method to dispatch an event of the specified type internally
+	 * to the instance.
      * 
      * @param The string event type.
      */
-    protected function dispatchEventType( type:String ):Boolean
+    protected function dispatchEventType(type:String):Boolean
     {
-        if ( type != null )
+        if (type != null)
         {
-           return dispatchEvent( new Event( type ) ); 
+           return dispatchEvent( new Event(type) ); 
         }
         return false;
     }
+	
+	/**
+	 * A utility method to retry a method after a specified delay.
+	 * 
+	 * @param closure The method to retry.
+	 * @param delay The delay in milliseconds.
+	 * @param arguments The arguments of the method.
+	 * 
+	 */
+	protected function retryMethod(closure:Function, 
+								   delay:Number, 
+								   ...arguments):uint
+	{
+		_retryId = setTimeout.apply( null, [closure, delay].concat(arguments) );
+		return _retryId;
+	}
+	
+	/**
+	 * A hook function that is called anytime a session changes. It is called 
+	 * before the <code>SessionManager.SESSION_CHANGE</code> event is
+	 * dispatched to the class.
+	 */
+	protected function sessionChangeHook():void
+	{
+		//Do nothing unless overridden
+	}
     
     /**
      * The return value for abstract methods, getters, and setters in 
@@ -350,9 +400,13 @@ public class AClass extends EventDispatcher
     /**
      * @private
      */
-    private function sessionChangeHandler( event:Event ):void
+    private function sessionChangeHandler(event:Event):void
     {
-        dispatchEventType( event.type );
+		//Dispatch first in case any changes need to be made before
+		//the sessionChange event is broadcast to the class.
+		sessionChangeHook();
+		
+		dispatchEventType(event.type);
     }
 }
 
