@@ -32,7 +32,7 @@ public class ADispatcher extends AClass
      */
     public function ADispatcher( self:ADispatcher )
 	{
-		super( self );  
+		super(self);  
 	}
 	
 	//--------------------------------------------------------------------------
@@ -62,7 +62,7 @@ public class ADispatcher extends AClass
     /**
      * @private
      */    
-    public function set dispatcher( value:IEventDispatcher ):void
+    public function set dispatcher(value:IEventDispatcher):void
     {
         _dispatcher = value;
     }

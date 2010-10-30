@@ -103,15 +103,15 @@ public class SiteDefaults
 	public var items:Array; /* of SiteItem */
 	
 	//----------------------------------
-    //    itemTypes
-    //----------------------------------
-    
-    /**
-     * The item type selectors.
-     */
-    public var itemTypes:Array;
-    
-    //----------------------------------
+	//    itemTypes
+	//----------------------------------
+	
+	/**
+	 * The item type selectors.
+	 */
+	public var itemTypes:Array;
+	
+	//----------------------------------
     //    masterItem
     //----------------------------------
     

@@ -128,7 +128,7 @@ public class ViewModelEvent extends Event
         reference:String = null )
     {
     	//Does not bubble
-        super( type );
+        super(type);
         _data = data;
         _reference = reference;
     }

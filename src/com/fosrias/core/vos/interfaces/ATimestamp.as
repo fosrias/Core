@@ -12,7 +12,7 @@ import com.fosrias.core.utils.DateUtils;
 
 [Bindable]
 /**
- * The ATimestamp class is the base class for all remote classes the include
+ * The ATimestamp class is the base class for all remote classes that include
  * timestamps.
  */
 public class ATimestamp extends AClass

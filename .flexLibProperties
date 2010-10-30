@@ -14,6 +14,7 @@
     <classEntry path="com.fosrias.core.SpinnerTester"/>
     <classEntry path="com.fosrias.core.business.MessageService"/>
     <classEntry path="com.fosrias.core.business.RESTfulService"/>
+    <classEntry path="com.fosrias.core.business.RemoteService"/>
     <classEntry path="com.fosrias.core.business.Services"/>
     <classEntry path="com.fosrias.core.business.interfaces.ARESTfulService"/>
     <classEntry path="com.fosrias.core.business.interfaces.AService"/>
@@ -38,6 +39,7 @@
     <classEntry path="com.fosrias.core.managers.fragment.FragmentRequiresSessionState"/>
     <classEntry path="com.fosrias.core.managers.fragment.FragmentStateFactory"/>
     <classEntry path="com.fosrias.core.managers.fragment.FragmentValidState"/>
+    <classEntry path="com.fosrias.core.managers.interfaces.ADownloadProgressManager"/>
     <classEntry path="com.fosrias.core.managers.interfaces.AManager"/>
     <classEntry path="com.fosrias.core.managers.interfaces.ASessionState"/>
     <classEntry path="com.fosrias.core.managers.interfaces.AState"/>
@@ -78,6 +80,7 @@
     <classEntry path="com.fosrias.core.utils.DateMath"/>
     <classEntry path="com.fosrias.core.utils.DateUtils"/>
     <classEntry path="com.fosrias.core.utils.EffectPlayer"/>
+    <classEntry path="com.fosrias.core.utils.FileLoader"/>
     <classEntry path="com.fosrias.core.utils.FormatterUtils"/>
     <classEntry path="com.fosrias.core.utils.Iterator"/>
     <classEntry path="com.fosrias.core.utils.MathUtils"/>
@@ -117,6 +120,7 @@
     <classEntry path="com.fosrias.core.views.components.AutosizingRichEditableText"/>
     <classEntry path="com.fosrias.core.views.components.BindingWatcherCanvas"/>
     <classEntry path="com.fosrias.core.views.components.EnumComboBox"/>
+    <classEntry path="com.fosrias.core.views.components.FileLoaderProgressBar"/>
     <classEntry path="com.fosrias.core.views.components.FixedDatefield"/>
     <classEntry path="com.fosrias.core.views.components.HideableComboBox"/>
     <classEntry path="com.fosrias.core.views.components.IconlessDateField"/>
@@ -145,6 +149,7 @@
     <classEntry path="com.fosrias.core.views.skins.LeftCheckBoxSkin"/>
     <classEntry path="com.fosrias.core.views.skins.NumericTextInput"/>
     <classEntry path="com.fosrias.core.views.skins.ProgressBarSkin"/>
+    <classEntry path="com.fosrias.core.vos.CFUser"/>
     <classEntry path="com.fosrias.core.vos.CallHash"/>
     <classEntry path="com.fosrias.core.vos.CallResult"/>
     <classEntry path="com.fosrias.core.vos.LoginData"/>
@@ -152,8 +157,11 @@
     <classEntry path="com.fosrias.core.vos.Message"/>
     <classEntry path="com.fosrias.core.vos.UserData"/>
     <classEntry path="com.fosrias.core.vos.UserPermissions"/>
+    <classEntry path="com.fosrias.core.vos.UserRole"/>
     <classEntry path="com.fosrias.core.vos.interfaces.ASelector"/>
     <classEntry path="com.fosrias.core.vos.interfaces.ATimestamp"/>
+    <classEntry path="com.fosrias.site.events.SiteEvent"/>
+    <classEntry path="com.fosrias.site.events.SiteEventKind"/>
     <classEntry path="com.fosrias.site.models.HierarchicalItemData"/>
     <classEntry path="com.fosrias.site.models.SiteHierarchicalItemData"/>
     <classEntry path="com.fosrias.site.vos.HierarchicalItemWrapper"/>
@@ -164,10 +172,8 @@
     <classEntry path="com.fosrias.site.vos.interfaces.AHierarchicalItem"/>
     <classEntry path="com.fosrias.site.vos.interfaces.AListItem"/>
     <classEntry path="com.fosrias.site.vos.interfaces.ANestedListItem"/>
-    <classEntry path="com.fosrias.core.managers.interfaces.ADownloadProgressManager"/>
-    <classEntry path="com.fosrias.core.utils.FileLoader"/>
-    <classEntry path="com.fosrias.core.views.components.FileLoaderProgressBar"/>
-    <classEntry path="com.fosrias.core.business.RemoteService"/>
+    <classEntry path="com.fosrias.site.vos.interfaces.ISiteItem"/>
+    <classEntry path="com.fosrias.core.vos.SessionToken"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

@@ -19,6 +19,7 @@ import com.fosrias.core.vos.UserPermissions;
  * The User class is 
  */
 [RemoteClass(alias="User")]
+
 [Bindable]
 public class User extends AUser
 {

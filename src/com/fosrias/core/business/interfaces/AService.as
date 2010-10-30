@@ -11,6 +11,7 @@
 package com.fosrias.core.business.interfaces
 {
 import com.fosrias.core.interfaces.ADispatcher;
+import com.fosrias.core.namespaces.app_internal;
 import com.fosrias.core.utils.DateUtils;
 
 import flash.utils.Dictionary;
@@ -135,8 +136,8 @@ public class AService extends ADispatcher
     	var operation:Operation 
     	    = Operation( service.getOperation(remoteOperation) );
 			
-		//Apply user credentials
-		service.setRemoteCredentials(sessionUser.login, sessionUser.password);
+		//Apply user credentials from the current session token.
+		service.setRemoteCredentials(sessionToken.login, sessionToken.password);
 			
 		 //Get a timestamp
     	var now:Date = new Date();

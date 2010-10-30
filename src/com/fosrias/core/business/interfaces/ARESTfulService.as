@@ -73,7 +73,7 @@ public class ARESTfulService extends AService
     /**
      * Calls the index method in the remote service controller.
      */
-    public function index( ... args ):void
+    public function index(...args):void
     {
         call.apply(null, ['index'].concat(args));
     }
