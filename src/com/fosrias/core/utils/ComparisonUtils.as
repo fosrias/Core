@@ -60,13 +60,18 @@ public class ComparisonUtils
         secondaryArray:Array ):Boolean
     {	
 		//Compare null values
-		if (primaryArray == null && secondaryArray == null || 
-            primaryArray.length == 0 && secondaryArray.length == 0)
+		if (primaryArray == null && secondaryArray == null)
 		{
 			return true;
+			
 		} else if (primaryArray == null || secondaryArray == null) {
+			
 			return false;
-		} 
+			
+		} else if (primaryArray.length == 0 && secondaryArray.length == 0) {
+			
+			return true;
+		}
 		
         //Must have same length to be equal
         var length:int = primaryArray.length;
