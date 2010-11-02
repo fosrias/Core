@@ -242,7 +242,17 @@ public class FileLoader extends ADispatcher
 	{
 		if (openInBrowser)
 		{ 
-			navigateToURL( new URLRequest("http://" + url), "_blank");
+			var request:URLRequest;
+			
+			if (url.indexOf('http') == 0)
+			{
+				request = new URLRequest(url);
+				
+			} else {
+				
+				request = new URLRequest("http://" + url);
+			}
+			navigateToURL(request, "_blank");
 			
 			return false;
 			
