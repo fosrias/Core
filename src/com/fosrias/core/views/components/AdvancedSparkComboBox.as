@@ -207,12 +207,31 @@ public class AdvancedSparkComboBox extends spark.components.ComboBox
 					super.selectedItem = dp;
 					return;     
 				}
-				
 			}    
 			super.selectedItem = null; 
+			
 		} else {
+			
 			super.selectedItem = value;
 		}
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Overridden properties
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * @inheritDoc
+	 */
+	override protected function commitProperties():void
+	{
+		super.commitProperties();
+		
+		//Hack. Not sure why this is not happening in super.commitProperties.
+		if (textInput && selectedItem == null)
+			textInput.text = "";
 	}
 }
 
