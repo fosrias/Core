@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TextArea xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 change="changeHandler(event);"
+		 focusIn="onFocusIn();"
+		 focusOut="_isEditing = false;">
+	
+	<!-- Define States _____________________________________________________ -->
+	<s:states>
+		<s:State name="plain"/>
+		<s:State name="html"/>
+	</s:states>
+	
+<fx:Declarations>
+	
+	<!-- Define Effects ____________________________________________________ -->
+	<s:Fade id="dissolveIn" duration="250" 
+			alphaFrom="0" alphaTo="1"/>
+</fx:Declarations>
+	
+	<!-- Define Script _____________________________________________________ -->
+<fx:Script>
+<![CDATA[
+	import com.fosrias.core.views.skins.AutosizingTextAreaSkin;
+	
+	import flashx.textLayout.conversion.ConversionType;
+	import flashx.textLayout.conversion.TextConverter;
+	import flashx.textLayout.elements.TextFlow;
+	
+	import mx.binding.utils.BindingUtils;
+	import mx.binding.utils.ChangeWatcher;
+	import mx.controls.Text;
+	
+	import spark.events.TextOperationEvent;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Variables
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * @private
+	 */
+	private var _changeWatcher:ChangeWatcher;
+	
+	/**
+	 * @private
+	 */
+	private var _isEditing:Boolean;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  editorUI
+	//----------------------------------
+	
+	/**
+	 * @private
+	 * Storage for the editorUI property.
+	 */
+	private var _editorUI:EditorUI;
+
+	/**
+	 * The editor UI associated with the control.
+	 */
+	public function get editorUI():EditorUI
+	{
+		return _editorUI;
+	}
+
+	/**
+	 * @private
+	 */
+	public function set editorUI(value:EditorUI):void
+	{
+		_editorUI = value;
+		
+		_changeWatcher = BindingUtils.bindSetter(showHTML, 
+			editorUI, ["showHTML"]);
+	}
+
+	//----------------------------------
+	//  htmlText
+	//----------------------------------
+	
+	/**
+	 * @private
+	 * Storage for the htmlText property
+	 */
+	private var _htmlText:String;
+	
+	[Bindable("textChange")]
+	/**
+	 * The html text of the textFlow.
+	 */
+	public function get htmlText():String
+	{
+		return _htmlText;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set htmlText(value:String):void
+	{
+		//We don't accept injected changes while editing
+		if (_isEditing)
+			return;
+		
+		_htmlText = value;
+		
+		//Super so we bypass resetting the htmlText value
+		super.textFlow = importToTextFlow(_htmlText);
+		
+		dispatchEvent( new Event("textChange") );
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  text
+	//----------------------------------
+	
+	/**
+	 * @private
+	 * Storage for the autosize property
+	 */
+	override public function set text(value:String):void
+	{
+		//We don't accept injected changes while editing
+		if (_isEditing)
+			return;
+		
+		super.text = value;
+		
+		//Do this here so we don't have to wait for property validation
+		//to refresh the super.textFlow property.
+		var textFlow:TextFlow = TextConverter.importToFlow(value, 
+			TextConverter.PLAIN_TEXT_FORMAT);
+		
+		_htmlText = TextConverter.export(textFlow,
+			TextConverter.TEXT_FIELD_HTML_FORMAT,
+			ConversionType.STRING_TYPE).toString();
+
+		dispatchEvent( new Event("textChange") );
+	}
+	
+	//----------------------------------
+	//  textFlow
+	//----------------------------------
+	
+	/**
+	 * @private
+	 */
+	override public function set textFlow(value:TextFlow):void
+	{
+		//We don't accept injected changes while editing
+		if (_isEditing)
+			return;
+		
+		super.textFlow = value;
+		
+		_htmlText = TextConverter.export(value,
+			TextConverter.TEXT_FIELD_HTML_FORMAT,
+			ConversionType.STRING_TYPE).toString();
+		
+		dispatchEvent( new Event("textChange") );
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Private methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * @private
+	 */
+	private function changeHandler(event:TextOperationEvent):void
+	{
+		//Flag that prevents external updates while editing the text
+		_isEditing = true;
+		
+		if (currentState == "html")
+		{
+			_htmlText = this.text;
+			
+		} else {
+			
+			_htmlText = TextConverter.export(this.textFlow,
+				TextConverter.TEXT_FIELD_HTML_FORMAT,
+				ConversionType.STRING_TYPE).toString();
+		}
+		dispatchEvent( new Event("textChange") ); 
+	}
+	
+	/**
+	 * @private
+	 */
+	private function importToTextFlow(value:String):TextFlow
+	{
+		switch (currentState)
+		{
+			case "plain":
+			{
+				return TextConverter.importToFlow(value, 
+					TextConverter.TEXT_FIELD_HTML_FORMAT);
+				break;
+			}
+			default:
+				return TextConverter.importToFlow(value, 
+					TextConverter.PLAIN_TEXT_FORMAT);
+		}
+	}
+	
+	/**
+	 * @private
+	 */
+	private function onFocusIn():void
+	{
+		if (editable)
+		{
+			editorUI.editedTextArea = this; 
+			showHTML(editorUI.showHTML);
+		}
+	}
+	
+	/**
+	 * @private
+	 */
+	private function showHTML(value:Boolean):void
+	{
+		var isChange:Boolean = false;
+		var state:String;
+		
+		if (_editorUI.editedTextArea === this)
+		{
+			if (value)
+			{
+				isChange = currentState != "html";
+				state = "html";
+				
+			} else {
+				
+				isChange = currentState != "plain";
+				state = "plain";
+			}
+			
+			if (isChange)
+			{
+				currentState = state;
+				
+				//Resets the text flow
+				super.textFlow = importToTextFlow(_htmlText);
+				
+				//Soften the change
+				dissolveIn.play( [this] );
+			}	
+		}
+	}	
+]]>
+</fx:Script>
+	
+</s:TextArea>

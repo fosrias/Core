@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup name="CustomEditor"
+		  xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  minWidth="400" width="652"
+		  gap="0"
+		  currentStateChange="this.currentState == 'Content' ?
+		  	  _editedTextArea = editor : _editedTextArea = null;">
+	
+	<!-- Define States _____________________________________________________ -->
+	<s:states>
+		<s:State name="Base"/>
+		<s:State name="Content"/>
+	</s:states>
+	
+	<!-- Define Script _____________________________________________________ -->
+<fx:Script>
+<![CDATA[
+	import flash.text.engine.FontPosture;
+	import flash.text.engine.FontWeight;
+	
+	import flashx.textLayout.conversion.ConversionType;
+	import flashx.textLayout.conversion.TextConverter;
+	import flashx.textLayout.formats.TextAlign;
+	import flashx.textLayout.formats.TextDecoration;
+	import flashx.textLayout.formats.TextLayoutFormat;
+	import flashx.textLayout.operations.FlowOperation;
+	import flashx.textLayout.operations.InsertTextOperation;
+	
+	import mx.collections.ArrayCollection;
+	import mx.controls.Text;
+	import mx.events.ColorPickerEvent;
+	import mx.events.FlexEvent;
+	
+	import spark.events.IndexChangeEvent;
+	import spark.events.TextOperationEvent;
+	import spark.utils.TextFlowUtil;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Variables
+	//
+	//--------------------------------------------------------------------------
+	
+	[Bindable]
+	private var _fonts:ArrayCollection = new ArrayCollection( 
+		['Arial', 'Verdana', 'Times New Roman', 'Trebuchet MS'] );	
+	
+	[Bindable]
+	private var _fontSizes:ArrayCollection = new ArrayCollection( 
+		[8,10,12,14,16,24,36,72] );
+	
+	[Bindable]
+	private var _textAlignment:ArrayCollection = new ArrayCollection(
+		[ {label: 'L', value: TextAlign.LEFT},
+	      {label: 'C', value: TextAlign.CENTER},
+          {label: 'R', value: TextAlign.RIGHT},
+	      {label: 'J', value: TextAlign.JUSTIFY} 
+	    ] );
+	
+	private var _processingSelection:Boolean = false;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Properties
+	//
+	//--------------------------------------------------------------------------
+	
+	//----------------------------------
+	//  editedTextArea
+	//----------------------------------
+	
+	/**
+	 * @private
+	 * Storage for the editedTextArea
+	 */
+	private var _editedTextArea:TextArea;
+	
+	[Bindable]
+	/**
+	 * Reference to the text area currently being edited.
+	 */
+	public function get editedTextArea():TextArea
+	{
+		return _editedTextArea;
+	}
+	
+	/**
+	 * @private
+	 */
+	public function set editedTextArea(value:TextArea):void
+	{
+		if (_editedTextArea != null)
+			_editedTextArea.removeEventListener(
+				FlexEvent.SELECTION_CHANGE, selectionChangeHandler);
+		
+		_editedTextArea = value;
+		
+		if (_editedTextArea != null)
+		{
+			_editedTextArea.addEventListener(FlexEvent.SELECTION_CHANGE, 
+				selectionChangeHandler);
+			editorControl.enabled = true;
+			
+			preformatTextArea(_editedTextArea);
+			
+		}  else {
+			
+			editorControl.enabled = false;
+		}
+	}
+	
+	//----------------------------------
+	//  showHTML
+	//----------------------------------
+	
+	[Bindable]
+	public var showHTML:Boolean;
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Greeks the currently selected <code>TextArea</code> control.
+	 */
+	public function applyGreeking(generateGreek:Boolean = false):String
+	{
+		var currentTextArea:TextArea;
+		
+		if (generateGreek)
+		{
+			//Store reference
+			currentTextArea = _editedTextArea;
+			
+			//Generate greeking
+			_editedTextArea = taTemplate;
+			
+			//Substitute greeking
+			formatTextArea( TextFlow( tfGreeked.deepCopy() ) );
+
+			var greekText:String = exportAsHTML(_editedTextArea.textFlow);
+			
+			//Restore
+			_editedTextArea = currentTextArea;
+			
+			//Register a change event on the text area
+			return greekText;
+		}
+		
+		//Substitute greeking
+		formatTextArea( TextFlow( tfGreeked.deepCopy() ) );
+
+		return null;
+	}
+	
+	/**
+	 *  Clears the currently selected <code>TextArea</code> control.
+	 */
+	public function clear():void
+	{
+		formatTextArea(new TextFlow, true);
+	}
+	
+	/**
+	 * Clears the currently selected <code>TextArea</code> 
+	 * <code>errorString</code>.
+	 */
+	public function clearError():void
+	{
+		if (_editedTextArea != null)
+			_editedTextArea.errorString = "";
+	}
+	
+	/**
+	 *  Cancels editing the currently selected <code>TextArea</code> control.
+	 */
+	public function cancelEdit():void
+	{
+		editedTextArea = null;
+	}
+	
+	public function importAsPlainText(value:String):TextFlow
+	{
+		return TextConverter.importToFlow(value, TextConverter.TEXT_FIELD_HTML_FORMAT);
+	}
+	
+	public function exportAsHTML(value:TextFlow):String
+	{
+		return TextConverter.export(_editedTextArea.textFlow,
+			TextConverter.TEXT_FIELD_HTML_FORMAT,
+			ConversionType.STRING_TYPE).toString();
+	}
+	
+	public function preformatTextArea(value:TextArea):void
+	{
+		_editedTextArea = value;
+		
+		if (_editedTextArea.text.length == 0)
+		{	
+			//Cause the TextArea to keep the current editor default
+			//settings
+			formatTextArea(_editedTextArea.textFlow, false, false);
+			
+		} else {
+			
+			//Just select the end so format updated there.
+			formatTextArea(_editedTextArea.textFlow, false, false, true);
+		}
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Protected methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * @private
+	 */
+	protected function applyTextLayoutFormat(format:String, 
+										     value:Object,
+										     reportChange:Boolean = true):void
+	{
+		_processingSelection = true;
+		
+		var anchorPosition:int = _editedTextArea.selectionAnchorPosition;
+		var activePosition:int = _editedTextArea.selectionActivePosition;
+		var textLayoutFormat:TextLayoutFormat =
+			_editedTextArea.getFormatOfRange(null, anchorPosition, 
+				activePosition);
+		textLayoutFormat[format] = value;
+		_editedTextArea.setFormatOfRange(textLayoutFormat, anchorPosition,
+			activePosition);
+		
+		if (reportChange)
+		{
+			_editedTextArea.setFocus();
+			dispatchChange();
+		}
+		_processingSelection = false;
+	}
+	
+	/**
+	 * @private
+	 */
+	protected function dispatchChange():void
+	{
+		_editedTextArea.dispatchEvent( 
+			new TextOperationEvent(TextOperationEvent.CHANGE) );
+	}
+	
+	/**
+	 * @private
+	 */
+	protected function formatTextArea(value:TextFlow, 
+									  clearSelection:Boolean = false,
+									  reportChange:Boolean = true,
+									  formatEnd:Boolean = false):void
+	{
+		if (_editedTextArea == null || _processingSelection)
+			return;
+		
+		_editedTextArea.textFlow = value;
+		
+		//Store state of the editor tool bar since selection change
+		//tracks these
+		var fontFamily:String = ddlFont.selectedItem;
+		var fontSize:int = ddlFontSize.selectedItem;
+		var fontWeighted:Boolean = btnBold.selected;
+		var fontStyled:Boolean = btnItalics.selected;
+		var fontUnderlined:Boolean = btnUnderline.selected;
+		var fontColor:uint = cpColor.selectedColor;
+		var fontAligned:Object = bbTextAlign.selectedItem;
+		
+		if (formatEnd)
+		{
+			_editedTextArea.selectRange(_editedTextArea.text.length, 
+				_editedTextArea.text.length);
+		} else {
+			
+			_editedTextArea.selectAll();
+		}
+		
+		applyFontFamily(fontFamily, false);
+
+		applyFontSize(fontSize, false);
+		
+		applyFontWeight(fontWeighted, false);
+		
+		applyFontStyle(fontStyled, false);
+		
+		applyTextDecoration(fontUnderlined, false);
+		
+		applyColor(fontColor, false);
+
+		applyTextAlign(fontAligned, false);
+		
+		if (clearSelection)
+		{
+			//Clear the range
+			_editedTextArea.selectRange(-1, -1);
+			_editedTextArea.scrollToRange(0,0);
+		}
+		
+		if (reportChange)
+		{
+			_editedTextArea.setFocus();
+			dispatchChange();
+		}
+	}
+	
+	/**
+	 * 
+	 */
+    protected function selectionChangeHandler(event:FlexEvent):void 
+	{
+		if (editedTextArea == null || editedTextArea.text == null || 
+			editedTextArea.text.length == 0 || _processingSelection)
+			return;
+		
+		//Flag to prevent stack overflow from the next step
+		_processingSelection = true;
+
+		var textLayoutFormat:TextLayoutFormat = 
+			_editedTextArea.getFormatOfRange(null,
+			_editedTextArea.selectionAnchorPosition,
+			_editedTextArea.selectionActivePosition);
+		
+		//Store the current state
+        ddlFont.selectedItem = textLayoutFormat.fontFamily;
+        ddlFontSize.selectedItem = textLayoutFormat.fontSize;
+        btnBold.selected = (textLayoutFormat.fontWeight == FontWeight.BOLD);
+        btnItalics.selected = (textLayoutFormat.fontStyle == FontPosture.ITALIC);
+        btnUnderline.selected = (textLayoutFormat.textDecoration == 
+			TextDecoration.UNDERLINE);
+        cpColor.selectedColor = textLayoutFormat.color;
+
+        switch (textLayoutFormat.textAlign) 
+		{
+            case TextAlign.LEFT:
+                bbTextAlign.selectedIndex = 0;
+                break;
+            case TextAlign.CENTER:
+                bbTextAlign.selectedIndex = 1;
+                break;
+            case TextAlign.RIGHT:
+                bbTextAlign.selectedIndex = 2;
+                break;
+            case TextAlign.JUSTIFY:
+                bbTextAlign.selectedIndex = 3;
+                break;
+            default:
+                bbTextAlign.selectedIndex = -1;
+                break;
+        }
+		_processingSelection = false;
+    }
+ 
+	/**
+	 * 
+	 */
+	protected function applyFontFamily(value:String,
+									   reportChange:Boolean = true):void 
+	{
+		applyTextLayoutFormat("fontFamily", value, reportChange);
+    }
+ 
+	/**
+	 * 
+	 */
+	protected function applyFontSize(value:int,
+									 reportChange:Boolean = true):void 
+	{
+		applyTextLayoutFormat("fontSize", value, reportChange);
+    }
+ 
+	/**
+	 * 
+	 */
+	protected function applyFontWeight(value:Boolean,
+									   reportChange:Boolean = true):void 
+	{
+		var fontWeight:String = value ? FontWeight.BOLD : FontWeight.NORMAL ;
+		
+		applyTextLayoutFormat("fontWeight", fontWeight, reportChange);
+    }
+ 
+	/**
+	 * 
+	 */
+	protected function applyFontStyle(value:Boolean,
+									  reportChange:Boolean = true):void 
+	{
+		var fontStyle:String = value ? FontPosture.ITALIC : FontPosture.NORMAL;
+		
+		applyTextLayoutFormat("fontStyle", fontStyle, reportChange);
+    }
+ 
+	/**
+	 * 
+	 */
+	protected function applyTextDecoration(value:Boolean,
+										   reportChange:Boolean = true):void 
+	{
+		var textDecoration:String = value ? TextDecoration.UNDERLINE : 
+			TextDecoration.NONE;
+		
+		applyTextLayoutFormat("textDecoration", textDecoration, reportChange);
+    }
+ 
+	/**
+	 * 
+	 */
+	protected function applyColor(value:uint,
+								  reportChange:Boolean = true):void 
+	{
+		applyTextLayoutFormat("color", value, reportChange);
+    }
+ 
+	/**
+	 * 
+	 */
+	protected function applyTextAlign(selectedItem:Object,
+									  reportChange:Boolean = true):void 
+	{
+        if (selectedItem) 
+		{
+			applyTextLayoutFormat("textAlign", selectedItem.value, 
+				reportChange);
+        }
+    }
+
+]]>
+</fx:Script>
+	
+	<!-- Define Declarations _______________________________________________ -->
+	<fx:Declarations>
+		<s:TextFlow id="tfGreeked">
+			<s:p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis et nibh lorem. Nulla ut velit magna. Nunc quis libero ac orci porta tincidunt eget in lorem. Aenean vitae nisi vitae urna lacinia congue. Duis nec leo turpis. Phasellus dui orci, lacinia in dictum lacinia, ullamcorper a tortor. Suspendisse lacinia, turpis vel euismod gravida, turpis dui vulputate libero, vel consequat enim sem nec mauris. Curabitur vitae magna vel neque accumsan commodo vitae quis ipsum. Nullam ac condimentum elit. Integer eget magna ac mi fermentum luctus. Ut pharetra auctor pulvinar. Duis lobortis, nulla at vestibulum tincidunt, ante neque scelerisque risus, ac dignissim nunc nisl rhoncus risus. Cras pretium egestas purus, a commodo nunc vehicula at. Fusce vestibulum enim in mi hendrerit a viverra justo tempor. Maecenas eget ipsum ac mauris dictum congue eu id justo.</s:p>
+			<s:p/>
+			<s:p>Aliquam tincidunt tempor nisi id porta. Aenean risus dolor, tincidunt a ultrices in, laoreet eu ante. Mauris vel lacus neque, ut scelerisque eros. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec vel lacus sit amet erat vehicula malesuada id in augue. Sed purus massa, placerat non imperdiet nec, venenatis a nulla. Donec vel ligula leo, in rhoncus arcu. Duis semper bibendum facilisis. Duis nibh lorem, egestas rutrum tincidunt non, vulputate accumsan nulla. Nunc ligula nisl, ultrices ut tempor quis, rutrum et enim. Nullam accumsan scelerisque ante id pretium. Mauris nibh metus, blandit in varius congue, pharetra sit amet sem. Phasellus tincidunt lacus quis est semper ut rhoncus sem pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar, enim eu consectetur venenatis, dui tortor commodo ante, sit amet sagittis libero odio cursus neque. Aliquam a dui non eros placerat euismod. In at mattis felis. Suspendisse potenti. Morbi posuere condimentum lacus. Suspendisse tellus magna, viverra ac mattis vel, adipiscing eget lectus.</s:p>
+			<s:p/>
+			<s:p>Etiam ut eros lectus. Praesent nec massa nibh. Cras venenatis, ligula in condimentum euismod, nisl lorem hendrerit lacus, a imperdiet odio est et odio. Suspendisse eu orci ut augue commodo gravida sed eu risus. Vestibulum venenatis erat ac metus ullamcorper blandit. Integer et sem enim. Vivamus a arcu metus. Nunc sollicitudin commodo placerat. Maecenas vehicula, massa et auctor tempor, felis leo commodo lorem, eget pulvinar felis turpis nec erat. Mauris imperdiet gravida felis a eleifend.</s:p>
+			<s:p/>
+			<s:p>Suspendisse mattis tempor fringilla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed molestie arcu. Praesent ut tellus sed orci blandit tristique non eget est. Sed interdum feugiat nisi, sit amet aliquet enim sodales non. Maecenas in velit sit amet tellus tincidunt dapibus. Vivamus est eros, iaculis et venenatis a, malesuada vel lacus. Aliquam vel orci tortor. Etiam ornare ante eget massa dignissim a auctor nunc pellentesque. Pellentesque sodales porta nisi, pretium accumsan eros tincidunt vitae. Cras facilisis accumsan purus ultricies lacinia. Praesent consequat elit imperdiet tellus vehicula ut ornare mauris mattis. Suspendisse non tortor nisl. Etiam ac pretium est.</s:p>
+			<s:p/>
+			<s:p>Maecenas tristique, velit aliquam faucibus ornare, justo erat porta elit, sed venenatis neque mi ac elit. Nullam enim metus, gravida ac euismod sit amet, commodo vitae elit. Quisque eget molestie ante. Nulla fermentum pretium augue non tristique. Praesent in orci eu diam ultrices sodales ac quis leo. Aliquam lobortis elit quis mi rutrum feugiat. Aenean sed elit turpis. Duis enim ligula, posuere sit amet semper a, pretium vel leo. Etiam mollis dolor nec elit suscipit imperdiet. Sed a est eros.</s:p>
+			<s:p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis et nibh lorem. Nulla ut velit magna. Nunc quis libero ac orci porta tincidunt eget in lorem. Aenean vitae nisi vitae urna lacinia congue. Duis nec leo turpis. Phasellus dui orci, lacinia in dictum lacinia, ullamcorper a tortor. Suspendisse lacinia, turpis vel euismod gravida, turpis dui vulputate libero, vel consequat enim sem nec mauris. Curabitur vitae magna vel neque accumsan commodo vitae quis ipsum. Nullam ac condimentum elit. Integer eget magna ac mi fermentum luctus. Ut pharetra auctor pulvinar. Duis lobortis, nulla at vestibulum tincidunt, ante neque scelerisque risus, ac dignissim nunc nisl rhoncus risus. Cras pretium egestas purus, a commodo nunc vehicula at. Fusce vestibulum enim in mi hendrerit a viverra justo tempor. Maecenas eget ipsum ac mauris dictum congue eu id justo.</s:p>
+			<s:p/>
+			<s:p>Aliquam tincidunt tempor nisi id porta. Aenean risus dolor, tincidunt a ultrices in, laoreet eu ante. Mauris vel lacus neque, ut scelerisque eros. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec vel lacus sit amet erat vehicula malesuada id in augue. Sed purus massa, placerat non imperdiet nec, venenatis a nulla. Donec vel ligula leo, in rhoncus arcu. Duis semper bibendum facilisis. Duis nibh lorem, egestas rutrum tincidunt non, vulputate accumsan nulla. Nunc ligula nisl, ultrices ut tempor quis, rutrum et enim. Nullam accumsan scelerisque ante id pretium. Mauris nibh metus, blandit in varius congue, pharetra sit amet sem. Phasellus tincidunt lacus quis est semper ut rhoncus sem pretium. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam pulvinar, enim eu consectetur venenatis, dui tortor commodo ante, sit amet sagittis libero odio cursus neque. Aliquam a dui non eros placerat euismod. In at mattis felis. Suspendisse potenti. Morbi posuere condimentum lacus. Suspendisse tellus magna, viverra ac mattis vel, adipiscing eget lectus.</s:p>
+			<s:p/>
+			<s:p>Etiam ut eros lectus. Praesent nec massa nibh. Cras venenatis, ligula in condimentum euismod, nisl lorem hendrerit lacus, a imperdiet odio est et odio. Suspendisse eu orci ut augue commodo gravida sed eu risus. Vestibulum venenatis erat ac metus ullamcorper blandit. Integer et sem enim. Vivamus a arcu metus. Nunc sollicitudin commodo placerat. Maecenas vehicula, massa et auctor tempor, felis leo commodo lorem, eget pulvinar felis turpis nec erat. Mauris imperdiet gravida felis a eleifend.</s:p>
+			<s:p/>
+			<s:p>Suspendisse mattis tempor fringilla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sed molestie arcu. Praesent ut tellus sed orci blandit tristique non eget est. Sed interdum feugiat nisi, sit amet aliquet enim sodales non. Maecenas in velit sit amet tellus tincidunt dapibus. Vivamus est eros, iaculis et venenatis a, malesuada vel lacus. Aliquam vel orci tortor. Etiam ornare ante eget massa dignissim a auctor nunc pellentesque. Pellentesque sodales porta nisi, pretium accumsan eros tincidunt vitae. Cras facilisis accumsan purus ultricies lacinia. Praesent consequat elit imperdiet tellus vehicula ut ornare mauris mattis. Suspendisse non tortor nisl. Etiam ac pretium est.</s:p>
+			<s:p/>
+			<s:p>Maecenas tristique, velit aliquam faucibus ornare, justo erat porta elit, sed venenatis neque mi ac elit. Nullam enim metus, gravida ac euismod sit amet, commodo vitae elit. Quisque eget molestie ante. Nulla fermentum pretium augue non tristique. Praesent in orci eu diam ultrices sodales ac quis leo. Aliquam lobortis elit quis mi rutrum feugiat. Aenean sed elit turpis. Duis enim ligula, posuere sit amet semper a, pretium vel leo. Etiam mollis dolor nec elit suscipit imperdiet. Sed a est eros.</s:p>
+		</s:TextFlow>
+	</fx:Declarations>
+	
+	<!-- Define GUI ________________________________________________________ -->
+	<s:TextArea id="taTemplate" width="0" height="0" visible="false"/>
+		<mx:ControlBar id="editorControl" 
+					   width="100%" 
+					   cornerRadius="0" 
+					   enabled="false" 
+					   paddingLeft.Base="0" paddingRight.Base="0"
+					   paddingTop.Base="0" paddingBottom.Base="0">
+			<mx:ToolBar width="100%" horizontalGap="5">
+				<s:ComboBox id="ddlFont"
+								dataProvider="{_fonts}"
+							    enabled="{!btnHTML.selected}"
+								width="150"
+								selectedItem="{'Arial'}"
+								change="applyFontFamily(ddlFont.selectedItem);">
+				</s:ComboBox>
+				<s:ComboBox id="ddlFontSize"
+								dataProvider="{_fontSizes}"
+								enabled="{!btnHTML.selected}"
+								width="60"
+								selectedItem="{12}"
+								change="applyFontSize(ddlFontSize.selectedItem);">
+				</s:ComboBox>
+				<s:ToggleButton id="btnBold"
+								label="B"
+								enabled="{!btnHTML.selected}"
+								fontWeight="bold"
+								width="30"
+								click="applyFontWeight(btnBold.selected);"/>
+				<s:ToggleButton id="btnItalics"
+								label="I"
+								enabled="{!btnHTML.selected}"
+								fontStyle="italic"
+								width="30"
+								click="applyFontStyle(btnItalics.selected);"/>
+				<s:ToggleButton id="btnUnderline"
+								label="U" 
+								enabled="{!btnHTML.selected}"
+								textDecoration="underline"
+								width="30"
+								click="applyTextDecoration(btnUnderline.selected);"/>
+				<mx:ColorPicker id="cpColor"
+								enabled="{!btnHTML.selected}"
+								change="applyColor(cpColor.selectedColor);"/>
+				<s:ButtonBar id="bbTextAlign"
+							 arrowKeysWrapFocus="true"
+							 dataProvider="{_textAlignment}"
+							 enabled="{!btnHTML.selected}"
+							 labelField="label"
+							 width="120"
+							 change="applyTextAlign(bbTextAlign.selectedItem);">
+				</s:ButtonBar>
+				<s:ToggleButton id="btnHTML" label="HTML" width="55" 
+								click="showHTML = btnHTML.selected;"/>
+				<s:Button id="btnGreek" width="55" 
+						  enabled="{!btnHTML.selected}"
+						  label="Greek"
+						  click="applyGreeking();"/>
+			</mx:ToolBar>
+		</mx:ControlBar>
+		<s:Group width="100%" height="100%" includeIn="Content">
+			<s:TextArea id="editor"
+						focusEnabled="false"
+						left="10" right="10" minHeight="200" height="100%"
+						textFlow="{tfGreeked}"
+						selectionChange="selectionChangeHandler(event);">
+			</s:TextArea>
+		</s:Group>
+</s:VGroup>
