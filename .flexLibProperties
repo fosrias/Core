@@ -3,15 +3,9 @@
   <includeClasses>
     <classEntry path="com.asual.swfaddress.SWFAddress"/>
     <classEntry path="com.asual.swfaddress.SWFAddressEvent"/>
-    <classEntry path="com.firemoss.controls.loading.LoadingSpinner"/>
-    <classEntry path="com.firemoss.controls.loading.Tick"/>
-    <classEntry path="com.firemoss.drawing.layout.RadialRepeater"/>
     <classEntry path="com.firemoss.effects.BlurOutIn"/>
-    <classEntry path="com.firemoss.effects.FadeInOut"/>
-    <classEntry path="com.firemoss.effects.ZoomInOut"/>
     <classEntry path="com.firemoss.util.serialization.Serialization"/>
     <classEntry path="com.fosrias.core.CoreApplication"/>
-    <classEntry path="com.fosrias.core.SpinnerTester"/>
     <classEntry path="com.fosrias.core.business.MessageService"/>
     <classEntry path="com.fosrias.core.business.RESTfulService"/>
     <classEntry path="com.fosrias.core.business.RemoteService"/>
@@ -130,12 +124,10 @@
     <classEntry path="com.fosrias.core.views.components.PopUpGroup"/>
     <classEntry path="com.fosrias.core.views.components.PopUpPanel"/>
     <classEntry path="com.fosrias.core.views.components.PopUpTitleWindow"/>
-    <classEntry path="com.fosrias.core.views.components.Spinner"/>
     <classEntry path="com.fosrias.core.views.components.StatefulPopUpCanvas"/>
     <classEntry path="com.fosrias.core.views.components.StatefulPopUpGroup"/>
     <classEntry path="com.fosrias.core.views.components.StatefulPopUpPanel"/>
     <classEntry path="com.fosrias.core.views.components.StatefulPopUpTitleWindow"/>
-    <classEntry path="com.fosrias.core.views.components.Tick"/>
     <classEntry path="com.fosrias.core.views.interfaces.AInputFormItem"/>
     <classEntry path="com.fosrias.core.views.interfaces.AMainViewModel"/>
     <classEntry path="com.fosrias.core.views.interfaces.AValidatedViewModel"/>
@@ -172,7 +164,6 @@
     <classEntry path="com.fosrias.site.vos.interfaces.AHierarchicalItem"/>
     <classEntry path="com.fosrias.site.vos.interfaces.AListItem"/>
     <classEntry path="com.fosrias.site.vos.interfaces.ANestedListItem"/>
-    <classEntry path="com.fosrias.site.vos.interfaces.ISiteItem"/>
     <classEntry path="com.fosrias.core.vos.SessionToken"/>
     <classEntry path="com.fosrias.site.views.components.ItemLinkButton"/>
     <classEntry path="com.fosrias.site.views.skins.ItemLinkButtonSkin"/>
