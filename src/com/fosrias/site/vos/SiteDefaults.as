@@ -133,7 +133,7 @@ public class SiteDefaults
     {
     	_masterItem = value;
         
-		//Sets the master item id as a class variable
+		//Sets the master item id as a class variable along with its domain
 	    if (_masterItem != null)
 		    _masterItem.setAsMaster();
     }
@@ -156,6 +156,9 @@ public class SiteDefaults
 		_siteSource     = _hierarchicalItems.source[0];
 		_authorSource   = _hierarchicalItems.source[1];
 		_categorySource = _hierarchicalItems.source[2];
+		
+		//Set the master item
+		_masterItem = SiteItem(_siteSource.source);
 		
 		//Map the links	
 		var linksCollection:ArrayCollection = 
@@ -238,7 +241,7 @@ public class SiteDefaults
 			//Add system search item.
 			var search:SiteItem = new SiteItem(0, _masterItem.id, 0, 
 				SiteItem.SEARCH, "Search", "Search List", 0, false, null, 
-				"search", "Search","", true, true, false, 0,0, true, true);
+				"search", "Search","", null, true, true, false, 0, 0, true, true);
 			
 			//Register it as a link.
 			_linkToItemMap[search.name] = search;
