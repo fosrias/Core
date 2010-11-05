@@ -106,8 +106,12 @@ public class URLValidator extends Validator
 	{
 		var regexp:RegExp;
 
-		if (domainOnly)
-		{
+		if (url.indexOf("localhost") == 0) {
+			
+			//We allow localhost for testing.
+			return true;
+			
+		} else if (domainOnly) {
 			//Refactor using this code to download and test this.
 			//http://publicsuffix.org/
 			regexp = /^[a-z0-9\-]{2,63}\.\w{2,3}/;
