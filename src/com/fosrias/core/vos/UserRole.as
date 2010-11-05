@@ -9,7 +9,7 @@ package com.fosrias.core.vos
 {
 import com.fosrias.core.models.interfaces.IIsEqual;
 
-[RemoteClass(alias="com.fosrias.site.components.physical.UserRole")]
+[RemoteClass(alias="CFCore.com.fosrias.site.components.physical.UserRole")]
 /**
  * The UserRole class is a value object for user roles.
  */

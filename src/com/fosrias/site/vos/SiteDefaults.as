@@ -20,7 +20,7 @@ import mx.controls.Alert;
 
 use namespace app_internal;
 
-[RemoteClass(alias="com.fosrias.site.components.utility.Defaults")]
+[RemoteClass(alias="CFCore.com.fosrias.site.components.utility.Defaults")]
 [Bindable]
 public class SiteDefaults
 {    

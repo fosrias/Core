@@ -14,7 +14,7 @@ import flash.events.EventDispatcher;
 
 use namespace memento_internal;
 
-[RemoteClass(alias="com.fosrias.site.components.physical.User")]
+[RemoteClass(alias="CFCore.com.fosrias.site.components.physical.User")]
 [Bindable]
 /**
  * The CFUser class is a user class for use with ColdFusion sites.

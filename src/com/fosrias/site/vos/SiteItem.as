@@ -27,7 +27,7 @@ import mx.controls.dataGridClasses.DataGridColumn;
 use namespace app_internal;
 use namespace memento_internal;
 
-[RemoteClass(alias="com.fosrias.site.components.physical.SiteItem")]
+[RemoteClass(alias="CFCore.com.fosrias.site.components.physical.SiteItem")]
 [Bindable]
 /**
  * The SiteItem class ...

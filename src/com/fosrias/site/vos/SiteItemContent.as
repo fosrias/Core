@@ -20,7 +20,7 @@ import flash.utils.ByteArray;
 use namespace app_internal
 use namespace memento_internal;
 
-[RemoteClass(alias="com.fosrias.site.components.physical.SiteItemContent")]
+[RemoteClass(alias="CFCore.com.fosrias.site.components.physical.SiteItemContent")]
 [Bindable]
 /**
  * The SiteItemContent class is content of a corresponding <code>SiteItem</code>
