@@ -3,8 +3,6 @@
   <includeClasses>
     <classEntry path="com.asual.swfaddress.SWFAddress"/>
     <classEntry path="com.asual.swfaddress.SWFAddressEvent"/>
-    <classEntry path="com.firemoss.effects.BlurOutIn"/>
-    <classEntry path="com.firemoss.util.serialization.Serialization"/>
     <classEntry path="com.fosrias.core.CoreApplication"/>
     <classEntry path="com.fosrias.core.business.MessageService"/>
     <classEntry path="com.fosrias.core.business.RESTfulService"/>
@@ -113,6 +111,8 @@
     <classEntry path="com.fosrias.core.views.components.AdvancedSparkDownloadProgressBar"/>
     <classEntry path="com.fosrias.core.views.components.AutosizingRichEditableText"/>
     <classEntry path="com.fosrias.core.views.components.BindingWatcherCanvas"/>
+    <classEntry path="com.fosrias.core.views.components.EditedTextArea"/>
+    <classEntry path="com.fosrias.core.views.components.EditorUI"/>
     <classEntry path="com.fosrias.core.views.components.EnumComboBox"/>
     <classEntry path="com.fosrias.core.views.components.FileLoaderProgressBar"/>
     <classEntry path="com.fosrias.core.views.components.FixedDatefield"/>
@@ -147,6 +147,7 @@
     <classEntry path="com.fosrias.core.vos.LoginData"/>
     <classEntry path="com.fosrias.core.vos.MenuBarItem"/>
     <classEntry path="com.fosrias.core.vos.Message"/>
+    <classEntry path="com.fosrias.core.vos.SessionToken"/>
     <classEntry path="com.fosrias.core.vos.UserData"/>
     <classEntry path="com.fosrias.core.vos.UserPermissions"/>
     <classEntry path="com.fosrias.core.vos.UserRole"/>
@@ -156,6 +157,8 @@
     <classEntry path="com.fosrias.site.events.SiteEventKind"/>
     <classEntry path="com.fosrias.site.models.HierarchicalItemData"/>
     <classEntry path="com.fosrias.site.models.SiteHierarchicalItemData"/>
+    <classEntry path="com.fosrias.site.views.components.ItemLinkButton"/>
+    <classEntry path="com.fosrias.site.views.skins.ItemLinkButtonSkin"/>
     <classEntry path="com.fosrias.site.vos.HierarchicalItemWrapper"/>
     <classEntry path="com.fosrias.site.vos.SiteDefaults"/>
     <classEntry path="com.fosrias.site.vos.SiteItem"/>
@@ -164,11 +167,6 @@
     <classEntry path="com.fosrias.site.vos.interfaces.AHierarchicalItem"/>
     <classEntry path="com.fosrias.site.vos.interfaces.AListItem"/>
     <classEntry path="com.fosrias.site.vos.interfaces.ANestedListItem"/>
-    <classEntry path="com.fosrias.core.vos.SessionToken"/>
-    <classEntry path="com.fosrias.site.views.components.ItemLinkButton"/>
-    <classEntry path="com.fosrias.site.views.skins.ItemLinkButtonSkin"/>
-    <classEntry path="com.fosrias.core.views.components.EditedTextArea"/>
-    <classEntry path="com.fosrias.core.views.components.EditorUI"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
