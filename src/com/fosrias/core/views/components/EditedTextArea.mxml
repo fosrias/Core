@@ -2,9 +2,10 @@
 <s:TextArea xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		 xmlns:s="library://ns.adobe.com/flex/spark" 
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 whiteSpaceCollapse="preserve"
 		 change="changeHandler(event);"
 		 focusIn="onFocusIn();"
-		 focusOut="_isEditing = false;">
+		 focusOut="_isEditing = false;showHTML(false);">
 	
 	<!-- Define States _____________________________________________________ -->
 	<s:states>
@@ -117,6 +118,7 @@
 		
 		//Super so we bypass resetting the htmlText value
 		super.textFlow = importToTextFlow(_htmlText);
+		super.textFlow.whiteSpaceCollapse = "preserve";
 		
 		dispatchEvent( new Event("textChange") );
 	}
