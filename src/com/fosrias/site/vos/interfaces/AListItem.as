@@ -13,8 +13,6 @@ import com.fosrias.core.vos.interfaces.ATimestamp;
 
 import mx.collections.ArrayCollection;
 
-import org.osmf.layout.AbsoluteLayoutFacet;
-
 /**
  * The AListItem class is the abstract base class for all list item classes.
  * Set the <code>convertRemoteDates</code> parameter to <code>true</code> if
