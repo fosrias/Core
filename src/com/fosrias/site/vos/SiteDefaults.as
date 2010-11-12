@@ -241,7 +241,8 @@ public class SiteDefaults
 			//Add system search item.
 			var search:SiteItem = new SiteItem(0, _masterItem.id, 0, 
 				SiteItem.SEARCH, "Search", "Search List", 0, false, null, 
-				"search", "Search","", null, true, true, false, 0, 0, true, true);
+				"search", "Search","", null, null, true, true, false, 0, 0, 
+				true, true);
 			
 			//Register it as a link.
 			_linkToItemMap[search.name] = search;

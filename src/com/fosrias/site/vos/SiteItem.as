@@ -17,6 +17,7 @@ import com.fosrias.site.vos.interfaces.AListItem;
 import com.fosrias.site.vos.interfaces.ANestedListItem;
 
 import flash.errors.IllegalOperationError;
+import flash.utils.ByteArray;
 
 import flashx.textLayout.conversion.TextConverter;
 import flashx.textLayout.elements.TextFlow;
@@ -46,6 +47,7 @@ public class SiteItem extends ANestedListItem
     public static const CUSTOM:String 	      = "CUSTOM";
 	public static const DOCUMENT:String 	  = "DOCUMENT";
 	public static const FAQ:String 	 		  = "FAQ";
+	public static const FAQ_LIST:String 	  = "FAQ_LIST";
 	public static const FILE:String 		  = "FILE";
 	public static const GROUP:String 		  = "GROUP";
 	public static const GROUP_AUTHOR:String   = "GROUP_AUTHOR";
@@ -66,6 +68,7 @@ public class SiteItem extends ANestedListItem
 	public static const MENU_LEFT_SB:String   = "MENU_LEFT_SB";
 	public static const MENU_RIGHT_SB:String  = "MENU_RIGHT_SB";
 	public static const POST:String           = "POST";
+	public static const POST_LIST:String      = "POST_LIST";
 	public static const SEARCH:String         = "SEARCH";
 	public static const SITE:String           = "SITE";
 	public static const SITE_MAP:String       = "SITE_MAP";
@@ -123,7 +126,8 @@ public class SiteItem extends ANestedListItem
 							 urlFragment:String = "",
 							 browserTitle:String = "",
 							 tags:String = "",
-							 xmlTags:XML = null,
+							 xmlTags:String = null,
+							 image:ByteArray = null,
 							 isActive:Boolean = false,
 							 isLink:Boolean = false,
 							 isListDetail:Boolean = false,
@@ -183,6 +187,7 @@ public class SiteItem extends ANestedListItem
 		this.browserTitle = browserTitle;
 		this.tags = tags;
 		this.xmlTags = xmlTags;
+		this.image = image;
 		this.isLink = isLink;
 		this.isActive = isActive;
 		this.isListDetail = isListDetail;
@@ -206,7 +211,7 @@ public class SiteItem extends ANestedListItem
 	{
 		var clone:SiteItem = new SiteItem( id, parentId, relatedItemId, type, 
 			name, description, contentId, isMenuItem, menuSeparator, 
-			urlFragment, browserTitle, tags, xmlTags, isActive, isLink, 
+			urlFragment, browserTitle, tags, xmlTags, image, isActive, isLink, 
 			isListDetail, lft, rgt, isLocked, isSystem);
 		
 		if (content != null)
@@ -218,17 +223,24 @@ public class SiteItem extends ANestedListItem
 	}
 	
 	//----------------------------------
-	//    documentURL
+	//    fileLocation
 	//----------------------------------
 	
 	/**
 	 * The URL of the document, if any.
 	 */
-	public function get documentURL():String
+	public function get documentLocation():String
 	{
-		return "http://" + _masterSiteItemDomain + 
+		if (isSWF)
+		{
+			return _content.fileLocation
+		} else {
+			
+			return "http://" + _masterSiteItemDomain + 
 			(_masterSiteItemDomain.slice(_masterSiteItemDomain.length) != "/" 
 				? "/" : "") + _content.fileLocation;
+		}
+		
 	}
 
 	//----------------------------------
@@ -545,7 +557,7 @@ public class SiteItem extends ANestedListItem
 	{
 		var clone:SiteItem = new SiteItem(id, parentId, relatedItemId, type, 
 			name, description, contentId, isMenuItem, menuSeparator, 
-			urlFragment, browserTitle, tags, xmlTags, isActive, isLink, 
+			urlFragment, browserTitle, tags, xmlTags, image, isActive, isLink, 
 			isListDetail, lft, rgt, isLocked, isSystem);
 		clone.isDeleted = isDeleted;
 		
@@ -567,7 +579,7 @@ public class SiteItem extends ANestedListItem
 		//is always false
 		return new SiteItem( 0, parentId, relatedItemId,  type, name, 
 			description, contentId, isMenuItem, menuSeparator, urlFragment, 
-			browserTitle, tags);
+			browserTitle, tags, xmlTags, image);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -588,7 +600,7 @@ public class SiteItem extends ANestedListItem
 	{
 		var clone:SiteItem = new SiteItem( id, parentId, relatedItemId, type, 
 			name, description, contentId, isMenuItem, menuSeparator, 
-			urlFragment, browserTitle, tags, xmlTags, isActive, isLink, 
+			urlFragment, browserTitle, tags, xmlTags, image, isActive, isLink, 
 			isListDetail, lft, rgt, isLocked, isSystem);
 		
 		if (content != null)
@@ -613,8 +625,8 @@ public class SiteItem extends ANestedListItem
 		//is always false and lft and rgt are zero indicate new
 		var copy:SiteItem =  new SiteItem( 0, parentId, relatedItemId, type, 
 			name, description, contentId, isMenuItem, menuSeparator, 
-			urlFragment, browserTitle, tags, xmlTags, false, false, false, 0, 0, 
-			false, false, content.noItemCopy);
+			urlFragment, browserTitle, tags, xmlTags, image, false, false, 
+			false, 0, 0, false, false, content.noItemCopy);
 		
 		if (content != null)
 			copy.content = content.noItemClone;
@@ -894,6 +906,15 @@ public class SiteItem extends ANestedListItem
 	}
 	
 	//----------------------------------
+	//  image
+	//----------------------------------
+	
+	/**
+	 * The image associated with the item if any.
+	 */
+	public var image:ByteArray;
+	
+	//----------------------------------
 	//  isDeleted
 	//----------------------------------
 	
@@ -912,7 +933,7 @@ public class SiteItem extends ANestedListItem
 	/**
 	 * XML payload field for storing xml data.
 	 */
-	public var xmlTags:XML;
+	public var xmlTags:String;
 	
 	//--------------------------------------------------------------------------
 	//
@@ -984,6 +1005,7 @@ public class SiteItem extends ANestedListItem
 		browserTitle  = propertyMap.browserTitle;
 		tags          = propertyMap.tags;
 		xmlTags       = propertyMap.xmlTags;
+		image         = propertyMap.image;
 		parentId      = propertyMap.parentId; //Must be before lft and rgt
 		type          = propertyMap.type;
 		lft           = propertyMap.lft;
@@ -1032,6 +1054,7 @@ public class SiteItem extends ANestedListItem
 								  value.browserTitle == browserTitle &&
 								  value.tags == tags &&
 								  value.xmlTags == xmlTags &&
+								  value.image == image &&
 								  value.isActive == isActive &&
 								  value.isLink == isLink &&
 								  value.isListDetail == isListDetail;
@@ -1116,8 +1139,8 @@ public class SiteItem extends ANestedListItem
 	public static function createPage(parentId:int, lft:int):SiteItem
 	{
 		var item:SiteItem = new SiteItem(0, parentId, 0, SiteItem.TEXT,
-			"New Item", "", 0, true, null, "", "", "", null, true, false, false, 
-			lft, lft + 1);
+			"New Item", "", 0, true, null, "", "", "", null, null,  true, 
+			false, false, lft, lft + 1);
 		return item;
 	}
 	
