@@ -43,7 +43,7 @@ public class AViewFactory extends AFactory
      * 
      * <p>Overridden to always instantiate the <code>factoryType</code>.
      */
-    override protected function instantiateImpl( factoryType:*, type:String, 
+    override protected function instantiateImpl( factoryType:*, type:*, 
         args:Array ):*
     {
         return new factoryType();

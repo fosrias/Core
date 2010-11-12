@@ -126,7 +126,7 @@ public class AFactory extends AClass
      * 
      * @return The instantiated  object.
      */    
-    public function create( type:String, ... args ):*
+    public function create(type:*, ... args):*
     {
         var factoryType:* = map[ type ];
         
@@ -143,7 +143,17 @@ public class AFactory extends AClass
             return null;
         }
     }
-    
+	
+	/**
+	 * Registers a new factory type to a corresponding type key that is a valid 
+	 * type for the factory. Use this method to register custom types.
+	 */
+	public function register(value:*, type:String):void
+	{
+		_types.push(type);
+		map[type] = type;
+	}
+
     //--------------------------------------------------------------------------
     //
     //  Protected Methods
@@ -210,7 +220,7 @@ public class AFactory extends AClass
      * @return The instantiated class.
      * 
      */
-    protected function instantiateImpl( factoryType:*, type:String, 
+    protected function instantiateImpl( factoryType:*, type:*, 
         args:Array ):*
     {
     	raiseImplementationError( "method", "instantiateImpl" );

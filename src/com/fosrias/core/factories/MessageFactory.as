@@ -94,7 +94,7 @@ public class MessageFactory extends AFactory
      * function that takes a <code>message</code> as its argument. This 
      * function should process the returned message accordingly.</p>
      */    
-    override public function create( type:String, ...args ):*
+    override public function create(type:*, ...args ):*
     {
     	var message:Message = map[ type ];
     	if ( args.length == 0 )

@@ -45,7 +45,7 @@ public class AStateFactory extends AFactory
     /**
      * @inheritDoc
      */
-    override protected function instantiateImpl(factoryType:*, type:String, 
+    override protected function instantiateImpl(factoryType:*, type:*, 
         args:Array):*
     {
     	return new factoryType(type, args[0]);

@@ -119,7 +119,7 @@ public class ValidatorFactory extends AFactory
      * @inheritDoc
      */
     override protected function instantiateImpl( factoryType:*, 
-        type:String, args:Array):*
+        type:*, args:Array):*
     {
     	return new factoryType;
     }
