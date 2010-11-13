@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				   xmlns:s="library://ns.adobe.com/flex/spark" 
+				   xmlns:mx="library://ns.adobe.com/flex/mx"
+				   height="52" 
+				   cornerRadius="5"
+				   dropShadowVisible="true" width="116" 
+				   backgroundAlpha="0.25">
+	
+<fx:Script>
+<![CDATA[
+
+	[Bindable]
+	public var label:String;
+
+]]>
+</fx:Script>
+	
+	<mx:ProgressBar id="pbModalMessage"
+				    label="{label}"
+				    indeterminate="true" left="10" right="10" top="10" bottom="6"/>
+</s:BorderContainer>

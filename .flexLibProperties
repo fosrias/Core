@@ -120,6 +120,7 @@
     <classEntry path="com.fosrias.core.views.components.IconlessDateField"/>
     <classEntry path="com.fosrias.core.views.components.InputTextFormItem"/>
     <classEntry path="com.fosrias.core.views.components.ManualProgressBar"/>
+    <classEntry path="com.fosrias.core.views.components.ModalMessagePopup"/>
     <classEntry path="com.fosrias.core.views.components.PopUpCanvas"/>
     <classEntry path="com.fosrias.core.views.components.PopUpGroup"/>
     <classEntry path="com.fosrias.core.views.components.PopUpPanel"/>

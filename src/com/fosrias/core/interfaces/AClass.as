@@ -341,6 +341,15 @@ public class AClass extends EventDispatcher
 	{
 		//Do nothing unless overridden
 	}
+	
+	/**
+	 * Resets the session timeout. Call this function anywhere activity should
+	 * reset the session from timing out.
+	 */
+	protected function resetSessionTimeout():void
+	{
+		_sessionManager.resetSessionTimeout();
+	}
     
     /**
      * The return value for abstract methods, getters, and setters in 

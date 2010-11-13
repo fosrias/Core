@@ -11,11 +11,13 @@
 package com.fosrias.core.managers
 {
 import com.fosrias.core.models.NullUser;
-import com.fosrias.core.vos.SessionToken;
 import com.fosrias.core.models.interfaces.AUser;
+import com.fosrias.core.vos.SessionToken;
 
 import flash.events.Event;
 import flash.events.EventDispatcher;
+import flash.utils.clearTimeout;
+import flash.utils.setTimeout;
 
 [Bindable]  
 /**
@@ -38,13 +40,19 @@ public class SessionManager extends EventDispatcher
      */
     public static const SESSION_CHANGE:String = "sessionChange";
     
-    /**
+	/**
+	 * The constant the time before a session times out. The default is 
+	 * 15 minutes.
+	 */
+	public static const TIMEOUT_DELAY:uint = 900000;
+	
+	/**
      * @private 
      */
     private static const _instance:SessionManager 
     	= new SessionManager(SingletonEnforcer);  
     
-    //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
     //
     //  Constructor
     //
@@ -65,7 +73,30 @@ public class SessionManager extends EventDispatcher
         }  
     }  
     
-    //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	//
+	//  Variables
+	//
+	//--------------------------------------------------------------------------
+	
+	/** 
+	 * @private
+	 */  
+	private var _hasSessionTimeout:Boolean = false;
+	
+	/** 
+	 * @private
+	 */  
+	private var _sessionIndex:uint;
+	
+	/** 
+	 * @private
+	 */  
+	private var _timeoutDelay:uint = TIMEOUT_DELAY;
+	
+	
+	
+	//--------------------------------------------------------------------------
     //
     //  Properties
     //
@@ -137,6 +168,18 @@ public class SessionManager extends EventDispatcher
 		} else {
 			_token = new SessionToken;
 		}
+		
+		//If there is a valid session, set the timeout
+		if (_token.hasSession)
+		{
+			resetSessionTimeout();
+			
+		} else {
+			
+			//Cancel any pending timeout
+			clearTimeout(_sessionIndex);
+		}
+		
 		dispatchEvent( new Event(SESSION_CHANGE) );
 	}
 	
@@ -169,11 +212,66 @@ public class SessionManager extends EventDispatcher
             _user = value;
         } else {
             _user = new NullUser;
+			clearTimeout(_sessionIndex);
         }
         dispatchEvent( new Event(SESSION_CHANGE) );
     }
     
-    //--------------------------------------------------------------------------
+	//--------------------------------------------------------------------------
+	//
+	//  Methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Resets the session timeout.
+	 */
+	public function resetSessionTimeout():void
+	{
+		if (_hasSessionTimeout && _token.hasSession)
+		{
+			clearTimeout(_sessionIndex);
+			_sessionIndex = setTimeout(endSession, _timeoutDelay);
+		}
+	}
+	
+	/**
+	 * Sets a pending token so that remote calls have a login and password 
+	 * defined for creating sessions.
+	 */
+	public function setPendingToken(value:SessionToken):void
+	{
+		_token = value;
+	}
+	
+	/**
+	 * Enables session timeout. If a delay is not specified, it uses the 
+	 * default of 15 minutes.
+	 */
+	public function enableSessionTimeout(delay:Number = NaN):void
+	{
+		_hasSessionTimeout = true;
+		
+		//Override the default
+		if ( !isNaN(delay) )
+			_timeoutDelay = delay;
+	}
+	
+	//--------------------------------------------------------------------------
+	//
+	//  Private methods
+	//
+	//--------------------------------------------------------------------------
+	
+	/**
+	 * Resets the session timeout.
+	 */
+	private function endSession():void
+	{
+		token = new SessionToken();
+	}
+	
+	//--------------------------------------------------------------------------
 	//
 	//  Static methods
 	//

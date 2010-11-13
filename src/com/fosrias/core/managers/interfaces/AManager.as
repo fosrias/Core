@@ -12,19 +12,22 @@ package com.fosrias.core.managers.interfaces
 {
 import com.fosrias.core.events.StateEvent;
 import com.fosrias.core.interfaces.ADispatcher;
-import com.fosrias.core.vos.SessionToken;
 import com.fosrias.core.models.User;
 import com.fosrias.core.models.interfaces.AUser;
 import com.fosrias.core.namespaces.app_internal;
 import com.fosrias.core.validators.ServerErrors;
+import com.fosrias.core.views.components.ModalMessagePopup;
 import com.fosrias.core.vos.CallResult;
 
+import flash.display.DisplayObject;
 import flash.events.Event;
 import flash.utils.clearTimeout;
 import flash.utils.setTimeout;
 
 import mx.core.FlexGlobals;
+import mx.core.IFlexDisplayObject;
 import mx.core.UIComponent;
+import mx.managers.PopUpManager;
 import mx.rpc.AsyncToken;
 import mx.rpc.Fault;
 
@@ -69,11 +72,6 @@ public class AManager extends ADispatcher
     //--------------------------------------------------------------------------
     
     /**
-     * @private
-     */
-    private var _remoteCallIntervalId:int;
-	
-	/**
 	 * @private
 	 */
 	protected var _lastRemoteCall:String;
@@ -83,7 +81,22 @@ public class AManager extends ADispatcher
 	 */
 	protected var _lastRemoteCallParameters:Object;
 	
-    
+	/**
+	 * @private
+	 */
+	private var _modalPopup:IFlexDisplayObject;
+	
+	/**
+	 * @private
+	 */
+	private var _modalPopupIndex:uint;
+	
+	/**
+	 * @private
+	 */
+	private var _remoteCallIntervalId:int;
+	
+	
     //--------------------------------------------------------------------------
     //
     //  Properties
@@ -335,8 +348,39 @@ public class AManager extends ADispatcher
         hasPendingRemoteCall = false;
         clearTimeout( _remoteCallIntervalId );
     }
+	
+	/**
+	 * Hides the modal message popup.
+	 */
+	protected function hideModalMessage():void
+	{
+		clearTimeout(_modalPopupIndex);
+		PopUpManager.removePopUp(_modalPopup);
+	}
     
-    /**
+	/**
+	 * Hides the modal message popup.
+	 */
+	protected function showModalMessage(value:String = null):void
+	{
+		var popup:ModalMessagePopup = new ModalMessagePopup();
+		
+		popup.visible = false;
+		
+		if (value != null)
+			popup.label = value;
+		
+		_modalPopup = popup;
+		
+		PopUpManager.addPopUp(_modalPopup, 
+			DisplayObject(FlexGlobals.topLevelApplication), true);
+		
+		PopUpManager.centerPopUp(_modalPopup);
+		
+		_modalPopupIndex = setTimeout(makePopupVisible, 400);
+	}
+	
+	/**
      * The current sessioin user.
      */
     protected function setCallTimeout(closure:Function, 
@@ -381,6 +425,18 @@ public class AManager extends ADispatcher
 	//  Private methods
 	//
 	//--------------------------------------------------------------------------
+	
+	
+	/**
+	 * @private
+	 */
+	private function makePopupVisible():void
+	{
+		if (_modalPopup != null)
+		{
+			_modalPopup.visible = true;
+		}
+	}
 	
 	/**
 	 * Sets the watched states for the manager.
