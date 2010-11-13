@@ -120,6 +120,19 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	}
 	
 	//----------------------------------
+	//  isDocument
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 * Whether the item is a document.
+	 */
+	public function get isDocument():Boolean
+	{
+		return SiteItem(source).isDocument;
+	}
+	
+	//----------------------------------
 	//  isLink
 	//----------------------------------
 	
@@ -135,18 +148,6 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	{
 		SiteItem(source).isLink = value;
 	}
-	
-	//----------------------------------
-	//  isLinkItem
-	//----------------------------------
-	
-	/**
-	 * Whether item is a link or not.
-	 */
-	/*public function get isLinkItem():Boolean
-	{
-		return SiteItem(source).isLinkItem;
-	}*/
 	
 	//----------------------------------
 	//  isList
@@ -218,6 +219,19 @@ public dynamic class SiteItemWrapper extends HierarchicalItemWrapper
 	public function set isMenuItem(value:Boolean):void
 	{
 		SiteItem(source).isMenuItem = value;
+	}
+	
+	//----------------------------------
+	//  isSWF
+	//----------------------------------
+	
+	[Transient]
+	/**
+	 * Whether the item is a swf file.
+	 */
+	public function get isSWF():Boolean
+	{
+		return SiteItem(source).isSWF;
 	}
 	
 	//----------------------------------

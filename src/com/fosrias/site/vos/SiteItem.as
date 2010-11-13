@@ -356,6 +356,20 @@ public class SiteItem extends ANestedListItem
 	}
 	
 	//----------------------------------
+	//  isDocument
+	//----------------------------------
+	
+	[Bindable("typeChange")]
+	[Transient]
+	/**
+	 * Whether the item is an author group item or not.
+	 */
+	public function get isDocument():Boolean
+	{
+		return type == DOCUMENT;
+	}
+	
+	//----------------------------------
 	//  isCategory
 	//----------------------------------
 	
@@ -704,7 +718,7 @@ public class SiteItem extends ANestedListItem
 		super.type = value;
 		
 		//Home page is always a child of the site
-		if (type == HOME)
+		/*if (type == HOME)
 		{
 			urlFragment = "";
 			browserTitle = "";
@@ -728,7 +742,7 @@ public class SiteItem extends ANestedListItem
 		if (type == SEARCH)
 		{
 			isLink = true;
-		}
+		}*/
 		
 		//Site always has no parent
 		if (value == SITE)
@@ -1075,6 +1089,39 @@ public class SiteItem extends ANestedListItem
 			_masterSiteItemDomain = urlFragment;
 			_masterSiteItemId = id;
 		}
+	}
+	
+	/**
+	 * @private
+	 * Sets the master site domain and id class variables so that constructor 
+	 * defaults to it as the parentId.
+	 */
+	app_internal function updateType(value:String):void
+	{
+		super.type = value;
+		
+		//Menus are always menu items
+		if (type == MENU || type == MENU_BODY_SB || type == MENU_LEFT_SB
+			|| type == MENU_RIGHT_SB)
+		{
+			isMenuItem = true;
+		}
+		
+		//A link cannot link to itself and it is never used in a menu
+		if (type == GROUP_LINK)
+		{
+			isLink = false;
+			isMenuItem = false;
+		}
+		
+		//A search item is always available as a link
+		if (type == SEARCH)
+		{
+			isLink = true;
+		}
+		
+		//Give changes other events a chance to update first.
+		callLater(dispatchEventType, ["typeChange"]);
 	}
 	
 	//--------------------------------------------------------------------------
